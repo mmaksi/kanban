@@ -3,19 +3,40 @@
 import { ReactNode, useState } from "react";
 
 import variables from "../app/variables.module.scss";
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+export const pks = Plus_Jakarta_Sans({
+  style: ["normal"],
+  subsets: ["latin"],
+});
 
 type buttonTypes = "primary" | "secondary" | "destructive";
 type buttonSizes = "L" | "S";
+type appMode = "light" | "dark";
 
 interface ButtonProps {
   type: buttonTypes;
   size: buttonSizes;
+  mode: appMode;
   children: ReactNode;
   customStyles?: {};
+  clickhandler: () => void | Promise<void>;
 }
 
 const Button = (props: ButtonProps) => {
-  const { children, type, size, customStyles, ...otherProps } = props;
+  const {
+    children,
+    type,
+    size,
+    customStyles,
+    mode,
+    clickhandler,
+    ...otherProps
+  } = props;
+
+  const clickEventHandler = async () => {
+    await clickhandler();
+  };
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -84,10 +105,18 @@ const Button = (props: ButtonProps) => {
     }
   };
 
+  const getModeStyle = () => {
+    if (mode === "dark" && type === "secondary")
+      return {
+        backgroundColor: White,
+      };
+  };
+
   const styles = {
     ...getButtonSize(),
     ...getButtonType(),
     ...(isHovered && getHoverStyle()),
+    ...getModeStyle(),
   };
 
   return (
@@ -97,8 +126,9 @@ const Button = (props: ButtonProps) => {
       {...otherProps}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={clickEventHandler}
     >
-      {children}
+      <h3 className={pks.className}>{children}</h3>
     </button>
   );
 };

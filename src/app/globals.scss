@@ -17,29 +17,25 @@ $black: #000112;
 
 /* Headings */
 @mixin heading-XL {
-  font-family: "Plus Jakarta Sans";
-  font-weight: bold;
+  font-weight: 700;
   font-size: 24px;
   line-height: 30px;
 }
 
 @mixin heading-L {
-  font-family: "Plus Jakarta Sans";
-  font-weight: bold;
+  font-weight: 700;
   font-size: 18px;
   line-height: 23px;
 }
 
 @mixin heading-M {
-  font-family: "Plus Jakarta Sans";
-  font-weight: bold;
+  font-weight: 700;
   font-size: 15px;
   line-height: 19px;
 }
 
 @mixin heading-S {
-  font-family: "Plus Jakarta Sans";
-  font-weight: bold;
+  font-weight: 700;
   font-size: 12px;
   line-height: 15px;
   letter-spacing: 2.4px;
@@ -47,15 +43,13 @@ $black: #000112;
 
 /* Body */
 @mixin body-L {
-  font-family: "Plus Jakarta Sans";
-  font-weight: medium;
+  font-weight: 400;
   font-size: 13px;
   line-height: 23px;
 }
 
 @mixin body-M {
-  font-family: "Plus Jakarta Sans";
-  font-weight: bold;
+  font-weight: 700;
   font-size: 12px;
   line-height: 15px;
 }
@@ -64,10 +58,31 @@ $black: #000112;
   border-radius: 24px;
 }
 
+// Global elements
+html {
+  font-size: 62.5%; /* 1rem = 10px (10/16 * 100%) */
+}
+
+body {
+  @include body-L;
+}
+
 button {
   @include base-button;
 }
 
 h1 {
+  @include heading-XL;
+}
+
+h2 {
   @include heading-L;
+}
+
+h3 {
+  @include heading-M;
+}
+
+h4 {
+  @include heading-S;
 }
