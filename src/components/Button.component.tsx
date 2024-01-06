@@ -2,13 +2,9 @@
 
 import { ReactNode, useState } from "react";
 
-import variables from "../app/variables.module.scss";
-import { Plus_Jakarta_Sans } from "next/font/google";
-
-export const pks = Plus_Jakarta_Sans({
-  style: ["normal"],
-  subsets: ["latin"],
-});
+import styles from "./Button.module.scss";
+import exportedStyles from "../_exports.module.scss";
+import { ExportedStyles } from "@/types/CustomTypes";
 
 type buttonTypes = "primary" | "secondary" | "destructive";
 type buttonSizes = "L" | "S";
@@ -41,33 +37,33 @@ const Button = (props: ButtonProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const {
-    PrimaryColor,
-    PrimaryHoverColor,
-    SecondaryColor,
-    SecondaryHoverColor,
-    DestructiveColor,
-    DestructiveHoverColor,
-    White,
-  } = variables;
+    primaryPurple,
+    hoverPurple,
+    primaryRed,
+    hoverRed,
+    white,
+    lightBackground,
+    lightLines,
+  } = exportedStyles as unknown as ExportedStyles;
 
   const getButtonType = () => {
     switch (type) {
       case "primary":
         return {
-          backgroundColor: PrimaryColor, // Set your primary color
-          color: White,
+          backgroundColor: primaryPurple, // Set your primary color
+          color: white,
           ...customStyles,
         };
       case "secondary":
         return {
-          backgroundColor: SecondaryColor, // Set your primary color
-          color: PrimaryColor,
+          backgroundColor: lightBackground, // Set your primary color
+          color: primaryPurple,
           ...customStyles,
         };
       case "destructive":
         return {
-          backgroundColor: DestructiveColor, // Set your primary color
-          color: White,
+          backgroundColor: primaryRed, // Set your primary color
+          color: white,
           ...customStyles,
         };
     }
@@ -90,15 +86,15 @@ const Button = (props: ButtonProps) => {
     switch (type) {
       case "primary":
         return {
-          backgroundColor: PrimaryHoverColor,
+          backgroundColor: hoverPurple,
         };
       case "secondary":
         return {
-          backgroundColor: SecondaryHoverColor,
+          backgroundColor: lightLines,
         };
       case "destructive":
         return {
-          backgroundColor: DestructiveHoverColor,
+          backgroundColor: hoverRed,
         };
       default:
         return {};
@@ -108,11 +104,11 @@ const Button = (props: ButtonProps) => {
   const getModeStyle = () => {
     if (mode === "dark" && type === "secondary")
       return {
-        backgroundColor: White,
+        backgroundColor: white,
       };
   };
 
-  const styles = {
+  const buttonStyles = {
     ...getButtonSize(),
     ...getButtonType(),
     ...(isHovered && getHoverStyle()),
@@ -121,14 +117,14 @@ const Button = (props: ButtonProps) => {
 
   return (
     <button
-      className="base-button"
-      style={styles}
+      className={styles.baseButton}
+      style={buttonStyles}
       {...otherProps}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={clickEventHandler}
     >
-      <h3 className={pks.className}>{children}</h3>
+      <h3>{children}</h3>
     </button>
   );
 };

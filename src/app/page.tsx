@@ -1,4 +1,5 @@
 import Button from "@/components/Button.component";
+import { CheckBox } from "@/components/SubtaskCheckbox.component";
 
 export default function Home() {
   const clickhandler = async () => {
@@ -16,6 +17,10 @@ export default function Home() {
       >
         Submit
       </Button>
+
+      <CheckBox mode="dark">
+        Create applicationapplicationapplicationapplicationapplication
+      </CheckBox>
     </main>
   );
 }
