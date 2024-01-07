@@ -19,13 +19,6 @@ h1 {
   justify-content: center; /* Horizontaal centreren */
 }
 
-h2 {
-  @include heading-L;
-  display: flex;
-  align-items: center; /* Verticaal centreren */
-  justify-content: center; /* Horizontaal centreren */
-}
-
 h3 {
   @include heading-M;
 }
@@ -33,12 +26,3 @@ h3 {
 h4 {
   @include heading-S;
 }
-
-// .sidebar__logo {
-//   // margin-left: 32px;
-//   // margin-top: 29px;
-//   position: absolute;
-//   top: 29px;
-//   left: 32px;
-//   z-index: 10;
-// }

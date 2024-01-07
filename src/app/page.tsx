@@ -16,17 +16,14 @@ export default function Home() {
       {/* <div className="sidebar__logo">
         <Image src={LogoDark} alt="logo" width={152.528} height={25.224} />
       </div> */}
-      {/* <Navbar />
+      <Navbar />
       <Sidebar />
       <div
         className={styles.home__content}
         style={{ marginLeft: sidebarWidth }}
       >
         hello world@
-      </div> */}
-      <Button size="L" type="primary" mode="light" padding="1.5rem">
-        Custom Button Component
-      </Button>
+      </div>
     </div>
   );
 }

@@ -1,45 +1,64 @@
 @import "../variables";
 @import "../mixins";
 
-.sidebar {
-  background-color: $dark-grey;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - $navbar-height);
-  width: $sidebar-width;
-  position: fixed;
-}
+/* Tablet view */
+@media screen and (min-width: 600px) {
+  .sidebar {
+    background-color: $dark-grey;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
 
-.sidebar__boardsList {
-  width: $sidebar-width;
-  overflow: auto;
-}
+    height: calc(100vh - $navbar-sm-height);
+    width: $sidebar-sm-width;
+  }
 
-.sidebarItem {
-  @include heading-M;
-  padding: 1.5rem 0;
-  margin-right: 2.4rem;
+  .sidebar__boardsList {
+    width: $sidebar-sm-width;
+    overflow: auto;
+  }
 
-  & span {
-    margin: 0 3.2rem;
+  .sidebarItem {
+    @include heading-M;
+    padding: 1.5rem 0;
+    margin-right: 2rem;
+
+    & span {
+      margin: 0 3.2rem;
+    }
+  }
+
+  .sidebarItem_selected {
+    background-color: $primary-purple;
+    border-radius: 0px 10rem 10rem 0;
+    border-bottom: 1px solid #444;
+  }
+
+  .sidebarItem__addBoard {
+    color: $primary-purple;
+  }
+
+  .sidebar__boardsTitle {
+    @include body-M;
+    letter-spacing: 2.4px;
+    text-transform: capitalize;
+    margin: 2.4rem 3.4rem 1.7rem 3.4rem;
   }
 }
 
-.sidebarItem_selected {
-  background-color: $primary-purple;
-  border-radius: 0px 10rem 10rem 0;
-  border-bottom: 1px solid #444;
-}
+/* Desktop view */
+@media screen and (min-width: 1024px) {
+  .sidebar {
+    width: $sidebar-lg-width;
+    height: calc(100vh - $navbar-lg-height);
+  }
 
-.sidebarItem__addBoard {
-  color: $primary-purple;
-}
+  .sidebar__boardsList {
+    width: $sidebar-lg-width;
+  }
 
-.sidebar__boardsTitle {
-  @include body-M;
-  letter-spacing: 2.4px;
-  text-transform: capitalize;
-  margin-bottom: 20px;
-  margin: 2.4rem 3.4rem 1.7rem 3.4rem;
+  .sidebarItem {
+    margin-right: 2.4rem;
+  }
 }
