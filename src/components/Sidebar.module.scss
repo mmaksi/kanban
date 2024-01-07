@@ -6,31 +6,29 @@
   color: white;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100vh - $navbar-height);
   width: $sidebar-width;
   position: fixed;
-  top: $navbar-height;
 }
 
-.sidebar__itemsList {
-  flex: 1;
+.sidebar__boardsList {
   width: $sidebar-width;
   overflow: auto;
 }
 
 .sidebarItem {
   @include heading-M;
-  padding: 15px 0;
-  margin-right: 24px;
+  padding: 1.5rem 0;
+  margin-right: 2.4rem;
 
   & span {
-    margin: 0 32px;
+    margin: 0 3.2rem;
   }
 }
 
-.sidebarItemSelected {
+.sidebarItem_selected {
   background-color: $primary-purple;
-  border-radius: 0px 100px 100px 0px;
+  border-radius: 0px 10rem 10rem 0;
   border-bottom: 1px solid #444;
 }
 
@@ -38,17 +36,10 @@
   color: $primary-purple;
 }
 
-.sidebarItems__container {
-  display: flex;
-  flex-direction: column;
-  margin-left: 32px;
-  margin-right: 32px;
-  display: flex;
-}
-
 .sidebar__boardsTitle {
   @include body-M;
   letter-spacing: 2.4px;
   text-transform: capitalize;
   margin-bottom: 20px;
+  margin: 2.4rem 3.4rem 1.7rem 3.4rem;
 }

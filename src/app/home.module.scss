@@ -1,0 +1,8 @@
+@import "../variables";
+@import "../mixins";
+
+.home__content {
+  background-color: $dark-grey;
+  height: calc(100vh - $navbar-height);
+  border: 1px solid $dark-lines;
+}

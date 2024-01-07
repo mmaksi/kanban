@@ -1,38 +1,38 @@
 /* Headings */
 @mixin heading-XL {
   font-weight: 700;
-  font-size: 24px;
-  line-height: 30px;
+  font-size: 2.4rem;
+  line-height: 3rem;
 }
 
 @mixin heading-L {
   font-weight: 700;
-  font-size: 18px;
-  line-height: 23px;
+  font-size: 1.8rem;
+  line-height: 2.3rem;
 }
 
 @mixin heading-M {
   font-weight: 700;
-  font-size: 15px;
-  line-height: 19px;
+  font-size: 1.5rem;
+  line-height: 1.9rem;
 }
 
 @mixin heading-S {
   font-weight: 700;
-  font-size: 12px;
-  line-height: 15px;
-  letter-spacing: 2.4px;
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.24rem;
 }
 
 /* Body */
 @mixin body-L {
   font-weight: 400;
-  font-size: 13px;
-  line-height: 23px;
+  font-size: 1.3rem;
+  line-height: 2.3rem;
 }
 
 @mixin body-M {
   font-weight: 700;
-  font-size: 12px;
-  line-height: 15px;
+  font-size: 1.2rem;
+  line-height: 1.5rem;
 }

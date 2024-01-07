@@ -17,11 +17,16 @@ export const Navbar = () => {
   };
 
   return (
-    <div className={styles.navbar} style={{ border: `1px solid ${darkLines}` }}>
-      <div className={styles.navbarHeaders} style={{ marginLeft: "300px" }}>
-        {/* 216px */}
-        {/* <Image src={LogoDark} alt="logo" width={152.528} height={25.224} /> */}
-        <h1 style={{ borderLeft: `1px solid ${darkLines}` }}>
+    <div className={styles.navbar}>
+      <div className={styles.navbar__headers}>
+        <Image src={LogoDark} alt="logo" className={styles.navbar__logo} />
+        <h1
+          className={styles.navbar__boardName}
+          style={{
+            marginLeft: "11.2472rem",
+            borderLeft: `1px solid ${darkLines}`, // to be changed on visibility of sidebar
+          }}
+        >
           Platform Launch
         </h1>
       </div>

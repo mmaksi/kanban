@@ -28,21 +28,16 @@ export const Sidebar = () => {
 
   return (
     <>
-      <div
-        className={styles.sidebar}
-        style={{ border: `1px solid ${darkLines}` }}
-      >
-        <div className={styles.sidebarItems__container}>
-          <p className={styles.sidebar__boardsTitle}>All Boards (8)</p>
-        </div>
-        <div className={styles.sidebar__itemsList}>
+      <div className={styles.sidebar}>
+        <p className={styles.sidebar__boardsTitle}>All Boards (8)</p>
+        <div className={styles.sidebar__boardsList}>
           {boards.map((board, index) => {
             return (
               <div
                 key={board.id}
                 onClick={() => handleItemClick(index)}
                 className={`${styles.sidebarItem} ${
-                  selectedStates[index] && styles.sidebarItemSelected
+                  selectedStates[index] && styles.sidebarItem_selected
                 }`}
               >
                 <span>{board.name}</span>

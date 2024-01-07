@@ -3,21 +3,23 @@
 .navbar {
   background-color: $dark-grey;
   color: white;
-  padding: 0 32px 0 0;
+  padding: 0 3.4rem;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  position: absolute;
-  z-index: -1;
-  width: 100vw;
+  align-items: center;
   height: $navbar-height;
 
-  & button {
-    margin-top: 29px;
+  &__boardName {
+    height: $navbar-height;
+    padding-left: 2.4rem;
+  }
+
+  &__logo {
+    width: 15.2528rem;
   }
 }
 
-.navbarHeaders h1 {
-  padding-left: 24px;
-  height: 96px;
+.navbar__headers {
+  display: flex;
+  flex-direction: row;
 }
