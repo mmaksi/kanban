@@ -2,6 +2,7 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 @import "../mixins";
+@import "../variables";
 
 html {
   font-size: 62.5%; /* 1rem = 10px (10/16 * 100%) */
@@ -31,4 +32,13 @@ h3 {
 
 h4 {
   @include heading-S;
+}
+
+.sidebar__logo {
+  // margin-left: 32px;
+  // margin-top: 29px;
+  position: absolute;
+  top: 29px;
+  left: 32px;
+  z-index: 10;
 }

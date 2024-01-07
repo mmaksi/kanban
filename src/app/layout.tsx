@@ -5,6 +5,7 @@ import "./globals.scss";
 const pks = Plus_Jakarta_Sans({
   style: ["normal"],
   subsets: ["latin"],
+  preload: true,
 });
 
 export const metadata: Metadata = {

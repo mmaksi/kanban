@@ -14,4 +14,5 @@ export interface ExportedStyles {
   lightLines: string;
   primaryPurple25: string;
   darkLines: string;
+  sidebarWidth: string;
 }

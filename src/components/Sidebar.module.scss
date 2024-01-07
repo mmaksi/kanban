@@ -1,17 +1,41 @@
 @import "../variables";
+@import "../mixins";
 
 .sidebar {
   background-color: $dark-grey;
   color: white;
-  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   width: $sidebar-width;
   position: fixed;
-  border: 2px solid red;
+  top: $navbar-height;
+}
+
+.sidebar__itemsList {
+  flex: 1;
+  width: $sidebar-width;
+  overflow: auto;
 }
 
 .sidebarItem {
-  padding: 10px;
+  @include heading-M;
+  padding: 15px 0;
+  margin-right: 24px;
+
+  & span {
+    margin: 0 32px;
+  }
+}
+
+.sidebarItemSelected {
+  background-color: $primary-purple;
+  border-radius: 0px 100px 100px 0px;
   border-bottom: 1px solid #444;
+}
+
+.sidebarItem__addBoard {
+  color: $primary-purple;
 }
 
 .sidebarItems__container {
@@ -20,5 +44,11 @@
   margin-left: 32px;
   margin-right: 32px;
   display: flex;
-  margin-top: $navbar-height;
+}
+
+.sidebar__boardsTitle {
+  @include body-M;
+  letter-spacing: 2.4px;
+  text-transform: capitalize;
+  margin-bottom: 20px;
 }

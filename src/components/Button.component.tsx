@@ -17,7 +17,7 @@ interface ButtonProps {
   children: ReactNode;
   customStyles?: {};
   padding: string;
-  clickhandler: () => void | Promise<void>;
+  clickhandler?: () => void | Promise<void>;
 }
 
 const Button = (props: ButtonProps) => {
@@ -31,10 +31,6 @@ const Button = (props: ButtonProps) => {
     clickhandler,
     ...otherProps
   } = props;
-
-  const clickEventHandler = async () => {
-    await clickhandler();
-  };
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -124,7 +120,7 @@ const Button = (props: ButtonProps) => {
       {...otherProps}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={clickEventHandler}
+      onClick={clickhandler}
     >
       <h3>{children}</h3>
     </button>
