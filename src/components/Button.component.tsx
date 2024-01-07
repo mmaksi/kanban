@@ -16,6 +16,7 @@ interface ButtonProps {
   mode: appMode;
   children: ReactNode;
   customStyles?: {};
+  padding: string;
   clickhandler: () => void | Promise<void>;
 }
 
@@ -26,6 +27,7 @@ const Button = (props: ButtonProps) => {
     size,
     customStyles,
     mode,
+    padding,
     clickhandler,
     ...otherProps
   } = props;
@@ -73,11 +75,11 @@ const Button = (props: ButtonProps) => {
     switch (size) {
       case "L":
         return {
-          padding: "15px 60px",
+          padding: `0.8rem ${padding}`,
         };
       case "S":
         return {
-          padding: "8px 69.5px",
+          padding: `0.5rem ${padding}`,
         };
     }
   };

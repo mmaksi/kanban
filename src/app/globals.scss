@@ -13,10 +13,16 @@ body {
 
 h1 {
   @include heading-XL;
+  display: flex;
+  align-items: center; /* Verticaal centreren */
+  justify-content: center; /* Horizontaal centreren */
 }
 
 h2 {
   @include heading-L;
+  display: flex;
+  align-items: center; /* Verticaal centreren */
+  justify-content: center; /* Horizontaal centreren */
 }
 
 h3 {

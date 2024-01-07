@@ -1,0 +1,25 @@
+@import "../variables";
+
+.navbar {
+  background-color: $dark-grey;
+  color: white;
+  padding: 0 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: absolute;
+  z-index: 1;
+  width: 100vw;
+  height: $navbar-height;
+
+  & div,
+  button {
+    margin-top: 29px;
+  }
+}
+
+.navbarHeaders {
+  display: flex;
+  flex-direction: row;
+  gap: 150px;
+}

@@ -13,4 +13,5 @@ export interface ExportedStyles {
   mediumGrey: string;
   lightLines: string;
   primaryPurple25: string;
+  darkLines: string;
 }
