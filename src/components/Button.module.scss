@@ -1,6 +1,37 @@
+@import "../variables";
+
 button.baseButton {
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 2.4rem;
+}
+
+// Types
+.baseButton__primary {
+  background-color: $primary-purple;
+  color: white;
+}
+
+.baseButton__secondary {
+  background-color: $light-grey-background;
+  color: $primary-purple;
+}
+
+.baseButton__destructive {
+  background-color: $primary-red;
+  color: $white;
+}
+
+// Hover states
+.baseButton__primary:hover {
+  background-color: $hover-purple;
+}
+
+.baseButton__secondary:hover {
+  background-color: $light-lines;
+}
+
+.baseButton__destructive {
+  background-color: $hover-red;
 }

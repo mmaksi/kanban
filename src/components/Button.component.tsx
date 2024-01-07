@@ -21,51 +21,9 @@ interface ButtonProps {
 }
 
 const Button = (props: ButtonProps) => {
-  const {
-    children,
-    type,
-    size,
-    customStyles,
-    mode,
-    padding,
-    clickhandler,
-    ...otherProps
-  } = props;
+  const { children, type, size, mode, padding, clickhandler } = props;
 
-  const [isHovered, setIsHovered] = useState(false);
-
-  const {
-    primaryPurple,
-    hoverPurple,
-    primaryRed,
-    hoverRed,
-    white,
-    lightBackground,
-    lightLines,
-  } = exportedStyles as unknown as ExportedStyles;
-
-  const getButtonType = () => {
-    switch (type) {
-      case "primary":
-        return {
-          backgroundColor: primaryPurple, // Set your primary color
-          color: white,
-          ...customStyles,
-        };
-      case "secondary":
-        return {
-          backgroundColor: lightBackground, // Set your primary color
-          color: primaryPurple,
-          ...customStyles,
-        };
-      case "destructive":
-        return {
-          backgroundColor: primaryRed, // Set your primary color
-          color: white,
-          ...customStyles,
-        };
-    }
-  };
+  const { white } = exportedStyles as unknown as ExportedStyles;
 
   const getButtonSize = () => {
     switch (size) {
@@ -80,25 +38,6 @@ const Button = (props: ButtonProps) => {
     }
   };
 
-  const getHoverStyle = () => {
-    switch (type) {
-      case "primary":
-        return {
-          backgroundColor: hoverPurple,
-        };
-      case "secondary":
-        return {
-          backgroundColor: lightLines,
-        };
-      case "destructive":
-        return {
-          backgroundColor: hoverRed,
-        };
-      default:
-        return {};
-    }
-  };
-
   const getModeStyle = () => {
     if (mode === "dark" && type === "secondary")
       return {
@@ -108,18 +47,21 @@ const Button = (props: ButtonProps) => {
 
   const buttonStyles = {
     ...getButtonSize(),
-    ...getButtonType(),
-    ...(isHovered && getHoverStyle()),
     ...getModeStyle(),
   };
 
   return (
     <button
-      className={styles.baseButton}
+      className={`${styles.baseButton} ${
+        type === "primary"
+          ? styles.baseButton__primary
+          : "secondary"
+          ? styles.baseButton__secondary
+          : "destructive"
+          ? styles.baseButton__destructive
+          : ""
+      }`}
       style={buttonStyles}
-      {...otherProps}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       onClick={clickhandler}
     >
       <h3>{children}</h3>
