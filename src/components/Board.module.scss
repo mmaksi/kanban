@@ -1,0 +1,13 @@
+@import "../variables";
+@import "../mixins";
+
+.board__container {
+  width: auto;
+}
+
+/* Desktop view */
+@media screen and (min-width: 1024px) {
+  .board__container {
+    width: $sidebar-lg-width;
+  }
+}

@@ -6,6 +6,7 @@ import styles from "./home.module.scss";
 import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 import Button from "@/components/Button.component";
+import { Board } from "@/components/Board.component";
 
 const { darkLines, lightLines, sidebarWidth } =
   customStyles as unknown as ExportedStyles;
@@ -18,12 +19,7 @@ export default function Home() {
       </div> */}
       <Navbar />
       <Sidebar />
-      <div
-        className={styles.home__content}
-        style={{ marginLeft: sidebarWidth }}
-      >
-        hello world@
-      </div>
+      <Board />
     </div>
   );
 }

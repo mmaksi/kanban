@@ -1,6 +1,15 @@
 @import "../variables";
 @import "../mixins";
 
+/* Mobile view */
+.sidebar {
+  display: none;
+}
+
+.sidebarItem {
+  cursor: pointer;
+}
+
 /* Tablet view */
 @media screen and (min-width: 600px) {
   .sidebar {
@@ -11,11 +20,12 @@
     position: fixed;
 
     height: calc(100vh - $navbar-sm-height);
-    width: $sidebar-sm-width;
+    height: calc(100dvh - $navbar-sm-height);
+    width: $sidebar-md-width;
   }
 
   .sidebar__boardsList {
-    width: $sidebar-sm-width;
+    width: $sidebar-md-width;
     overflow: auto;
   }
 
@@ -52,6 +62,7 @@
   .sidebar {
     width: $sidebar-lg-width;
     height: calc(100vh - $navbar-lg-height);
+    height: calc(100dvh - $navbar-lg-height);
   }
 
   .sidebar__boardsList {

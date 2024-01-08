@@ -33,6 +33,13 @@
   &__mobileLogo {
     width: 2.4rem;
   }
+
+  &__arrowDown {
+    margin-left: 0.8rem;
+    display: flex;
+    align-items: center; /* Verticaal centreren */
+    justify-content: center; /* Horizontaal centreren */
+  }
 }
 
 .navbar__headers {
@@ -67,10 +74,15 @@
     }
 
     &__desktopLogo {
+      display: block;
       width: 15.2528rem;
     }
 
     &__mobileLogo {
+      display: none;
+    }
+
+    &__arrowDown {
       display: none;
     }
   }

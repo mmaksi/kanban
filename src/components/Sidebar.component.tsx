@@ -20,7 +20,7 @@ export const Sidebar = () => {
     setSelectedStates(newSelectedStates);
   };
 
-  const addNewBoard = (e: MouseEvent<HTMLDivElement>) => {
+  const addNewBoard = (e: MouseEvent) => {
     const newBoards = [...boards, { id: 4, name: "new boards", columns: [] }];
     setBoards(newBoards);
     console.log(boards.length);
@@ -29,7 +29,9 @@ export const Sidebar = () => {
   return (
     <>
       <div className={styles.sidebar}>
-        <p className={styles.sidebar__boardsTitle}>All Boards (8)</p>
+        <p
+          className={styles.sidebar__boardsTitle}
+        >{`All Boards (${boards.length})`}</p>
         <div className={styles.sidebar__boardsList}>
           {boards.map((board, index) => {
             return (
@@ -44,12 +46,12 @@ export const Sidebar = () => {
               </div>
             );
           })}
-          <div
-            onClick={(e: MouseEvent<HTMLDivElement>) => addNewBoard(e)}
+          <button
+            onClick={(e: MouseEvent) => addNewBoard(e)}
             className={`${styles.sidebarItem} ${styles.sidebarItem__addBoard}`}
           >
             <span>+ Create New Board</span>
-          </div>
+          </button>
         </div>
       </div>
     </>

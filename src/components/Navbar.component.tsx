@@ -1,11 +1,15 @@
+import { useState } from "react";
 import Image from "next/image";
+
 import Button from "./Button.component";
+
 import styles from "./Navbar.module.scss";
+import customStyles from "../_exports.module.scss";
+import { ExportedStyles } from "@/types/CustomTypes";
+
 import DesktopLogoDark from "../../public/logo-light.svg";
 import MobileLogo from "../../public/logo-mobile.svg";
-import { ExportedStyles } from "@/types/CustomTypes";
-import customStyles from "../_exports.module.scss";
-import { useState } from "react";
+import ArrowDwown from "@/icons/ArrowDown";
 
 const { darkLines, lightLines, sidebarWidth } =
   customStyles as unknown as ExportedStyles;
@@ -42,6 +46,9 @@ export const Navbar = () => {
         >
           Platform Launch
         </h2>
+        <span className={styles.navbar__arrowDown}>
+          <ArrowDwown />
+        </span>
       </div>
       <Button
         size="L"
