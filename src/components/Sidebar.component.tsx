@@ -4,6 +4,7 @@ import { ExportedStyles } from "@/types/CustomTypes";
 import Image from "next/image";
 import data from "../data.json";
 import { MouseEvent, useState } from "react";
+import boardIcon from "../../public/icon-board.svg";
 
 const { darkLines, lightLines, darkGrey } =
   customStyles as unknown as ExportedStyles;
@@ -42,6 +43,7 @@ export const Sidebar = () => {
                   selectedStates[index] && styles.sidebarItem_selected
                 }`}
               >
+                <Image src={boardIcon} alt="board icon" />
                 <span>{board.name}</span>
               </div>
             );

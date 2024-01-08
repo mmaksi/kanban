@@ -61,15 +61,18 @@
   border: none;
 }
 
+/* Desktop view */
 @media screen and (min-width: 1024px) {
   .navbar {
     padding: 0 3.4rem;
     height: $navbar-lg-height;
+    position: fixed;
+    width: 100%;
 
     &__boardName {
       height: $navbar-lg-height;
       padding-left: 2.4rem;
-      @include heading-L;
+      @include heading-XL;
       margin-left: 11.3472rem;
     }
 

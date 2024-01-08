@@ -50,13 +50,7 @@ export const Navbar = () => {
           <ArrowDwown />
         </span>
       </div>
-      <Button
-        size="L"
-        type="primary"
-        mode="dark"
-        clickhandler={clickhandler}
-        padding="1.5rem"
-      >
+      <Button size="L" type="primary" mode="dark" clickhandler={clickhandler}>
         <span className={styles.button__plusIcon}>+</span>
         <span className={styles.button__cta}> Add New Task</span>
       </Button>

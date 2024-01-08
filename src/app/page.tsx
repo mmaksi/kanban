@@ -14,9 +14,6 @@ const { darkLines, lightLines, sidebarWidth } =
 export default function Home() {
   return (
     <div>
-      {/* <div className="sidebar__logo">
-        <Image src={LogoDark} alt="logo" width={152.528} height={25.224} />
-      </div> */}
       <Navbar />
       <Sidebar />
       <Board />

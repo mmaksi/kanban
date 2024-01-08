@@ -8,6 +8,7 @@
 
 .sidebarItem {
   cursor: pointer;
+  // TODO check mobile design and probably move the code from desktop view to here
 }
 
 /* Tablet view */
@@ -51,6 +52,7 @@
 
   .sidebar__boardsTitle {
     @include body-M;
+    line-height: normal;
     letter-spacing: 2.4px;
     text-transform: capitalize;
     margin: 2.4rem 3.4rem 1.7rem 3.4rem;
@@ -62,14 +64,27 @@
   .sidebar {
     width: $sidebar-lg-width;
     height: calc(100vh - $navbar-lg-height);
-    height: calc(100dvh - $navbar-lg-height);
+    height: calc(100dvh);
+    top: $navbar-lg-height;
   }
 
   .sidebar__boardsList {
-    width: $sidebar-lg-width;
+    width: 100%;
   }
 
   .sidebarItem {
-    margin-right: 2.4rem;
+    margin-right: 0rem;
+    display: flex;
+    gap: 1.6rem;
+
+    @include heading-M;
+    padding: 1.5rem 0;
+    margin-right: 2rem;
+
+    margin-left: 3.2rem;
+
+    & span {
+      margin: 0;
+    }
   }
 }

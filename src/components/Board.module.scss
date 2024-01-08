@@ -1,27 +1,36 @@
 @import "../variables";
 @import "../mixins";
 
+/* Mobile view */
 .board__container {
-  width: auto;
+  height: calc(100dvh - $navbar-sm-height);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $medium-grey;
+}
+
+.board__emptyContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.board__lightBackground {
+  background-color: $dark-background;
 }
 
 /* Desktop view */
 @media screen and (min-width: 1024px) {
   .board__container {
-    background-color: $dark-background;
-    color: $white;
-    height: calc(100dvh - $navbar-lg-height);
+    height: calc(100dvh);
     margin-left: $sidebar-lg-width;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 
   .board__emptyContent {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
     gap: 3.2rem;
   }
 }

@@ -10,49 +10,60 @@ type buttonTypes = "primary" | "secondary" | "destructive";
 type buttonSizes = "L" | "S";
 type appMode = "light" | "dark";
 
-interface ButtonProps {
+interface BaseButtonProps {
   type: buttonTypes;
-  size: buttonSizes;
   mode: appMode;
   children: ReactNode;
   customStyles?: {};
-  padding: string;
   clickhandler?: () => void | Promise<void>;
 }
 
+// Create mutually exclusive properties
+interface ButtonPropsWithSize extends BaseButtonProps {
+  size: buttonSizes;
+  customPadding?: never;
+}
+interface ButtonPropsWithCustomPadding extends BaseButtonProps {
+  customPadding: { paddingX: string; paddingY: string };
+  size?: never;
+}
+
+type ButtonProps = ButtonPropsWithSize | ButtonPropsWithCustomPadding;
+
 const Button = (props: ButtonProps) => {
-  const { children, type, size, mode, padding, clickhandler } = props;
+  const { children, type, size, mode, customPadding, clickhandler } = props;
 
   const { white } = exportedStyles as unknown as ExportedStyles;
-
-  const getButtonSize = () => {
-    switch (size) {
-      case "L":
-        return {
-          padding: `0.8rem ${padding}`,
-        };
-      case "S":
-        return {
-          padding: `0.5rem ${padding}`,
-        };
-    }
-  };
 
   const getModeStyle = () => {
     if (mode === "dark" && type === "secondary")
       return {
         backgroundColor: white,
       };
+    return {};
+  };
+
+  // We assume buttons won't have the same style across the application on mobile view
+  const getCustomPaddings = () => {
+    if (customPadding)
+      return { padding: `${customPadding.paddingX} ${customPadding.paddingY}` };
+    return {};
   };
 
   const buttonStyles = {
-    ...getButtonSize(),
     ...getModeStyle(),
+    ...getCustomPaddings(),
   };
 
   return (
     <button
       className={`${styles.baseButton} ${
+        size === "L"
+          ? styles.baseButton__large
+          : "S"
+          ? styles.baseButton__small
+          : ""
+      } ${
         type === "primary"
           ? styles.baseButton__primary
           : "secondary"
@@ -64,7 +75,7 @@ const Button = (props: ButtonProps) => {
       style={buttonStyles}
       onClick={clickhandler}
     >
-      <span className={styles.baseButton__content}>{children}</span>
+      <span className={`${styles.baseButton__content}`}>{children}</span>
     </button>
   );
 };
