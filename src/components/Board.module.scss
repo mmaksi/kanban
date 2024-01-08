@@ -8,6 +8,20 @@
 /* Desktop view */
 @media screen and (min-width: 1024px) {
   .board__container {
-    width: $sidebar-lg-width;
+    background-color: $dark-background;
+    color: $white;
+    height: calc(100dvh - $navbar-lg-height);
+    margin-left: $sidebar-lg-width;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .board__emptyContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 3.2rem;
   }
 }

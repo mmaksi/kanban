@@ -64,7 +64,7 @@ const Button = (props: ButtonProps) => {
       style={buttonStyles}
       onClick={clickhandler}
     >
-      <h3>{children}</h3>
+      <span className={styles.baseButton__content}>{children}</span>
     </button>
   );
 };

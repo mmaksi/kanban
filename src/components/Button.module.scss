@@ -1,10 +1,15 @@
 @import "../variables";
+@import "../mixins";
 
 button.baseButton {
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 2.4rem;
+}
+
+span.baseButton__content {
+  @include heading-M;
 }
 
 // Types
