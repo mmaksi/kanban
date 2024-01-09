@@ -32,11 +32,13 @@
 
   .sidebarItem {
     @include heading-M;
-    padding: 1.5rem 0;
+    padding: 1.5rem 0 1.5rem 3.2rem;
     margin-right: 2rem;
+    display: flex;
+    gap: 1.2rem;
 
     & span {
-      margin: 0 3.2rem;
+      margin: 0;
     }
   }
 
@@ -56,6 +58,8 @@
     letter-spacing: 2.4px;
     text-transform: capitalize;
     margin: 2.4rem 3.4rem 1.7rem 3.4rem;
+    color: $medium-grey;
+    line-height: normal;
   }
 }
 
@@ -64,7 +68,7 @@
   .sidebar {
     width: $sidebar-lg-width;
     height: calc(100vh - $navbar-lg-height);
-    height: calc(100dvh);
+    height: calc(100dvh - $navbar-lg-height);
     top: $navbar-lg-height;
   }
 
@@ -78,10 +82,8 @@
     gap: 1.6rem;
 
     @include heading-M;
-    padding: 1.5rem 0;
+    padding: 1.5rem 0 1.5rem 3.2rem;
     margin-right: 2rem;
-
-    margin-left: 3.2rem;
 
     & span {
       margin: 0;
