@@ -10,6 +10,8 @@ import { ExportedStyles } from "@/types/CustomTypes";
 import DesktopLogoDark from "../../public/logo-light.svg";
 import MobileLogo from "../../public/logo-mobile.svg";
 import ArrowDwown from "@/icons/ArrowDown";
+import Eye from "../../public/icon-show-sidebar.svg";
+import Ellipsis from "../../public/icon-vertical-ellipsis.svg";
 
 const { darkLines, lightLines, sidebarWidth } =
   customStyles as unknown as ExportedStyles;
@@ -50,10 +52,17 @@ export const Navbar = () => {
           <ArrowDwown />
         </span>
       </div>
-      <Button size="L" type="primary" mode="dark" clickhandler={clickhandler}>
-        <span className={styles.button__plusIcon}>+</span>
-        <span className={styles.button__cta}> Add New Task</span>
-      </Button>
+      <div className={styles.navbar__button}>
+        <Button size="L" type="primary" mode="dark" clickhandler={clickhandler}>
+          <span className={styles.button__plusIcon}>+</span>
+          <span className={styles.button__cta}> Add New Task</span>
+        </Button>
+        <Image
+          src={Ellipsis}
+          alt="Kanban - task management application"
+          // className={styles.navbar__desktopLogo}
+        />
+      </div>
     </div>
   );
 };

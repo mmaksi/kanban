@@ -1,0 +1,57 @@
+@import "../../../variables";
+@import "../../../mixins";
+
+.modal {
+  width: 48rem;
+  border-radius: 0.6rem;
+  background-color: $dark-grey;
+  padding: 3.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+
+  &__header {
+    color: $white;
+    @include heading-L;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+  }
+
+  &__inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+    margin-top: 1.2rem;
+  }
+}
+
+.input__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.8rem;
+
+  &_row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 1.6rem;
+  }
+}
+
+h3.modal__header {
+  @include body-M;
+  margin-bottom: 0.8rem;
+}

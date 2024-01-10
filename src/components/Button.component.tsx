@@ -31,7 +31,15 @@ interface ButtonPropsWithCustomPadding extends BaseButtonProps {
 type ButtonProps = ButtonPropsWithSize | ButtonPropsWithCustomPadding;
 
 const Button = (props: ButtonProps) => {
-  const { children, type, size, mode, customPadding, clickhandler } = props;
+  const {
+    children,
+    type,
+    size,
+    mode,
+    customStyles,
+    customPadding,
+    clickhandler,
+  } = props;
 
   const { white } = exportedStyles as unknown as ExportedStyles;
 
@@ -53,6 +61,7 @@ const Button = (props: ButtonProps) => {
   const buttonStyles = {
     ...getModeStyle(),
     ...getCustomPaddings(),
+    ...customStyles,
   };
 
   return (

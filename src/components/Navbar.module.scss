@@ -12,6 +12,13 @@
   align-items: center;
   height: $navbar-md-height;
 
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.6rem;
+  }
+
   &__boardName {
     // height: $navbar-sm-height;
     margin-left: $p-sm;
@@ -66,6 +73,10 @@
   .navbar {
     padding: 0 $p-md;
 
+    &__button {
+      gap: 2.4rem;
+    }
+
     &__boardName {
       padding-left: 2.4rem;
       margin-left: 8.1472rem;
@@ -102,6 +113,10 @@
     height: $navbar-lg-height;
     position: fixed;
     width: 100%;
+
+    &__button {
+      gap: 2.4rem;
+    }
 
     &__boardName {
       height: $navbar-lg-height;

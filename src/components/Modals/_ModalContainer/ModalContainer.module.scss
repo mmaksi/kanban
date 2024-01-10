@@ -1,0 +1,13 @@
+@import "../../../variables";
+@import "../../../mixins";
+
+.modal__container {
+  position: absolute;
+  min-height: 100vh;
+  min-width: 100dvw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  right: 0rem;
+  background: rgb(32, 33, 44, 0.5); /* Dimmed background */
+}
