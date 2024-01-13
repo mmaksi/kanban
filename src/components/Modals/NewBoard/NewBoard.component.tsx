@@ -4,8 +4,27 @@ import Image from "next/image";
 
 import Cross from "../../../../public/icon-cross.svg";
 import Button from "@/components/Button.component";
+import { Board } from "@/types/CustomTypes";
+import { Dispatch, SetStateAction } from "react";
 
-export const NewBoard = () => {
+interface Props {
+  boards: Board[];
+  setBoards: any;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+export const NewBoard = ({ boards, setBoards, setIsOpen }: Props) => {
+  const addNewBoard = () => {
+    let lastBoardId = boards[boards.length - 1].id;
+    lastBoardId = lastBoardId + 1;
+    const newBoards = [
+      ...boards,
+      { id: lastBoardId, name: "new boards", columns: [] },
+    ];
+    setBoards(newBoards);
+    setIsOpen(false);
+  };
+
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
       <h2 className={styles.modal__header}>Modal Header</h2>
@@ -50,6 +69,7 @@ export const NewBoard = () => {
               mode="dark"
               type="primary"
               customStyles={{ width: "100%" }}
+              clickhandler={addNewBoard}
             >
               + Create New Board
             </Button>

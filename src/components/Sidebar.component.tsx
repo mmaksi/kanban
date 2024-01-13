@@ -1,3 +1,5 @@
+"use client";
+
 import styles from "./Sidebar.module.scss";
 import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
@@ -5,11 +7,19 @@ import Image from "next/image";
 import data from "../data.json";
 import { MouseEvent, useState } from "react";
 import boardIcon from "../../public/icon-board.svg";
+import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
+import { NewBoard } from "./Modals/NewBoard/NewBoard.component";
 
 const { darkLines, lightLines, darkGrey } =
   customStyles as unknown as ExportedStyles;
 
 export const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const openModal = () => {
+    setIsOpen(!isOpen);
+  };
+
   const [selectedStates, setSelectedStates] = useState(
     Array(data.boards.length).fill(false)
   );
@@ -22,9 +32,7 @@ export const Sidebar = () => {
   };
 
   const addNewBoard = (e: MouseEvent) => {
-    const newBoards = [...boards, { id: 4, name: "new boards", columns: [] }];
-    setBoards(newBoards);
-    console.log(boards.length);
+    openModal();
   };
 
   return (
@@ -48,14 +56,24 @@ export const Sidebar = () => {
               </div>
             );
           })}
-          <button
+          <span
             onClick={(e: MouseEvent) => addNewBoard(e)}
             className={`${styles.sidebarItem} ${styles.sidebarItem__addBoard}`}
           >
-            <span>+ Create New Board</span>
-          </button>
+            + Create New Board
+          </span>
         </div>
       </div>
+
+      {isOpen && (
+        <ModalConatiner setIsOpen={setIsOpen}>
+          <NewBoard
+            boards={boards}
+            setBoards={setBoards}
+            setIsOpen={setIsOpen}
+          />
+        </ModalConatiner>
+      )}
     </>
   );
 };

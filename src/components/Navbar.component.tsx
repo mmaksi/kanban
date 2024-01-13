@@ -1,4 +1,4 @@
-import { useState } from "react";
+"use client";
 import Image from "next/image";
 
 import Button from "./Button.component";
@@ -17,8 +17,6 @@ const { darkLines, lightLines, sidebarWidth } =
   customStyles as unknown as ExportedStyles;
 
 export const Navbar = () => {
-  const [viewportWidth, setViewportWidth] = useState(0);
-
   const clickhandler = () => {
     console.log("first");
   };

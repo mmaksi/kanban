@@ -31,11 +31,11 @@ export const Board = () => {
         </div>
       )}
 
-      {isOpen && (
+      {/* {isOpen && (
         <ModalConatiner setIsOpen={setIsOpen}>
           <NewBoard />
         </ModalConatiner>
-      )}
+      )} */}
     </div>
   );
 };

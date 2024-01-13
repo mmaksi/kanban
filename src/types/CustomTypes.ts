@@ -16,3 +16,18 @@ export interface ExportedStyles {
   darkLines: string;
   sidebarWidth: string;
 }
+
+export interface Board {
+  id: number;
+  name: string;
+  columns: {
+    name: string;
+    tasks: {
+      title: string;
+      description: string;
+      status: string;
+      subtasks: { title: string; isCompleted: boolean }[];
+    }[];
+  }[];
+}
+[];
