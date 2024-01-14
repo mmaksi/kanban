@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,13 +11,33 @@ datasource db {
 }
 
 model Board {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
   boardName String
-  tasks     Task[]
+  columns   Column[]
+}
+
+model Column {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  tasks   Task[]
+  boardId String @db.ObjectId
+  board   Board  @relation(fields: [boardId], references: [id])
 }
 
 model Task {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  boardId String @db.ObjectId
-  board   Board   @relation(fields: [boardId], references: [id])
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  status      String
+  subtasks    Subtask[]
+  columnId    String @db.ObjectId
+  column      Column   @relation(fields: [columnId], references: [id])
+}
+
+model Subtask {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  isCompleted Boolean
+  taskId      String @db.ObjectId
+  task        Task     @relation(fields: [taskId], references: [id])
 }

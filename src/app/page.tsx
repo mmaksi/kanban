@@ -5,20 +5,20 @@ import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 import Button from "@/components/Button.component";
 import { Board } from "@/components/Board.component";
-import { createBoard, getAllBoards } from "@/actions/actions";
+import * as actions from "@/actions/actions";
 
 const { darkLines, lightLines, sidebarWidth } =
   customStyles as unknown as ExportedStyles;
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
-  await createBoard("Launch");
-  const snippets = await getAllBoards();
-  console.log(snippets);
+  const boards = await actions.getAllBoards();
 
   return (
     <div>
       <Navbar />
-      <Sidebar />
+      <Sidebar boards={boards} />
       <Board />
     </div>
   );

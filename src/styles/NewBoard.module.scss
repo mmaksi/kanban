@@ -33,6 +33,10 @@
     gap: 2.4rem;
     margin-top: 1.2rem;
   }
+
+  &__error {
+    color: rgb(227, 16, 16);
+  }
 }
 
 .input__container {

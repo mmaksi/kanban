@@ -17,10 +17,6 @@ const { darkLines, lightLines, sidebarWidth } =
   customStyles as unknown as ExportedStyles;
 
 export const Navbar = () => {
-  const clickhandler = () => {
-    console.log("first");
-  };
-
   return (
     <div className={styles.navbar}>
       <div className={styles.navbar__headers}>
@@ -51,7 +47,7 @@ export const Navbar = () => {
         </span>
       </div>
       <div className={styles.navbar__button}>
-        <Button size="L" type="primary" mode="dark" clickhandler={clickhandler}>
+        <Button size="L" type="primary" mode="dark">
           <span className={styles.button__plusIcon}>+</span>
           <span className={styles.button__cta}> Add New Task</span>
         </Button>

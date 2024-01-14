@@ -5,8 +5,6 @@ import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 import Button from "./Button.component";
 import { useState } from "react";
-import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
-import { NewBoard } from "./Modals/NewBoard/NewBoard.component";
 
 const { darkLines, lightLines, darkGrey } =
   customStyles as unknown as ExportedStyles;

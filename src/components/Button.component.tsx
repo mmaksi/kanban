@@ -15,7 +15,7 @@ interface BaseButtonProps {
   mode: appMode;
   children: ReactNode;
   customStyles?: {};
-  clickhandler?: () => void | Promise<void>;
+  clickhandler?: (e?: any) => void | Promise<void>;
 }
 
 // Create mutually exclusive properties

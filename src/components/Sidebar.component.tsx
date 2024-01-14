@@ -4,16 +4,20 @@ import styles from "@/styles/Sidebar.module.scss";
 import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 import Image from "next/image";
-import data from "../data.json";
 import { MouseEvent, useState } from "react";
 import boardIcon from "../../public/icon-board.svg";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { NewBoard } from "./Modals/NewBoard/NewBoard.component";
+import { BoardSchema } from "@/types/schemas";
+
+interface Props {
+  boards: BoardSchema[];
+}
 
 const { darkLines, lightLines, darkGrey } =
   customStyles as unknown as ExportedStyles;
 
-export const Sidebar = () => {
+export const Sidebar = ({ boards }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
@@ -21,12 +25,11 @@ export const Sidebar = () => {
   };
 
   const [selectedStates, setSelectedStates] = useState(
-    Array(data.boards.length).fill(false)
+    Array(boards.length).fill(false)
   );
-  const [boards, setBoards] = useState(data.boards);
 
   const handleItemClick = (index: number) => {
-    const newSelectedStates = Array(data.boards.length).fill(false);
+    const newSelectedStates = Array(boards.length).fill(false);
     newSelectedStates[index] = true;
     setSelectedStates(newSelectedStates);
   };
@@ -52,7 +55,7 @@ export const Sidebar = () => {
                 }`}
               >
                 <Image src={boardIcon} alt="board icon" />
-                <span>{board.name}</span>
+                <span>{board.boardName}</span>
               </div>
             );
           })}
@@ -67,11 +70,7 @@ export const Sidebar = () => {
 
       {isOpen && (
         <ModalConatiner setIsOpen={setIsOpen}>
-          <NewBoard
-            boards={boards}
-            setBoards={setBoards}
-            setIsOpen={setIsOpen}
-          />
+          <NewBoard setIsOpen={setIsOpen} />
         </ModalConatiner>
       )}
     </>
