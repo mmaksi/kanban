@@ -1,7 +1,7 @@
 "use client";
 
 import { AppMode, ExportedStyles } from "@/types/CustomTypes";
-import styles from "./SubtaskCheckbox.module.scss";
+import styles from "@/styles/SubtaskCheckbox.module.scss";
 import exportedStyles from "../_exports.module.scss";
 import { ReactNode, useState } from "react";
 

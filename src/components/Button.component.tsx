@@ -2,7 +2,7 @@
 
 import { ReactNode, useState } from "react";
 
-import styles from "./Button.module.scss";
+import styles from "@/styles/Button.module.scss";
 import exportedStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 

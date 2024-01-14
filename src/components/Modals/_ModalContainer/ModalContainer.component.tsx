@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./ModalContainer.module.scss";
+import styles from "@/styles/ModalContainer.module.scss";
 
 import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 

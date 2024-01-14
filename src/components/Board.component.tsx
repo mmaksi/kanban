@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./Board.module.scss";
+import styles from "@/styles/Board.module.scss";
 import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 import Button from "./Button.component";

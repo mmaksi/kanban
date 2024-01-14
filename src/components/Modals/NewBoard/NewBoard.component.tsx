@@ -1,5 +1,5 @@
 import { Input } from "@/components/Input.component";
-import styles from "./NewBoard.module.scss";
+import styles from "@/styles/NewBoard.module.scss";
 import Image from "next/image";
 
 import Cross from "../../../../public/icon-cross.svg";

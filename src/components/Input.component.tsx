@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import Button from "./Button.component";
 
-import styles from "./Input.module.scss";
+import styles from "@/styles/Input.module.scss";
 import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 
