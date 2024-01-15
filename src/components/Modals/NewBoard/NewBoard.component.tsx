@@ -6,7 +6,7 @@ import Cross from "../../../../public/icon-cross.svg";
 import Button from "@/components/Button.component";
 import { Dispatch, SetStateAction, useState } from "react";
 import * as actions from "@/actions/actions";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
