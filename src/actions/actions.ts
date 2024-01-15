@@ -59,7 +59,12 @@ export const createBoard = async (
   formData: FormData
 ) => {
   const formValues: string[] = [];
+  const boardColumns: { name: string }[] = [];
+
   formData.forEach((value, key) => {
+    if (key !== "boardName" && value !== "") {
+      boardColumns.push({ name: value.toString() });
+    }
     formValues.push(value.toString());
   });
 
@@ -84,6 +89,9 @@ export const createBoard = async (
     await prisma.board.create({
       data: {
         boardName: boardName as string,
+        columns: {
+          create: boardColumns,
+        },
       },
     });
     revalidatePath("/");
