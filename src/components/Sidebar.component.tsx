@@ -30,12 +30,6 @@ export const Sidebar = ({ boards }: Props) => {
     setIsOpen(!isOpen);
   };
 
-  useEffect(() => {
-    if (boards.length > 0) {
-      dispatch(setCurrentBoard(boards[0].boardName));
-    }
-  }, [boards, dispatch]);
-
   const handleItemClick = (index: number) => {
     // Mark a board selected
     const newSelectedStates = Array(boards.length).fill(false);
