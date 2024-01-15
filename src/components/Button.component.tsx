@@ -1,10 +1,11 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 
 import styles from "@/styles/Button.module.scss";
 import exportedStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
+import { useFormStatus } from "react-dom";
 
 type buttonTypes = "primary" | "secondary" | "destructive";
 type buttonSizes = "L" | "S";
@@ -16,6 +17,8 @@ interface BaseButtonProps {
   children: ReactNode;
   customStyles?: {};
   clickhandler?: (e?: any) => void | Promise<void>;
+  setIsOpen?: Dispatch<SetStateAction<boolean>>;
+  buttonType: "submit" | "reset" | "button";
 }
 
 // Create mutually exclusive properties
@@ -31,6 +34,7 @@ interface ButtonPropsWithCustomPadding extends BaseButtonProps {
 type ButtonProps = ButtonPropsWithSize | ButtonPropsWithCustomPadding;
 
 const Button = (props: ButtonProps) => {
+  const { pending, data } = useFormStatus();
   const {
     children,
     type,
@@ -38,7 +42,9 @@ const Button = (props: ButtonProps) => {
     mode,
     customStyles,
     customPadding,
+    buttonType,
     clickhandler,
+    setIsOpen,
   } = props;
 
   const { white } = exportedStyles as unknown as ExportedStyles;
@@ -64,6 +70,16 @@ const Button = (props: ButtonProps) => {
     ...customStyles,
   };
 
+  const getButtonContent = () => {
+    if (buttonType === "submit" && pending) {
+      return "Submitting...";
+    } else if (Array.isArray(children)) {
+      return children.map((element) => element);
+    } else {
+      return `${children}`;
+    }
+  };
+
   return (
     <button
       className={`${styles.baseButton} ${
@@ -82,9 +98,11 @@ const Button = (props: ButtonProps) => {
           : ""
       }`}
       style={buttonStyles}
-      onClick={clickhandler}
+      // onClick={customClickHandler}
     >
-      <span className={`${styles.baseButton__content}`}>{children}</span>
+      <span className={`${styles.baseButton__content}`}>
+        {getButtonContent()}
+      </span>
     </button>
   );
 };

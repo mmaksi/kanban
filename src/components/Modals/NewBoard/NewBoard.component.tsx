@@ -6,13 +6,13 @@ import Cross from "../../../../public/icon-cross.svg";
 import Button from "@/components/Button.component";
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import * as actions from "@/actions/actions";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const initialState = { error: "" };
+const initialState = { error: "", modalState: "" };
 const defaultFormFields = {
   boardName: "",
   column1: "",
@@ -24,30 +24,22 @@ const defaultFormFields = {
 export const NewBoard = ({ setIsOpen }: Props) => {
   const [formState, action] = useFormState(actions.createBoard, initialState);
   const [formFields, setFormFields] = useState(defaultFormFields);
-  const [errorValue, setErrorValue] = useState("");
 
   const { boardName, column1, column2, column3, column4 } = formFields;
 
-  const submitHandler = (e: FormEvent<HTMLFormElement>) => {
-    if (boardName.length < 3) {
-      setErrorValue("Input fields must be longer than 2 characters");
-      e.preventDefault();
-    }
-    if (boardName.length > 3) {
-      setIsOpen(false);
-    }
-  };
-
   const changeHandler = (event: any) => {
     const { name, value } = event.target;
+    value.length > 2 ? (formState.error = "none") : null;
     setFormFields({ ...formFields, [name]: value });
   };
+
+  formState.modalState === "close" ? setIsOpen(false) : null;
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
       <h2 className={styles.modal__header}>Add New Boards</h2>
       <div className={styles.modal__body}>
-        <form action={action} onSubmit={submitHandler}>
+        <form action={action}>
           <div className={styles.input__container}>
             <Input
               label="Board Name"
@@ -88,6 +80,7 @@ export const NewBoard = ({ setIsOpen }: Props) => {
                 mode="dark"
                 type="secondary"
                 customStyles={{ width: "100%" }}
+                buttonType="button"
                 // clickhandler={submitHandler}
               >
                 + Add New Column
@@ -98,12 +91,14 @@ export const NewBoard = ({ setIsOpen }: Props) => {
                 mode="dark"
                 type="primary"
                 customStyles={{ width: "100%" }}
+                buttonType="submit"
+                setIsOpen={setIsOpen}
               >
                 + Create New Board
               </Button>
 
-              {errorValue.length > 0 && (
-                <div className={styles.modal__error}>{errorValue}</div>
+              {formState.error !== "none" && (
+                <div className={styles.modal__error}>{formState.error}</div>
               )}
             </div>
           </div>

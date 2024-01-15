@@ -58,13 +58,16 @@ const prisma = new PrismaClient();
 let lastBoard = {};
 
 export const createBoard = async (
-  formState: { error: string },
+  formState: { error: string; modalState: string },
   formData: FormData
 ) => {
   // Form validation
   const a = formData.get("boardName");
   if (typeof a === "string" && a.length < 3) {
-    return { error: "Must be longer than 2" };
+    return {
+      error: "Input fields must be longer than 2 characters",
+      modalState: "",
+    };
   }
   const boardName = formData.get("boardName");
   if (boardName) {
@@ -74,10 +77,10 @@ export const createBoard = async (
       },
     });
     revalidatePath("/");
-    return { error: "" };
+    return { error: "", modalState: "close" };
   } else {
     revalidatePath("/");
-    return { error: "No board found" };
+    return { error: "No board found", modalState: "" };
   }
 };
 

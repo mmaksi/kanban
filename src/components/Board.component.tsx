@@ -23,7 +23,13 @@ export const Board = () => {
       {!isOpen && (
         <div className={styles.board__emptyContent}>
           <p>This board is empty. Create a new column to get started</p>
-          <Button clickhandler={openModal} type="primary" mode="dark" size="L">
+          <Button
+            clickhandler={openModal}
+            type="primary"
+            mode="dark"
+            size="L"
+            buttonType="button"
+          >
             + Add New Column
           </Button>
         </div>

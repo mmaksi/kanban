@@ -1,4 +1,3 @@
-"use client";
 import Image from "next/image";
 
 import Button from "./Button.component";
@@ -10,7 +9,6 @@ import { ExportedStyles } from "@/types/CustomTypes";
 import DesktopLogoDark from "../../public/logo-light.svg";
 import MobileLogo from "../../public/logo-mobile.svg";
 import ArrowDwown from "@/icons/ArrowDown";
-import Eye from "../../public/icon-show-sidebar.svg";
 import Ellipsis from "../../public/icon-vertical-ellipsis.svg";
 
 const { darkLines, lightLines, sidebarWidth } =
@@ -47,7 +45,7 @@ export const Navbar = () => {
         </span>
       </div>
       <div className={styles.navbar__button}>
-        <Button size="L" type="primary" mode="dark">
+        <Button size="L" type="primary" mode="dark" buttonType="button">
           <span className={styles.button__plusIcon}>+</span>
           <span className={styles.button__cta}> Add New Task</span>
         </Button>
