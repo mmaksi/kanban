@@ -4,7 +4,7 @@ import Image from "next/image";
 
 import Cross from "../../../../public/icon-cross.svg";
 import Button from "@/components/Button.component";
-import { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import * as actions from "@/actions/actions";
 import { useFormState, useFormStatus } from "react-dom";
 
@@ -31,6 +31,10 @@ export const NewBoard = ({ setIsOpen }: Props) => {
     const { name, value } = event.target;
     value.length > 2 ? (formState.error = "none") : null;
     setFormFields({ ...formFields, [name]: value });
+  };
+
+  const addColumn = () => {
+    console.log("first");
   };
 
   formState.modalState === "close" ? setIsOpen(false) : null;
@@ -81,7 +85,7 @@ export const NewBoard = ({ setIsOpen }: Props) => {
                 type="secondary"
                 customStyles={{ width: "100%" }}
                 buttonType="button"
-                // clickhandler={submitHandler}
+                clickhandler={addColumn}
               >
                 + Add New Column
               </Button>

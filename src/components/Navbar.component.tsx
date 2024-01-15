@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 import Button from "./Button.component";
@@ -10,11 +12,17 @@ import DesktopLogoDark from "../../public/logo-light.svg";
 import MobileLogo from "../../public/logo-mobile.svg";
 import ArrowDwown from "@/icons/ArrowDown";
 import Ellipsis from "../../public/icon-vertical-ellipsis.svg";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const { darkLines, lightLines, sidebarWidth } =
   customStyles as unknown as ExportedStyles;
 
 export const Navbar = () => {
+  const currentBoard = useSelector(
+    (state: RootState) => state.board.currentBoard
+  );
+
   return (
     <div className={styles.navbar}>
       <div className={styles.navbar__headers}>
@@ -38,7 +46,7 @@ export const Navbar = () => {
             }
           }
         >
-          Platform Launch
+          {currentBoard}
         </h2>
         <span className={styles.navbar__arrowDown}>
           <ArrowDwown />

@@ -9,6 +9,8 @@ import boardIcon from "../../public/icon-board.svg";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { NewBoard } from "./Modals/NewBoard/NewBoard.component";
 import { BoardSchema } from "@/types/schemas";
+import { useDispatch } from "react-redux";
+import { setCurrentBoard } from "@/store/slices/board.slice";
 
 interface Props {
   boards: BoardSchema[];
@@ -18,20 +20,24 @@ const { darkLines, lightLines, darkGrey } =
   customStyles as unknown as ExportedStyles;
 
 export const Sidebar = ({ boards }: Props) => {
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedStates, setSelectedStates] = useState(
+    Array(boards.length).fill(false)
+  );
 
   const openModal = () => {
     setIsOpen(!isOpen);
   };
 
-  const [selectedStates, setSelectedStates] = useState(
-    Array(boards.length).fill(false)
-  );
-
   const handleItemClick = (index: number) => {
+    // Mark a board selected
     const newSelectedStates = Array(boards.length).fill(false);
     newSelectedStates[index] = true;
     setSelectedStates(newSelectedStates);
+    // Set the selected board as a global state
+    const selectedBoard = boards[index].boardName;
+    dispatch(setCurrentBoard(selectedBoard));
   };
 
   const addNewBoard = (e: MouseEvent) => {

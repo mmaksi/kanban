@@ -82,6 +82,7 @@ const Button = (props: ButtonProps) => {
 
   return (
     <button
+      type={buttonType}
       className={`${styles.baseButton} ${
         size === "L"
           ? styles.baseButton__large
