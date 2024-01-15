@@ -14,11 +14,17 @@ interface Props {
   id: string;
   inputName: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
-  value: string;
 }
 
 export const Input = (props: Props) => {
-  const { label, placeholder, displayLabel, id, inputName, onChange } = props;
+  const {
+    label,
+    placeholder,
+    displayLabel,
+    id,
+    inputName,
+    onChange: changeHandler,
+  } = props;
   return (
     <>
       {displayLabel && (
@@ -28,7 +34,7 @@ export const Input = (props: Props) => {
       )}
 
       <input
-        onChange={onChange}
+        onChange={changeHandler}
         type="text"
         id={id}
         name={inputName}

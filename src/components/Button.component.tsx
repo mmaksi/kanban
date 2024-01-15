@@ -99,7 +99,7 @@ const Button = (props: ButtonProps) => {
           : ""
       }`}
       style={buttonStyles}
-      // onClick={customClickHandler}
+      onClick={clickhandler}
     >
       <span className={`${styles.baseButton__content}`}>
         {getButtonContent()}

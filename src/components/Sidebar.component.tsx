@@ -4,7 +4,7 @@ import styles from "@/styles/Sidebar.module.scss";
 import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 import Image from "next/image";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import boardIcon from "../../public/icon-board.svg";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { NewBoard } from "./Modals/NewBoard/NewBoard.component";
@@ -29,6 +29,12 @@ export const Sidebar = ({ boards }: Props) => {
   const openModal = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    if (boards.length > 0) {
+      dispatch(setCurrentBoard(boards[0].boardName));
+    }
+  }, [boards, dispatch]);
 
   const handleItemClick = (index: number) => {
     // Mark a board selected

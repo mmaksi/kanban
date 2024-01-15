@@ -1,10 +1,7 @@
 "use server";
 
-import { BoardSchema } from "@/types/schemas";
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import Router from "next/navigation";
 
 const prisma = new PrismaClient();
 
@@ -61,15 +58,28 @@ export const createBoard = async (
   formState: { error: string; modalState: string },
   formData: FormData
 ) => {
+  const formValues: string[] = [];
+  formData.forEach((value, key) => {
+    formValues.push(value.toString());
+  });
+
   // Form validation
-  const a = formData.get("boardName");
-  if (typeof a === "string" && a.length < 3) {
+  const hasEmptyString = formValues.some((item) => item === "");
+  if (hasEmptyString) {
+    return {
+      error: "Input fields cannot be empty",
+      modalState: "",
+    };
+  }
+
+  const boardName = formData.get("boardName");
+  if (typeof boardName === "string" && boardName.length < 3) {
     return {
       error: "Input fields must be longer than 2 characters",
       modalState: "",
     };
   }
-  const boardName = formData.get("boardName");
+
   if (boardName) {
     await prisma.board.create({
       data: {

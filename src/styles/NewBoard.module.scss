@@ -13,15 +13,17 @@
   &__header {
     color: $white;
     @include heading-L;
-  }
-
-  &__body {
-    display: flex;
-    flex-direction: column;
-    gap: 2.4rem;
+    margin-top: 2.4rem;
   }
 
   &__inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  &__columns {
+    margin-top: 0.8rem;
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
@@ -37,6 +39,10 @@
   &__error {
     color: rgb(227, 16, 16);
   }
+}
+
+.column__remove:hover {
+  cursor: pointer;
 }
 
 .input__container {
