@@ -1,0 +1,14 @@
+.column {
+  &__container {
+    width: 28rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+  }
+
+  &__tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
