@@ -1,0 +1,12 @@
+@import "../variables";
+@import "../mixins";
+
+.columns__container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 2.4rem;
+  gap: 2.4rem;
+  margin-top: $navbar-lg-height;
+}

@@ -9,8 +9,9 @@ import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.componen
 import { NewBoard as EditBoard } from "./Modals/NewBoard.component";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import { BoardColumn } from "./BoardColumns.component";
 import { BoardColumnSchema, BoardSchema } from "@/types/schemas";
+import Column from "./Column.component";
+import { BoardColumn } from "./BoardColumns.component";
 
 const { darkLines, lightLines, darkGrey } =
   customStyles as unknown as ExportedStyles;
@@ -39,22 +40,22 @@ export const Board = ({ boards }: Props) => {
 
   return (
     <div
-      className={`${columns.length === 0 && styles.board__container} ${
-        styles.board__lightBackground
-      } ${columns.length > 0 && styles.board_columns__container}`}
+      className={`${styles.board__container} ${styles.board__lightBackground}`}
     >
       {!isOpen && columns.length === 0 && (
-        <div className={styles.board__emptyContent}>
-          <p>This board is empty. Create a new column to get started</p>
-          <Button
-            clickhandler={openModal}
-            type="primary"
-            mode="dark"
-            size="L"
-            buttonType="button"
-          >
-            + Add New Column
-          </Button>
+        <div className={`${styles.board__container}`}>
+          <div className={styles.board__emptyContent}>
+            <p>This board is empty. Create a new column to get started</p>
+            <Button
+              clickhandler={openModal}
+              type="primary"
+              mode="dark"
+              size="L"
+              buttonType="button"
+            >
+              + Add New Column
+            </Button>
+          </div>
         </div>
       )}
 

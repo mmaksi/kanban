@@ -151,7 +151,9 @@ export const editBoard = async (
 };
 
 export const getAllBoards = async () => {
-  const allBoards = await prisma.board.findMany({});
+  const allBoards = await prisma.board.findMany({
+    include: { columns: true },
+  });
   lastBoard = allBoards[allBoards.length - 1];
   return allBoards;
 };

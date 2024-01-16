@@ -17,7 +17,7 @@ export default async function Home() {
     <div>
       <Navbar />
       <Sidebar boards={boards} />
-      <Board />
+      <Board boards={boards} />
     </div>
   );
 }

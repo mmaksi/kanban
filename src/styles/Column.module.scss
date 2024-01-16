@@ -1,9 +1,17 @@
+@import "../variables";
+@import "../mixins";
+
 .column {
   &__container {
     width: 28rem;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
+  }
+
+  &__header {
+    color: $white;
   }
 
   &__tasks {
