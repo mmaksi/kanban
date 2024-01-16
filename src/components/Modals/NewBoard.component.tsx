@@ -1,29 +1,64 @@
 import { Input } from "@/components/Input.component";
-import styles from "@/styles/NewBoard.module.scss";
+import styles from "@/styles/Modal.module.scss";
 import Image from "next/image";
 
-import Cross from "../../../../public/icon-cross.svg";
+import Cross from "public/icon-cross.svg";
 import Button from "@/components/Button.component";
-import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  MouseEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import * as actions from "@/actions/actions";
 import { useFormState } from "react-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentBoard } from "@/store/slices/board.slice";
+import { RootState } from "@/store/store";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  header: string;
+  formAction: "edit board" | "create board";
+  boardsLength: number | undefined;
 }
 
 const initialState = { error: "", modalState: "" };
 
-export const NewBoard = ({ setIsOpen }: Props) => {
-  const [formState, action] = useFormState(actions.createBoard, initialState);
-  const [formFields, setFormFields] = useState({});
+interface FormFields {
+  boardName: string;
+  [key: string]: string;
+}
 
+export const NewBoard = ({
+  setIsOpen,
+  header,
+  formAction,
+  boardsLength,
+}: Props) => {
+  const [newBoardFormState, createBoard] = useFormState(
+    actions.createBoard,
+    initialState
+  );
+  const [editBoardFormState, editBoard] = useFormState(
+    actions.editBoard,
+    initialState
+  );
+
+  const currentBoard = useSelector(
+    (state: RootState) => state.board.currentBoard
+  );
+
+  const [formFields, setFormFields] = useState({
+    boardName: currentBoard,
+  } as FormFields);
   const [columnsValues, setColumnsValues] = useState<string[]>([]);
 
   const changeHandler = (event: any) => {
     // Client side input validation
     const { name, value } = event.target;
-    value.length > 2 ? (formState.error = "none") : null;
+    value.length > 2 ? (newBoardFormState.error = "none") : null;
     setFormFields({ ...formFields, [name]: value });
   };
 
@@ -42,12 +77,32 @@ export const NewBoard = ({ setIsOpen }: Props) => {
     return setColumnsValues(modifiedArray);
   };
 
-  formState.modalState === "close" ? setIsOpen(false) : null;
+  const dispatch = useDispatch();
+
+  const currentBoardIndexString = localStorage.getItem("currentBoardIndex");
+  let currentBoardIndex: number | null = null;
+  if (currentBoardIndexString) {
+    currentBoardIndex = parseInt(currentBoardIndexString);
+  }
+
+  if (newBoardFormState.modalState === "created") {
+    dispatch(setCurrentBoard(formFields.boardName));
+
+    if (boardsLength) {
+      const newIndex = boardsLength - 1;
+      localStorage.setItem("currentBoardIndex", newIndex.toString());
+    } else {
+      localStorage.setItem("currentBoardIndex", "0");
+    }
+    setIsOpen(false);
+  }
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-      <h2 className={styles.modal__header}>Add New Boards</h2>
-      <form action={action}>
+      <h2 className={styles.modal__header} style={{ marginTop: 0 }}>
+        {header}
+      </h2>
+      <form action={formAction == "create board" ? createBoard : editBoard}>
         <div className={styles.input__container}>
           <Input
             label="Board Name"
@@ -55,6 +110,7 @@ export const NewBoard = ({ setIsOpen }: Props) => {
             id="boardName"
             displayLabel={true}
             inputName="boardName"
+            defaultValue={formFields["boardName"]}
             onChange={changeHandler}
           />
         </div>
@@ -70,6 +126,7 @@ export const NewBoard = ({ setIsOpen }: Props) => {
                   id={`column${index}`}
                   displayLabel={false}
                   inputName={`column${index}`}
+                  defaultValue={formFields[`column${index}`]}
                   onChange={changeHandler}
                 />
                 <span className={styles.column__remove} onClick={removeColumn}>
@@ -105,9 +162,12 @@ export const NewBoard = ({ setIsOpen }: Props) => {
               + Create New Board
             </Button>
 
-            {formState.error !== "none" && formState.error !== "" && (
-              <div className={styles.modal__error}>{formState.error}</div>
-            )}
+            {newBoardFormState.error !== "none" &&
+              newBoardFormState.error !== "" && (
+                <div className={styles.modal__error}>
+                  {newBoardFormState.error}
+                </div>
+              )}
           </div>
         </div>
       </form>

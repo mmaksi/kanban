@@ -95,6 +95,54 @@ export const createBoard = async (
       },
     });
     revalidatePath("/");
+    return { error: "", modalState: "created" };
+  } else {
+    revalidatePath("/");
+    return { error: "No board found", modalState: "" };
+  }
+};
+
+export const editBoard = async (
+  formState: { error: string; modalState: string },
+  formData: FormData
+) => {
+  const formValues: string[] = [];
+  const boardColumns: { name: string }[] = [];
+
+  formData.forEach((value, key) => {
+    if (key !== "boardName" && value !== "") {
+      boardColumns.push({ name: value.toString() });
+    }
+    formValues.push(value.toString());
+  });
+
+  // Form validation
+  const hasEmptyString = formValues.some((item) => item === "");
+  if (hasEmptyString) {
+    return {
+      error: "Input fields cannot be empty",
+      modalState: "",
+    };
+  }
+
+  const boardName = formData.get("boardName");
+  if (typeof boardName === "string" && boardName.length < 3) {
+    return {
+      error: "Input fields must be longer than 2 characters",
+      modalState: "",
+    };
+  }
+
+  if (boardName) {
+    await prisma.board.create({
+      data: {
+        boardName: boardName as string,
+        columns: {
+          create: boardColumns,
+        },
+      },
+    });
+    revalidatePath("/");
     return { error: "", modalState: "close" };
   } else {
     revalidatePath("/");

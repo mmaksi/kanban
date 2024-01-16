@@ -12,6 +12,7 @@ interface Props {
   placeholder: string;
   displayLabel: boolean;
   id: string;
+  defaultValue?: string;
   inputName: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
 }
@@ -22,6 +23,7 @@ export const Input = (props: Props) => {
     placeholder,
     displayLabel,
     id,
+    defaultValue,
     inputName,
     onChange: changeHandler,
   } = props;
@@ -38,6 +40,7 @@ export const Input = (props: Props) => {
         type="text"
         id={id}
         name={inputName}
+        value={defaultValue}
         placeholder={placeholder}
         className={styles.input}
       />

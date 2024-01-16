@@ -8,10 +8,10 @@ import styles from "@/styles/Navbar.module.scss";
 import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 
-import DesktopLogoDark from "../../public/logo-light.svg";
-import MobileLogo from "../../public/logo-mobile.svg";
+import DesktopLogoDark from "public/logo-light.svg";
+import MobileLogo from "public/logo-mobile.svg";
 import ArrowDwown from "@/icons/ArrowDown";
-import Ellipsis from "../../public/icon-vertical-ellipsis.svg";
+import Ellipsis from "public/icon-vertical-ellipsis.svg";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 

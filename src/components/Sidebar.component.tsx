@@ -5,12 +5,13 @@ import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 import Image from "next/image";
 import { MouseEvent, useEffect, useState } from "react";
-import boardIcon from "../../public/icon-board.svg";
+import boardIcon from "public/icon-board.svg";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
-import { NewBoard } from "./Modals/NewBoard/NewBoard.component";
+import { NewBoard } from "./Modals/NewBoard.component";
 import { BoardSchema } from "@/types/schemas";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setCurrentBoard } from "@/store/slices/board.slice";
+import { RootState } from "@/store/store";
 
 interface Props {
   boards: BoardSchema[] | undefined;
@@ -21,17 +22,22 @@ const { darkLines, lightLines, darkGrey } =
 
 export const Sidebar = ({ boards }: Props) => {
   const dispatch = useDispatch();
+
   const initialSelectionState: boolean[] = boards
     ? Array(boards.length).fill(false)
     : [];
+
   initialSelectionState.length ? (initialSelectionState[0] = true) : null;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedStates, setSelectedStates] = useState(initialSelectionState);
 
-  useEffect(() => {
-    const selectedBoard = boards ? boards[0]?.boardName : "";
-    dispatch(setCurrentBoard(selectedBoard));
-  }, [boards, dispatch]);
+  let currentBoardIndex: number | null = null;
+  if (typeof window !== "undefined") {
+    const currentBoardIndexString = localStorage.getItem("currentBoardIndex");
+    if (currentBoardIndexString) {
+      currentBoardIndex = parseInt(currentBoardIndexString);
+    }
+  }
 
   const openModal = () => {
     setIsOpen(!isOpen);
@@ -44,8 +50,9 @@ export const Sidebar = ({ boards }: Props) => {
       newSelectedStates[index] = true;
       setSelectedStates(newSelectedStates);
       // Set the selected board as a global state
-      const selectedBoard = boards[index].boardName;
-      dispatch(setCurrentBoard(selectedBoard));
+      const currentBoard = boards[index].boardName;
+      dispatch(setCurrentBoard(currentBoard));
+      localStorage.setItem("currentBoardIndex", index.toString());
     }
   };
 
@@ -67,7 +74,7 @@ export const Sidebar = ({ boards }: Props) => {
                   key={board.id}
                   onClick={() => handleItemClick(index)}
                   className={`${styles.sidebarItem} ${
-                    selectedStates[index] && styles.sidebarItem_selected
+                    currentBoardIndex == index && styles.sidebarItem_selected
                   }`}
                 >
                   <Image src={boardIcon} alt="board icon" />
@@ -86,7 +93,12 @@ export const Sidebar = ({ boards }: Props) => {
 
       {isOpen && (
         <ModalConatiner setIsOpen={setIsOpen}>
-          <NewBoard setIsOpen={setIsOpen} />
+          <NewBoard
+            setIsOpen={setIsOpen}
+            header="Add New Boards"
+            formAction="create board"
+            boardsLength={boards?.length}
+          />
         </ModalConatiner>
       )}
     </>
