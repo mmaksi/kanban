@@ -21,7 +21,7 @@ interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   header: string;
   formAction: "edit board" | "create board";
-  boardsLength: number | undefined;
+  boardsLength?: number | undefined;
 }
 
 const initialState = { error: "", modalState: "" };
