@@ -4,13 +4,7 @@ import Image from "next/image";
 
 import Cross from "public/icon-cross.svg";
 import Button from "@/components/Button.component";
-import {
-  Dispatch,
-  MouseEvent,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import * as actions from "@/actions/actions";
 import { useFormState } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,21 +16,28 @@ interface Props {
   header: string;
   formAction: "edit board" | "create board";
   boardsLength?: number | undefined;
+  boardColumns: { [key: string]: string } | never[];
 }
-
-const initialState = { error: "", modalState: "" };
 
 interface FormFields {
   boardName: string;
   [key: string]: string;
 }
 
-export const NewBoard = ({
+const initialState = { error: "", modalState: "" };
+
+export const BoardModal = ({
   setIsOpen,
   header,
   formAction,
   boardsLength,
+  boardColumns,
 }: Props) => {
+  const currentBoard = useSelector(
+    (state: RootState) => state.board.currentBoard
+  );
+  const dispatch = useDispatch();
+  // Form action
   const [newBoardFormState, createBoard] = useFormState(
     actions.createBoard,
     initialState
@@ -46,21 +47,27 @@ export const NewBoard = ({
     initialState
   );
 
-  const currentBoard = useSelector(
-    (state: RootState) => state.board.currentBoard
-  );
-
-  const [formFields, setFormFields] = useState({
-    boardName: currentBoard,
-  } as FormFields);
-  const [columnsValues, setColumnsValues] = useState<string[]>([]);
-
   const changeHandler = (event: any) => {
     // Client side input validation
     const { name, value } = event.target;
     value.length > 2 ? (newBoardFormState.error = "none") : null;
-    setFormFields({ ...formFields, [name]: value });
+
+    switch (formAction) {
+      case "edit board":
+        setEditFormFields({ ...editFormFields, [name]: value });
+        break;
+      case "create board":
+        setCreateFormFields({ ...createFormFields, [name]: value });
+      default:
+        break;
+    }
   };
+
+  // Create new board modal
+  const [createFormFields, setCreateFormFields] = useState({} as FormFields);
+  const [columnsValues, setColumnsValues] = useState<string[]>(
+    Object.keys(boardColumns)
+  );
 
   const addColumn = () => {
     const newColumnIndex = columnsValues.length;
@@ -77,7 +84,14 @@ export const NewBoard = ({
     return setColumnsValues(modifiedArray);
   };
 
-  const dispatch = useDispatch();
+  // Edit board modal
+  const initialEditFormFields = Object.assign(
+    { boardName: currentBoard as string },
+    boardColumns
+  );
+  const [editFormFields, setEditFormFields] = useState(
+    initialEditFormFields as unknown as FormFields
+  );
 
   const currentBoardIndexString = localStorage.getItem("currentBoardIndex");
   let currentBoardIndex: number | null = null;
@@ -86,7 +100,7 @@ export const NewBoard = ({
   }
 
   if (newBoardFormState.modalState === "created") {
-    dispatch(setCurrentBoard(formFields.boardName));
+    dispatch(setCurrentBoard(createFormFields.boardName));
 
     if (boardsLength) {
       const newIndex = boardsLength - 1;
@@ -96,6 +110,8 @@ export const NewBoard = ({
     }
     setIsOpen(false);
   }
+
+  console.log(editFormFields);
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -110,7 +126,11 @@ export const NewBoard = ({
             id="boardName"
             displayLabel={true}
             inputName="boardName"
-            defaultValue={formFields["boardName"]}
+            defaultValue={
+              formAction === "create board"
+                ? createFormFields["boardName"]
+                : editFormFields["boardName"]
+            }
             onChange={changeHandler}
           />
         </div>
@@ -118,25 +138,53 @@ export const NewBoard = ({
         <div>
           <h3 className={styles.modal__header}>Board Columns</h3>
           <div className={styles.modal__columns}>
-            {columnsValues.map((_, index) => (
-              <div key={index} className={styles.input__container_row}>
-                <Input
-                  label="Board Column"
-                  placeholder="Todo/Doing/Done.."
-                  id={`column${index}`}
-                  displayLabel={false}
-                  inputName={`column${index}`}
-                  defaultValue={formFields[`column${index}`]}
-                  onChange={changeHandler}
-                />
-                <span className={styles.column__remove} onClick={removeColumn}>
-                  <Image
-                    src={Cross}
-                    alt="cross icon to remove the input field"
+            {formAction === "create board" &&
+              columnsValues.map((_, index) => (
+                <div key={index} className={styles.input__container_row}>
+                  <Input
+                    label="Board Column"
+                    placeholder="Todo/Doing/Done.."
+                    id={`column${index}`}
+                    displayLabel={false}
+                    inputName={`column${index}`}
+                    defaultValue={createFormFields[`column${index}`]}
+                    onChange={changeHandler}
                   />
-                </span>
-              </div>
-            ))}
+                  <span
+                    className={styles.column__remove}
+                    onClick={removeColumn}
+                  >
+                    <Image
+                      src={Cross}
+                      alt="cross icon to remove the input field"
+                    />
+                  </span>
+                </div>
+              ))}
+
+            {formAction === "edit board" &&
+              columnsValues.map((_, index) => (
+                <div key={index} className={styles.input__container_row}>
+                  <Input
+                    label="Board Column"
+                    placeholder="Todo/Doing/Done.."
+                    id={`column${index}`}
+                    displayLabel={false}
+                    inputName={`column${index}`}
+                    defaultValue={editFormFields[`column${index}`]}
+                    onChange={changeHandler}
+                  />
+                  <span
+                    className={styles.column__remove}
+                    onClick={removeColumn}
+                  >
+                    <Image
+                      src={Cross}
+                      alt="cross icon to remove the input field"
+                    />
+                  </span>
+                </div>
+              ))}
           </div>
 
           <div className={styles.modal__buttons}>

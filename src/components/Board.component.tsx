@@ -6,7 +6,7 @@ import { ExportedStyles } from "@/types/CustomTypes";
 import Button from "./Button.component";
 import { useEffect, useState } from "react";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
-import { NewBoard as EditBoard } from "./Modals/NewBoard.component";
+import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { BoardColumn } from "./BoardColumns.component";
@@ -26,10 +26,6 @@ export const Board = ({ boards }: Props) => {
     (state: RootState) => state.board.currentBoard
   );
 
-  const openModal = () => {
-    setIsOpen(!isOpen);
-  };
-
   let columns: BoardColumnSchema[] = [];
   boards.forEach((board) => {
     if (board.boardName === currentBoard) {
@@ -38,37 +34,39 @@ export const Board = ({ boards }: Props) => {
   });
 
   return (
-    <div
-      className={`${columns.length === 0 && styles.board__container} ${
-        styles.board__lightBackground
-      } ${columns.length > 0 && styles.board_columns__container}`}
-    >
-      {!isOpen && columns.length === 0 && (
-        <div className={styles.board__emptyContent}>
-          <p>This board is empty. Create a new column to get started</p>
-          <Button
-            clickhandler={openModal}
-            type="primary"
-            mode="dark"
-            size="L"
-            buttonType="button"
-          >
-            + Add New Column
-          </Button>
-        </div>
-      )}
+    <>
+      <div
+        className={`${columns.length === 0 && styles.board__container} ${
+          styles.board__lightBackground
+        } ${columns.length > 0 && styles.board_columns__container}`}
+      >
+        {!isOpen && columns.length === 0 && (
+          <div className={styles.board__emptyContent}>
+            <p>This board is empty. Create a new column to get started</p>
+            <Button
+              clickhandler={() => setIsOpen(!isOpen)}
+              type="primary"
+              mode="dark"
+              size="L"
+              buttonType="button"
+            >
+              + Add New Column
+            </Button>
+          </div>
+        )}
 
-      {!isOpen && columns.length > 0 && <BoardColumn columns={columns} />}
-
-      {isOpen && (
-        <ModalConatiner setIsOpen={setIsOpen}>
-          <EditBoard
-            setIsOpen={setIsOpen}
-            header="Edit Board"
-            formAction="edit board"
-          />
-        </ModalConatiner>
-      )}
-    </div>
+        {!isOpen && columns.length > 0 && <BoardColumn columns={columns} />}
+        {isOpen && (
+          <ModalConatiner setIsOpen={setIsOpen}>
+            <EditBoard
+              setIsOpen={setIsOpen}
+              header="Edit Board"
+              formAction="edit board"
+              boardColumns={[]}
+            />
+          </ModalConatiner>
+        )}
+      </div>
+    </>
   );
 };

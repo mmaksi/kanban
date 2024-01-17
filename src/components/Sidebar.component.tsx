@@ -7,11 +7,10 @@ import Image from "next/image";
 import { MouseEvent, useEffect, useState } from "react";
 import boardIcon from "public/icon-board.svg";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
-import { NewBoard } from "./Modals/NewBoard.component";
+import { BoardModal as NewBoard } from "./Modals/BoardModal.component";
 import { BoardSchema } from "@/types/schemas";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentBoard } from "@/store/slices/board.slice";
-import { RootState } from "@/store/store";
 
 interface Props {
   boards: BoardSchema[] | undefined;
@@ -98,6 +97,7 @@ export const Sidebar = ({ boards }: Props) => {
             header="Add New Boards"
             formAction="create board"
             boardsLength={boards?.length}
+            boardColumns={[]}
           />
         </ModalConatiner>
       )}

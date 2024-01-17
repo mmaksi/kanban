@@ -6,7 +6,12 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: 2.4rem;
   gap: 2.4rem;
+  height: calc(100dvh - $navbar-lg-height);
+  width: 100%;
+}
+
+.move_top {
+  padding: 2.4rem;
   margin-top: $navbar-lg-height;
 }

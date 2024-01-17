@@ -1,0 +1,28 @@
+@import "../variables";
+@import "../mixins";
+
+.container {
+  height: calc(100% - 4rem);
+  align-self: flex-end;
+  width: 28rem;
+  background: linear-gradient(
+    180deg,
+    rgba(43, 44, 55, 0.25) 0%,
+    rgba(43, 44, 55, 0.13) 100%
+  );
+  border-radius: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 4rem;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.text {
+  color: $medium-grey;
+  @include heading-XL;
+  line-height: normal;
+}
