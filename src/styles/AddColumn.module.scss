@@ -2,7 +2,7 @@
 @import "../mixins";
 
 .container {
-  height: calc(100% - 4rem);
+  height: calc(100% - 4.4rem);
   align-self: flex-end;
   width: 28rem;
   background: linear-gradient(
@@ -14,7 +14,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  top: 4rem;
 
   &:hover {
     cursor: pointer;

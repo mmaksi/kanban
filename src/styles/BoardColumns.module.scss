@@ -7,11 +7,11 @@
   justify-content: flex-start;
   align-items: flex-start;
   gap: 2.4rem;
-  height: calc(100dvh - $navbar-lg-height);
+  height: 100%;
   width: 100%;
 }
 
-.move_top {
-  padding: 2.4rem;
-  margin-top: $navbar-lg-height;
-}
+// .move_top {
+//   padding: 2.4rem;
+//   margin-top: $navbar-lg-height;
+// }

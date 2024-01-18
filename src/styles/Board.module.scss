@@ -39,13 +39,14 @@
 /* Desktop view */
 @media screen and (min-width: 1024px) {
   .board__container {
-    height: calc(100dvh);
+    height: calc(100dvh - $navbar-lg-height);
     margin-left: $sidebar-lg-width;
   }
 
   .board_columns__container {
-    height: calc(100dvh);
+    height: calc(100dvh - $navbar-lg-height);
     margin-left: $sidebar-lg-width;
+    padding: 2.4rem;
 
     display: flex;
     align-items: flex-start;

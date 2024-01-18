@@ -56,17 +56,17 @@ export const Board = ({ boards }: Props) => {
         )}
 
         {!isOpen && columns.length > 0 && <BoardColumn columns={columns} />}
-        {isOpen && (
-          <ModalConatiner setIsOpen={setIsOpen}>
-            <EditBoard
-              setIsOpen={setIsOpen}
-              header="Edit Board"
-              formAction="edit board"
-              boardColumns={[]}
-            />
-          </ModalConatiner>
-        )}
       </div>
+      {isOpen && (
+        <ModalConatiner setIsOpen={setIsOpen}>
+          <EditBoard
+            setIsOpen={setIsOpen}
+            header="Edit Board"
+            formAction="edit board"
+            boardColumns={[]}
+          />
+        </ModalConatiner>
+      )}
     </>
   );
 };

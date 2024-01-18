@@ -2,9 +2,10 @@
 @import "../mixins";
 
 .modal__container {
-  position: absolute;
+  position: fixed;
   min-height: 100vh;
   min-width: 100dvw;
+  top: 0;
   display: flex;
   justify-content: center;
   align-items: center;
