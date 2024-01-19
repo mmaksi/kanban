@@ -1,28 +1,33 @@
 "use client";
 
 import styles from "@/styles/DropDown.module.scss";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
+import { BoardModal as DeleteBoard } from "./Modals/BoardModal.component";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 interface Props {
   element: string;
-  setDropDownOpen: Dispatch<SetStateAction<boolean>>;
-  DropDownIsOpen: boolean;
 }
 
-export const DropDown: React.FC<Props> = ({
-  element,
-  DropDownIsOpen,
-  setDropDownOpen,
-}) => {
+export const DropDown: React.FC<Props> = ({ element }) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   const editBoardClickHandler = () => {
-    setDropDownOpen(!DropDownIsOpen);
+    setIsEditModalOpen(true);
   };
 
   const deleteBoardClickHandler = () => {
-    setDropDownOpen(!DropDownIsOpen);
+    setIsDeleteModalOpen(true);
   };
+
+  const currentBoardId = useSelector((state: RootState) => state.board.id);
+  const serializedBoardColumns = useSelector(
+    (state: RootState) => state.board.serializedBoardColumns
+  );
 
   return (
     <div className={`${styles.dropdown__container} dark__bg`}>
@@ -38,6 +43,30 @@ export const DropDown: React.FC<Props> = ({
       >
         Delete {element}
       </span>
+
+      {isEditModalOpen && (
+        <ModalConatiner setIsOpen={setIsEditModalOpen}>
+          <EditBoard
+            setIsOpen={setIsEditModalOpen}
+            header="Edit Board"
+            formAction="edit board"
+            serializedBoardColumns={serializedBoardColumns}
+            boardId={currentBoardId}
+          />
+        </ModalConatiner>
+      )}
+
+      {/* {isDeleteModalOpen && (
+        <ModalConatiner setIsOpen={setIsEditModalOpen}>
+          <DeleteBoard
+            setIsOpen={setIsEditModalOpen}
+            header="Edit Board"
+            formAction="edit board"
+            boardColumns={[]}
+            boardId="{boardId}"
+          />
+        </ModalConatiner>
+      )} */}
     </div>
   );
 };

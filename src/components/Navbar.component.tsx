@@ -22,8 +22,8 @@ const { darkLines, lightLines, sidebarWidth } =
 
 export const Navbar = () => {
   const [DropDownIsOpen, setDropDownOpen] = useState(false);
-  const currentBoard = useSelector(
-    (state: RootState) => state.board.currentBoard
+  const currentBoardName = useSelector(
+    (state: RootState) => state.board.boardName
   );
 
   return (
@@ -49,7 +49,7 @@ export const Navbar = () => {
             }
           }
         >
-          {currentBoard}
+          {currentBoardName}
         </h2>
         <span className={styles.navbar__arrowDown}>
           <ArrowDwown />
@@ -66,13 +66,7 @@ export const Navbar = () => {
           alt="ellipsis to edit or delete the current board"
           className={styles.ellipsis}
         />
-        {DropDownIsOpen && (
-          <DropDown
-            element="Board"
-            DropDownIsOpen={DropDownIsOpen}
-            setDropDownOpen={setDropDownOpen}
-          />
-        )}
+        {DropDownIsOpen && <DropDown element="Board" />}
       </div>
     </div>
   );

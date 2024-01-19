@@ -8,7 +8,11 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import * as actions from "@/actions/actions";
 import { useFormState, useFormStatus } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentBoard } from "@/store/slices/board.slice";
+import {
+  setCurrentBoardId,
+  setCurrentBoardName,
+  setCurrentBoardColumns,
+} from "@/store/slices/board.slice";
 import { RootState } from "@/store/store";
 import { BoardColumnSchema } from "@/types/schemas";
 
@@ -17,7 +21,7 @@ interface Props {
   header: string;
   formAction: "edit board" | "create board";
   boardsLength?: number | undefined;
-  boardColumns: { [key: string]: string } | never[];
+  serializedBoardColumns: { [key: string]: string } | never[];
   boardId: string;
 }
 
@@ -33,12 +37,12 @@ export const BoardModal = ({
   header,
   formAction,
   boardsLength,
-  boardColumns,
+  serializedBoardColumns,
   boardId,
 }: Props) => {
   const updatedBoard = actions.editBoard.bind(null, boardId);
-  const currentBoard = useSelector(
-    (state: RootState) => state.board.currentBoard
+  const currentBoardName = useSelector(
+    (state: RootState) => state.board.boardName
   );
   const dispatch = useDispatch();
   // Form action
@@ -71,7 +75,7 @@ export const BoardModal = ({
   // Create new board modal
   const [createFormFields, setCreateFormFields] = useState({} as FormFields);
   const [columnsValues, setColumnsValues] = useState<string[]>(
-    Object.keys(boardColumns)
+    Object.keys(serializedBoardColumns)
   );
 
   const addColumn = () => {
@@ -91,8 +95,8 @@ export const BoardModal = ({
 
   // Edit board modal
   const initialEditFormFields = Object.assign(
-    { boardName: currentBoard as string },
-    boardColumns
+    { boardName: currentBoardName as string },
+    serializedBoardColumns
   );
   const [editFormFields, setEditFormFields] = useState(
     initialEditFormFields as unknown as FormFields
@@ -105,7 +109,8 @@ export const BoardModal = ({
   }
 
   if (newBoardFormState.modalState === "created") {
-    dispatch(setCurrentBoard(createFormFields.boardName));
+    dispatch(setCurrentBoardId(boardId));
+    dispatch(setCurrentBoardName(createFormFields.boardName));
 
     if (boardsLength) {
       const newIndex = boardsLength - 1;
@@ -116,7 +121,8 @@ export const BoardModal = ({
     setIsOpen(false);
   }
   if (editBoardFormState.modalState === "edited") {
-    dispatch(setCurrentBoard(editFormFields.boardName));
+    dispatch(setCurrentBoardName(editFormFields.boardName));
+    dispatch(setCurrentBoardId(boardId));
     setIsOpen(false);
   }
 

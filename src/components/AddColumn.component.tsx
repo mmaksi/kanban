@@ -6,24 +6,31 @@ import { ExportedStyles } from "@/types/CustomTypes";
 import { useState } from "react";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
-import { BoardColumnSchema } from "@/types/schemas";
+import { useDispatch } from "react-redux";
+import {
+  setCurrentBoardColumns,
+  setCurrentBoardSerializedColumns,
+} from "@/store/slices/board.slice";
 
 const { darkLines, lightLines, darkGrey } =
   customStyles as unknown as ExportedStyles;
 
 interface Props {
   boardColumns: string[];
-  columnUpdates: BoardColumnSchema[];
   boardId: string;
 }
 
-export const AddColumn = ({ boardColumns, columnUpdates, boardId }: Props) => {
+export const AddColumn = ({ boardColumns, boardId }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const boardColumnsArray = boardColumns.map(function (value, index) {
     return { [`column${index}`]: value };
   });
-  const boardColumnsObject = Object.assign({}, ...boardColumnsArray);
+  const boardColumnsObject = Object.assign({}, ...boardColumnsArray) as
+    | { [key: string]: string }
+    | never[];
+  dispatch(setCurrentBoardSerializedColumns(boardColumnsObject));
 
   return (
     <>
@@ -36,7 +43,7 @@ export const AddColumn = ({ boardColumns, columnUpdates, boardId }: Props) => {
             setIsOpen={setIsOpen}
             formAction="edit board"
             header="Edit Board"
-            boardColumns={boardColumnsObject}
+            serializedBoardColumns={boardColumnsObject}
             boardId={boardId}
           />
         </ModalConatiner>

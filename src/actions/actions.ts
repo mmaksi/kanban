@@ -114,8 +114,9 @@ const validateForm = (
   if (
     (action === "edit" && foundBoards.length > 1) ||
     (action === "create" && foundBoards.length > 0)
-  )
+  ) {
     return { error: "Board already exists with this name", modalState: "" };
+  }
   // Form validation
   const hasEmptyString = formValues.some((item) => item.trim() === "");
   if (hasEmptyString) {

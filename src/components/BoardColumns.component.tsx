@@ -21,11 +21,7 @@ export const BoardColumn = ({ boardId, columns }: Props) => {
       {columns.map((column) => {
         return <Column key={column.id} header={column.name} />;
       })}
-      <AddColumn
-        boardColumns={boardColumns}
-        boardId={boardId}
-        columnUpdates={columns}
-      />
+      <AddColumn boardColumns={boardColumns} boardId={boardId} />
     </div>
   );
 };

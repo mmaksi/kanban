@@ -4,8 +4,6 @@ import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 import { Board } from "@/components/Board.component";
 import * as actions from "@/actions/actions";
-import { AddColumn } from "@/components/AddColumn.component";
-import { DropDown } from "@/components/DropDown.component";
 
 const { darkLines, lightLines, sidebarWidth } =
   customStyles as unknown as ExportedStyles;

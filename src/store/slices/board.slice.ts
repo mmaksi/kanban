@@ -1,23 +1,46 @@
+import { BoardColumnSchema, BoardSchema } from "@/types/schemas";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export interface BoardState {
-  currentBoard: string | null;
+type SerializedBoardColumns = { [key: string]: string } | never[];
+
+export interface BoardState extends BoardSchema {
+  serializedBoardColumns: SerializedBoardColumns;
 }
 
 const initialState: BoardState = {
-  currentBoard: "",
+  id: "",
+  boardName: "",
+  columns: [],
+  serializedBoardColumns: {},
 };
 
 export const boardSlice = createSlice({
   name: "board",
   initialState,
   reducers: {
-    setCurrentBoard(state, action: PayloadAction<string>) {
-      state.currentBoard = action.payload;
+    setCurrentBoardId(state, action: PayloadAction<string>) {
+      state.id = action.payload;
+    },
+    setCurrentBoardName(state, action: PayloadAction<string>) {
+      state.boardName = action.payload;
+    },
+    setCurrentBoardColumns(state, action: PayloadAction<BoardColumnSchema[]>) {
+      state.columns = action.payload;
+    },
+    setCurrentBoardSerializedColumns(
+      state,
+      action: PayloadAction<SerializedBoardColumns>
+    ) {
+      state.serializedBoardColumns = action.payload;
     },
   },
 });
 
-export const { setCurrentBoard } = boardSlice.actions;
+export const {
+  setCurrentBoardId,
+  setCurrentBoardName,
+  setCurrentBoardColumns,
+  setCurrentBoardSerializedColumns,
+} = boardSlice.actions;
 export default boardSlice.reducer;

@@ -10,7 +10,11 @@ import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.componen
 import { BoardModal as NewBoard } from "./Modals/BoardModal.component";
 import { BoardSchema } from "@/types/schemas";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentBoard } from "@/store/slices/board.slice";
+import {
+  setCurrentBoardColumns,
+  setCurrentBoardId,
+  setCurrentBoardName,
+} from "@/store/slices/board.slice";
 
 interface Props {
   boards: BoardSchema[] | undefined;
@@ -38,11 +42,6 @@ export const Sidebar = ({ boards }: Props) => {
     }
   }
 
-  // Define a default selected board on first load
-  if (typeof window !== "undefined" && boards && boards.length > 0) {
-    localStorage.setItem("currentBoardIndex", "0");
-  }
-
   const handleItemClick = (index: number) => {
     if (boards) {
       // Mark a board selected
@@ -50,8 +49,10 @@ export const Sidebar = ({ boards }: Props) => {
       newSelectedStates[index] = true;
       setSelectedStates(newSelectedStates);
       // Set the selected board as a global state
-      const currentBoard = boards[index].boardName;
-      dispatch(setCurrentBoard(currentBoard));
+      const currentBoard = boards[index];
+      dispatch(setCurrentBoardId(currentBoard.id));
+      dispatch(setCurrentBoardName(currentBoard.boardName));
+      dispatch(setCurrentBoardColumns(currentBoard.columns));
       localStorage.setItem("currentBoardIndex", index.toString());
     }
   };
@@ -96,7 +97,7 @@ export const Sidebar = ({ boards }: Props) => {
             header="Add New Boards"
             formAction="create board"
             boardsLength={boards?.length}
-            boardColumns={[]}
+            serializedBoardColumns={[]}
             boardId=""
           />
         </ModalConatiner>

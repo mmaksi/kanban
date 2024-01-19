@@ -4,13 +4,17 @@ import styles from "@/styles/Board.module.scss";
 import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 import Button from "./Button.component";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { BoardColumn } from "./BoardColumns.component";
 import { BoardColumnSchema, BoardSchema } from "@/types/schemas";
+import {
+  setCurrentBoardColumns,
+  setCurrentBoardId,
+} from "@/store/slices/board.slice";
 
 const { darkLines, lightLines, darkGrey } =
   customStyles as unknown as ExportedStyles;
@@ -20,29 +24,33 @@ interface Props {
 }
 
 export const Board = ({ boards }: Props) => {
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
-  const currentBoard = useSelector(
-    (state: RootState) => state.board.currentBoard
+  const currentBoardName = useSelector(
+    (state: RootState) => state.board.boardName
   );
 
-  let columns: BoardColumnSchema[] = [];
-  let boardId = "";
-  boards.forEach((board) => {
-    if (board.boardName === currentBoard) {
-      columns = board.columns;
-      boardId = board.id;
-    }
-  });
+  useEffect(() => {
+    boards.forEach((board) => {
+      if (board.boardName === currentBoardName) {
+        dispatch(setCurrentBoardColumns(board.columns));
+        dispatch(setCurrentBoardId(board.id));
+      }
+    });
+  }, [boards, currentBoardName, dispatch]);
+
+  const boardColumns = useSelector((state: RootState) => state.board.columns);
+  const boardId = useSelector((state: RootState) => state.board.id);
 
   return (
     <>
       <div
-        className={`${columns.length === 0 && styles.board__container} ${
+        className={`${boardColumns.length === 0 && styles.board__container} ${
           styles.board__lightBackground
-        } ${columns.length > 0 && styles.board_columns__container}`}
+        } ${boardColumns.length > 0 && styles.board_columns__container}`}
       >
-        {!isOpen && columns.length === 0 && (
+        {!isOpen && boardColumns.length === 0 && (
           <div className={styles.board__emptyContent}>
             <p>This board is empty. Create a new column to get started</p>
             <Button
@@ -57,8 +65,8 @@ export const Board = ({ boards }: Props) => {
           </div>
         )}
 
-        {!isOpen && columns.length > 0 && (
-          <BoardColumn columns={columns} boardId={boardId} />
+        {!isOpen && boardColumns.length > 0 && (
+          <BoardColumn columns={boardColumns} boardId={boardId} />
         )}
       </div>
       {isOpen && (
@@ -67,7 +75,7 @@ export const Board = ({ boards }: Props) => {
             setIsOpen={setIsOpen}
             header="Edit Board"
             formAction="edit board"
-            boardColumns={[]}
+            serializedBoardColumns={[]}
             boardId={boardId}
           />
         </ModalConatiner>
