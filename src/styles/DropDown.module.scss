@@ -1,0 +1,34 @@
+@import "../variables";
+@import "../mixins";
+
+/* Desktop view */
+@media screen and (min-width: 1024px) {
+  .dropdown__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 19.2rem;
+    gap: 1.6rem;
+    border-radius: 8px;
+    padding: 1.6rem;
+    position: absolute;
+    top: $navbar-lg-height - $p-lg;
+  }
+
+  .dropdown__element {
+    color: $medium-grey;
+    text-align: left;
+    @include body-L;
+    font-weight: 500;
+    width: 100%;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .element__delete {
+    color: $primary-red;
+  }
+}

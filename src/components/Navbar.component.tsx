@@ -14,11 +14,14 @@ import ArrowDwown from "@/icons/ArrowDown";
 import Ellipsis from "public/icon-vertical-ellipsis.svg";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { DropDown } from "./DropDown.component";
+import { useState } from "react";
 
 const { darkLines, lightLines, sidebarWidth } =
   customStyles as unknown as ExportedStyles;
 
 export const Navbar = () => {
+  const [DropDownIsOpen, setDropDownOpen] = useState(false);
   const currentBoard = useSelector(
     (state: RootState) => state.board.currentBoard
   );
@@ -58,10 +61,18 @@ export const Navbar = () => {
           <span className={styles.button__cta}> Add New Task</span>
         </Button>
         <Image
+          onClick={() => setDropDownOpen(!DropDownIsOpen)}
           src={Ellipsis}
-          alt="Kanban - task management application"
-          // className={styles.navbar__desktopLogo}
+          alt="ellipsis to edit or delete the current board"
+          className={styles.ellipsis}
         />
+        {DropDownIsOpen && (
+          <DropDown
+            element="Board"
+            DropDownIsOpen={DropDownIsOpen}
+            setDropDownOpen={setDropDownOpen}
+          />
+        )}
       </div>
     </div>
   );

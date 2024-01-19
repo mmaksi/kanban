@@ -214,7 +214,11 @@ export const BoardModal = ({
               buttonType="submit"
               setIsOpen={setIsOpen}
             >
-              + Create New Board
+              {`${
+                formAction === "create board"
+                  ? "+ Create New Board"
+                  : "Save Changes"
+              }`}
             </Button>
 
             {newBoardFormState.error !== "none" &&

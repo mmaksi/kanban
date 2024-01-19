@@ -38,6 +38,11 @@ export const Sidebar = ({ boards }: Props) => {
     }
   }
 
+  // Define a default selected board on first load
+  if (typeof window !== "undefined" && boards && boards.length > 0) {
+    localStorage.setItem("currentBoardIndex", "0");
+  }
+
   const handleItemClick = (index: number) => {
     if (boards) {
       // Mark a board selected
@@ -48,7 +53,6 @@ export const Sidebar = ({ boards }: Props) => {
       const currentBoard = boards[index].boardName;
       dispatch(setCurrentBoard(currentBoard));
       localStorage.setItem("currentBoardIndex", index.toString());
-      console.log("currentBoard", currentBoard);
     }
   };
 
