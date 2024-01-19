@@ -16,11 +16,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { DropDown } from "./DropDown.component";
 import { useState } from "react";
+import { TaskModal } from "./Modals/TaskModal.component";
+import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 
 const { darkLines, lightLines, sidebarWidth } =
   customStyles as unknown as ExportedStyles;
 
 export const Navbar = () => {
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [DropDownIsOpen, setDropDownOpen] = useState(false);
   const currentBoardName = useSelector(
     (state: RootState) => state.board.boardName
@@ -62,6 +65,7 @@ export const Navbar = () => {
           type="primary"
           mode="dark"
           buttonType="button"
+          clickhandler={() => setIsTaskModalOpen(true)}
         >
           <span className={styles.button__plusIcon}>+</span>
           <span className={styles.button__cta}> Add New Task</span>
@@ -74,6 +78,11 @@ export const Navbar = () => {
         />
         {DropDownIsOpen && (
           <DropDown element="Board" setDropDownOpen={setDropDownOpen} />
+        )}
+        {isTaskModalOpen && (
+          <ModalConatiner setIsOpen={setIsTaskModalOpen}>
+            <TaskModal setIsOpen={setIsTaskModalOpen} />
+          </ModalConatiner>
         )}
       </div>
     </div>

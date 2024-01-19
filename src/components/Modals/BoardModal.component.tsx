@@ -202,6 +202,7 @@ export const BoardModal = ({
 
           <div className={styles.modal__buttons}>
             <Button
+              disabled={false}
               size="L"
               mode="dark"
               type="secondary"
@@ -213,6 +214,7 @@ export const BoardModal = ({
             </Button>
 
             <Button
+              disabled={false}
               size="L"
               mode="dark"
               type="primary"

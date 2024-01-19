@@ -1,0 +1,12 @@
+@import "../variables";
+@import "../mixins";
+
+.modal {
+  width: 48rem;
+  border-radius: 0.6rem;
+  background-color: $dark-grey;
+  padding: 3.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
