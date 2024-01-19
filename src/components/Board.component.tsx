@@ -59,6 +59,7 @@ export const Board = ({ boards }: Props) => {
               mode="dark"
               size="L"
               buttonType="button"
+              disabled={!!(boardId.length === 0)}
             >
               + Add New Column
             </Button>

@@ -56,7 +56,13 @@ export const Navbar = () => {
         </span>
       </div>
       <div className={styles.navbar__button}>
-        <Button size="L" type="primary" mode="dark" buttonType="button">
+        <Button
+          disabled={!!(currentBoardName.length === 0)}
+          size="L"
+          type="primary"
+          mode="dark"
+          buttonType="button"
+        >
           <span className={styles.button__plusIcon}>+</span>
           <span className={styles.button__cta}> Add New Task</span>
         </Button>

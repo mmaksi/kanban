@@ -19,6 +19,7 @@ interface BaseButtonProps {
   clickhandler?: (e?: any) => void | Promise<void>;
   setIsOpen?: Dispatch<SetStateAction<boolean>>;
   buttonType: "submit" | "reset" | "button";
+  disabled: boolean;
 }
 
 // Create mutually exclusive properties
@@ -44,7 +45,7 @@ const Button = (props: ButtonProps) => {
     customPadding,
     buttonType,
     clickhandler,
-    setIsOpen,
+    disabled,
   } = props;
 
   const { white } = exportedStyles as unknown as ExportedStyles;
@@ -82,8 +83,12 @@ const Button = (props: ButtonProps) => {
     }
   };
 
+  console.log("disabled button  ");
+  console.log({ disabled });
+
   return (
     <button
+      disabled={disabled}
       type={buttonType}
       className={`${styles.baseButton} ${
         size === "L"
