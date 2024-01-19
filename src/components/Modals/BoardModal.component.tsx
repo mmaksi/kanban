@@ -6,10 +6,11 @@ import Cross from "public/icon-cross.svg";
 import Button from "@/components/Button.component";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import * as actions from "@/actions/actions";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentBoard } from "@/store/slices/board.slice";
 import { RootState } from "@/store/store";
+import { BoardColumnSchema } from "@/types/schemas";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -17,6 +18,7 @@ interface Props {
   formAction: "edit board" | "create board";
   boardsLength?: number | undefined;
   boardColumns: { [key: string]: string } | never[];
+  boardId: string;
 }
 
 interface FormFields {
@@ -32,7 +34,9 @@ export const BoardModal = ({
   formAction,
   boardsLength,
   boardColumns,
+  boardId,
 }: Props) => {
+  const updatedBoard = actions.editBoard.bind(null, boardId);
   const currentBoard = useSelector(
     (state: RootState) => state.board.currentBoard
   );
@@ -43,7 +47,7 @@ export const BoardModal = ({
     initialState
   );
   const [editBoardFormState, editBoard] = useFormState(
-    actions.editBoard,
+    updatedBoard,
     initialState
   );
 
@@ -51,6 +55,7 @@ export const BoardModal = ({
     // Client side input validation
     const { name, value } = event.target;
     value.length > 2 ? (newBoardFormState.error = "none") : null;
+    value.length > 2 ? (editBoardFormState.error = "none") : null;
 
     switch (formAction) {
       case "edit board":
@@ -110,8 +115,10 @@ export const BoardModal = ({
     }
     setIsOpen(false);
   }
-
-  console.log(editFormFields);
+  if (editBoardFormState.modalState === "edited") {
+    dispatch(setCurrentBoard(editFormFields.boardName));
+    setIsOpen(false);
+  }
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -214,6 +221,13 @@ export const BoardModal = ({
               newBoardFormState.error !== "" && (
                 <div className={styles.modal__error}>
                   {newBoardFormState.error}
+                </div>
+              )}
+
+            {editBoardFormState.error !== "none" &&
+              editBoardFormState.error !== "" && (
+                <div className={styles.modal__error}>
+                  {editBoardFormState.error}
                 </div>
               )}
           </div>

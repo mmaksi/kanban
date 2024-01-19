@@ -7,10 +7,11 @@ import Column from "./Column.component";
 import { AddColumn } from "./AddColumn.component";
 
 interface Props {
+  boardId: string;
   columns: BoardColumnSchema[];
 }
 
-export const BoardColumn = ({ columns }: Props) => {
+export const BoardColumn = ({ boardId, columns }: Props) => {
   const boardColumns = columns.map((boardColumn) => {
     return boardColumn.name;
   });
@@ -20,7 +21,11 @@ export const BoardColumn = ({ columns }: Props) => {
       {columns.map((column) => {
         return <Column key={column.id} header={column.name} />;
       })}
-      <AddColumn boardColumns={boardColumns} />
+      <AddColumn
+        boardColumns={boardColumns}
+        boardId={boardId}
+        columnUpdates={columns}
+      />
     </div>
   );
 };

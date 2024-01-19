@@ -38,10 +38,6 @@ export const Sidebar = ({ boards }: Props) => {
     }
   }
 
-  const openModal = () => {
-    setIsOpen(!isOpen);
-  };
-
   const handleItemClick = (index: number) => {
     if (boards) {
       // Mark a board selected
@@ -52,11 +48,8 @@ export const Sidebar = ({ boards }: Props) => {
       const currentBoard = boards[index].boardName;
       dispatch(setCurrentBoard(currentBoard));
       localStorage.setItem("currentBoardIndex", index.toString());
+      console.log("currentBoard", currentBoard);
     }
-  };
-
-  const addNewBoard = (e: MouseEvent) => {
-    openModal();
   };
 
   return (
@@ -73,7 +66,9 @@ export const Sidebar = ({ boards }: Props) => {
                   key={board.id}
                   onClick={() => handleItemClick(index)}
                   className={`${styles.sidebarItem} ${
-                    currentBoardIndex == index && styles.sidebarItem_selected
+                    currentBoardIndex == index
+                      ? styles.sidebarItem_selected
+                      : ""
                   }`}
                 >
                   <Image src={boardIcon} alt="board icon" />
@@ -82,7 +77,7 @@ export const Sidebar = ({ boards }: Props) => {
               );
             })}
           <span
-            onClick={(e: MouseEvent) => addNewBoard(e)}
+            onClick={() => setIsOpen(!isOpen)}
             className={`${styles.sidebarItem} ${styles.sidebarItem__addBoard}`}
           >
             + Create New Board
@@ -98,6 +93,7 @@ export const Sidebar = ({ boards }: Props) => {
             formAction="create board"
             boardsLength={boards?.length}
             boardColumns={[]}
+            boardId=""
           />
         </ModalConatiner>
       )}

@@ -1,5 +1,10 @@
 "use server";
 
+import {
+  BoardColumnSchema,
+  BoardSchema,
+  NewBoardColumn,
+} from "@/types/schemas";
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -51,8 +56,83 @@ const prisma = new PrismaClient();
 //     await prisma.$disconnect();
 //   }
 // };
-
 let lastBoard = {};
+
+const serializeFormData = (
+  formData: FormData,
+  boardId: string
+): [string[], { name: string; boardId: string }[]] => {
+  const formValues: string[] = [];
+  const formColumns: { name: string; boardId: string }[] = [];
+
+  formData.forEach((value, key) => {
+    if (key !== "boardName" && value !== "") {
+      formColumns.push({ name: value.toString(), boardId });
+    }
+    formValues.push(value.toString());
+  });
+
+  return [formValues, formColumns];
+};
+
+const serializeExistedBoardColumns = (
+  existingBoard: BoardSchema,
+  formColumns: { name: string; boardId: string }[],
+  boardId: string
+) => {
+  const existingColumns = existingBoard.columns;
+  const updatedColumns: NewBoardColumn[] = [];
+  formColumns.forEach((formColumn, index) => {
+    const existingColumn = existingColumns[index];
+    if (existingColumn) {
+      const updatedColumn = Object.assign(existingColumn, {
+        name: formColumn.name,
+        boardId,
+      });
+      updatedColumns.push(updatedColumn);
+    }
+    if (!existingColumn)
+      updatedColumns.push({ name: formColumn.name, boardId });
+  });
+  return updatedColumns;
+};
+
+const getExistedBoards = async (boardName: string) => {
+  return await prisma.board.findMany({
+    where: {
+      boardName,
+    },
+  });
+};
+
+const validateForm = (
+  formData: FormData,
+  formValues: string[],
+  foundBoards: any,
+  action: "create" | "edit"
+) => {
+  if (
+    (action === "edit" && foundBoards.length > 1) ||
+    (action === "create" && foundBoards.length > 0)
+  )
+    return { error: "Board already exists with this name", modalState: "" };
+  // Form validation
+  const hasEmptyString = formValues.some((item) => item.trim() === "");
+  if (hasEmptyString) {
+    return {
+      error: "Input fields cannot be empty",
+      modalState: "",
+    };
+  }
+
+  const boardName = formData.get("boardName");
+  if (typeof boardName === "string" && boardName.length < 3) {
+    return {
+      error: "Input fields must be longer than 2 characters",
+      modalState: "",
+    };
+  }
+};
 
 export const createBoard = async (
   formState: { error: string; modalState: string },
@@ -68,86 +148,100 @@ export const createBoard = async (
     formValues.push(value.toString());
   });
 
-  // Form validation
-  const hasEmptyString = formValues.some((item) => item === "");
-  if (hasEmptyString) {
-    return {
-      error: "Input fields cannot be empty",
-      modalState: "",
-    };
-  }
+  const boardName = formData.get("boardName") as string;
+  const foundBoards = await getExistedBoards(boardName);
 
-  const boardName = formData.get("boardName");
-  if (typeof boardName === "string" && boardName.length < 3) {
-    return {
-      error: "Input fields must be longer than 2 characters",
-      modalState: "",
-    };
-  }
+  const results = validateForm(formData, formValues, foundBoards, "create");
+  if (results) return results;
 
-  if (boardName) {
-    await prisma.board.create({
-      data: {
-        boardName: boardName as string,
-        columns: {
-          create: boardColumns,
-        },
+  await prisma.board.create({
+    data: {
+      boardName,
+      columns: {
+        create: boardColumns,
       },
-    });
-    revalidatePath("/");
-    return { error: "", modalState: "created" };
-  } else {
-    revalidatePath("/");
-    return { error: "No board found", modalState: "" };
-  }
+    },
+  });
+  revalidatePath("/");
+  return { error: "", modalState: "created" };
 };
 
 export const editBoard = async (
+  boardId: string,
   formState: { error: string; modalState: string },
   formData: FormData
 ) => {
-  const formValues: string[] = [];
-  const boardColumns: { name: string }[] = [];
+  const [formValues, formColumns] = serializeFormData(formData, boardId);
 
-  formData.forEach((value, key) => {
-    if (key !== "boardName" && value !== "") {
-      boardColumns.push({ name: value.toString() });
-    }
-    formValues.push(value.toString());
+  const boardName = formData.get("boardName") as string;
+  const foundBoards = await getExistedBoards(boardName);
+
+  const results = validateForm(formData, formValues, foundBoards, "edit");
+  if (results) return results;
+
+  // Look for existing board for TypeScript
+  const existingBoard = await prisma.board.findUnique({
+    where: { id: boardId },
+    include: { columns: true },
   });
 
-  // Form validation
-  const hasEmptyString = formValues.some((item) => item === "");
-  if (hasEmptyString) {
-    return {
-      error: "Input fields cannot be empty",
-      modalState: "",
-    };
+  if (!existingBoard) {
+    throw new Error(`Board with ID ${boardId} not found`);
   }
 
-  const boardName = formData.get("boardName");
-  if (typeof boardName === "string" && boardName.length < 3) {
-    return {
-      error: "Input fields must be longer than 2 characters",
-      modalState: "",
-    };
-  }
+  // Step 2: Update the names of the existing columns
+  const updatedColumns = serializeExistedBoardColumns(
+    existingBoard,
+    formColumns,
+    boardId
+  );
 
-  if (boardName) {
-    await prisma.board.create({
+  const updatedColumnsToAdd = updatedColumns.filter(
+    (col) => !col.id
+  ) as unknown as BoardColumnSchema[];
+  const updatedColumnsToUpdate = updatedColumns.filter((col) => col.id);
+  const updatedColumnsIdsToUpdate = updatedColumnsToUpdate.map(
+    (column) => column.id
+  ) as string[];
+  const existingColumns = existingBoard.columns;
+  const columnsToDelete = existingColumns.filter(
+    (column) => !updatedColumns.includes(column)
+  );
+
+  await prisma.$transaction(async (tx) => {
+    // Update existing columns
+    for (const updatedColumn of updatedColumnsToUpdate) {
+      await tx.column.update({
+        where: { id: updatedColumn.id },
+        data: { name: updatedColumn.name },
+      });
+    }
+
+    // Create new columns
+    if (updatedColumnsToAdd.length > 0) {
+      await tx.column.createMany({
+        data: updatedColumnsToAdd,
+      });
+    }
+
+    // Update board name
+    await tx.board.update({
+      where: { id: boardId },
       data: {
-        boardName: boardName as string,
-        columns: {
-          create: boardColumns,
-        },
+        boardName,
       },
     });
-    revalidatePath("/");
-    return { error: "", modalState: "close" };
-  } else {
-    revalidatePath("/");
-    return { error: "No board found", modalState: "" };
-  }
+
+    // Delete extra columns
+    for (const column of columnsToDelete) {
+      await tx.column.delete({
+        where: { id: column.id },
+      });
+    }
+  });
+
+  revalidatePath("/");
+  return { error: "", modalState: "edited" };
 };
 
 export const getAllBoards = async () => {

@@ -9,3 +9,5 @@ export interface BoardColumnSchema {
   name: string;
   boardId: string;
 }
+
+export type NewBoardColumn = Partial<BoardColumnSchema>;

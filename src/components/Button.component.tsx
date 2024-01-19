@@ -34,7 +34,7 @@ interface ButtonPropsWithCustomPadding extends BaseButtonProps {
 type ButtonProps = ButtonPropsWithSize | ButtonPropsWithCustomPadding;
 
 const Button = (props: ButtonProps) => {
-  const { pending, data } = useFormStatus();
+  const { pending } = useFormStatus();
   const {
     children,
     type,

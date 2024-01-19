@@ -6,15 +6,18 @@ import { ExportedStyles } from "@/types/CustomTypes";
 import { useState } from "react";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
+import { BoardColumnSchema } from "@/types/schemas";
 
 const { darkLines, lightLines, darkGrey } =
   customStyles as unknown as ExportedStyles;
 
 interface Props {
   boardColumns: string[];
+  columnUpdates: BoardColumnSchema[];
+  boardId: string;
 }
 
-export const AddColumn = ({ boardColumns }: Props) => {
+export const AddColumn = ({ boardColumns, columnUpdates, boardId }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const boardColumnsArray = boardColumns.map(function (value, index) {
@@ -34,6 +37,7 @@ export const AddColumn = ({ boardColumns }: Props) => {
             formAction="edit board"
             header="Edit Board"
             boardColumns={boardColumnsObject}
+            boardId={boardId}
           />
         </ModalConatiner>
       )}

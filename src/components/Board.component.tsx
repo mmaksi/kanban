@@ -4,7 +4,7 @@ import styles from "@/styles/Board.module.scss";
 import customStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
 import Button from "./Button.component";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
 import { useSelector } from "react-redux";
@@ -27,9 +27,11 @@ export const Board = ({ boards }: Props) => {
   );
 
   let columns: BoardColumnSchema[] = [];
+  let boardId = "";
   boards.forEach((board) => {
     if (board.boardName === currentBoard) {
       columns = board.columns;
+      boardId = board.id;
     }
   });
 
@@ -55,7 +57,9 @@ export const Board = ({ boards }: Props) => {
           </div>
         )}
 
-        {!isOpen && columns.length > 0 && <BoardColumn columns={columns} />}
+        {!isOpen && columns.length > 0 && (
+          <BoardColumn columns={columns} boardId={boardId} />
+        )}
       </div>
       {isOpen && (
         <ModalConatiner setIsOpen={setIsOpen}>
@@ -64,6 +68,7 @@ export const Board = ({ boards }: Props) => {
             header="Edit Board"
             formAction="edit board"
             boardColumns={[]}
+            boardId={boardId}
           />
         </ModalConatiner>
       )}

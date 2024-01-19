@@ -12,7 +12,7 @@ datasource db {
 
 model Board {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  boardName String
+  boardName String  @unique
   columns   Column[]
 }
 
