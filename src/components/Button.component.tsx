@@ -50,11 +50,13 @@ const Button = (props: ButtonProps) => {
   const { white } = exportedStyles as unknown as ExportedStyles;
 
   const getModeStyle = () => {
-    if (mode === "dark" && type === "secondary")
+    if (mode === "dark" && type === "secondary") {
       return {
         backgroundColor: white,
       };
-    return {};
+    } else {
+      return {};
+    }
   };
 
   // We assume buttons won't have the same style across the application on mobile view
@@ -89,15 +91,9 @@ const Button = (props: ButtonProps) => {
           : "S"
           ? styles.baseButton__small
           : ""
-      } ${
-        type === "primary"
-          ? styles.baseButton__primary
-          : "secondary"
-          ? styles.baseButton__secondary
-          : "destructive"
-          ? styles.baseButton__destructive
-          : ""
-      }`}
+      } ${type === "destructive" && styles.baseButton__destructive} ${
+        type === "secondary" && styles.baseButton__secondary
+      } ${type === "primary" && styles.baseButton__primary}`}
       style={buttonStyles}
       onClick={clickhandler}
     >

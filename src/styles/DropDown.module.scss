@@ -32,3 +32,7 @@
     color: $primary-red;
   }
 }
+
+.notAllowed:hover {
+  cursor: not-allowed !important;
+}

@@ -66,7 +66,9 @@ export const Navbar = () => {
           alt="ellipsis to edit or delete the current board"
           className={styles.ellipsis}
         />
-        {DropDownIsOpen && <DropDown element="Board" />}
+        {DropDownIsOpen && (
+          <DropDown element="Board" setDropDownOpen={setDropDownOpen} />
+        )}
       </div>
     </div>
   );

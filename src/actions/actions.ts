@@ -245,6 +245,32 @@ export const editBoard = async (
   return { error: "", modalState: "edited" };
 };
 
+export const deleteBoardByName = async (
+  currentBoardId: string,
+  currentBoardColumns: BoardColumnSchema[],
+  formState: { error: string; modalState: string },
+  formData: FormData
+) => {
+  await prisma.$transaction(async (tx) => {
+    for (const column of currentBoardColumns) {
+      await prisma.task.deleteMany({
+        where: { columnId: column.id },
+      });
+    }
+
+    await tx.column.deleteMany({
+      where: { boardId: currentBoardId },
+    });
+
+    await tx.board.delete({
+      where: { id: currentBoardId },
+    });
+  });
+
+  revalidatePath("/");
+  return { error: "", modalState: "deleted" };
+};
+
 export const getAllBoards = async () => {
   const allBoards = await prisma.board.findMany({
     include: { columns: true },

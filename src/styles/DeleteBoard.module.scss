@@ -1,0 +1,32 @@
+@import "../variables";
+@import "../mixins";
+
+.modal {
+  width: 48rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2.4rem;
+  padding: 3.2rem;
+  background-color: $dark-grey;
+  border-radius: 6px;
+
+  &__header {
+    @include heading-L;
+    color: $primary-red;
+  }
+
+  &__content {
+    color: $medium-grey;
+    @include body-L;
+  }
+
+  &__buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1.6rem;
+  }
+}
