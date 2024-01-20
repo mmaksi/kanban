@@ -135,6 +135,74 @@ const validateForm = (
   }
 };
 
+const validateTaskForm = (
+  formData: FormData,
+  // foundBoards: any,
+  action: "create" | "edit"
+) => {
+  const title = formData.get("title") as string;
+  const trimmedTitle = title.trim();
+
+  if (trimmedTitle === "") {
+    return {
+      error: "Input fields cannot be empty",
+      modalState: "",
+    };
+  }
+
+  if (typeof title === "string" && title.length < 3) {
+    return {
+      error: "Task title must be longer than 2 characters",
+      modalState: "",
+    };
+  }
+};
+
+const saveTaskAndSubtasks = async (
+  boardId: string,
+  taskColumnId: string,
+  title: string,
+  description: string,
+  status: string,
+  subtasks: any[]
+) => {
+  await prisma.board.update({
+    where: { id: boardId },
+    data: {
+      columns: {
+        update: [
+          {
+            where: { id: taskColumnId },
+            data: {
+              tasks: {
+                create: {
+                  title,
+                  description,
+                  status,
+                  subtasks: {
+                    create: subtasks,
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+    include: {
+      columns: {
+        include: {
+          tasks: {
+            include: {
+              subtasks: true,
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
 export const createBoard = async (
   formState: { error: string; modalState: string },
   formData: FormData
@@ -281,4 +349,100 @@ export const getAllBoards = async () => {
 
 export const getLastBoard = async () => {
   return lastBoard;
+};
+
+export const createTask = async (
+  boardId: string,
+  taskColumnId: string,
+  boardColumns: BoardColumnSchema[],
+  formState: { error: string; modalState: string },
+  formData: FormData
+) => {
+  const title = formData.get("title")?.toString() as string;
+  const status = formData.get("status")?.toString() as string;
+  const description = formData.get("description")?.toString() as string;
+
+  const formValues: string[] = [];
+  const subtasks: { title: string; isCompleted: boolean }[] = [];
+  const taskColumnName = formData.get("status") as string;
+
+  // Extract the subtasks array
+  formData.forEach((value, key) => {
+    if (
+      key !== "title" &&
+      key !== "description" &&
+      key !== "status" &&
+      value !== ""
+    ) {
+      subtasks.push({ title: value.toString(), isCompleted: false });
+    }
+    formValues.push(value.toString());
+  });
+
+  const results = validateTaskForm(formData, "create");
+  if (results) return results;
+
+  await saveTaskAndSubtasks(
+    boardId,
+    taskColumnId,
+    title,
+    description,
+    status,
+    subtasks
+  );
+
+  // await prisma.board.update({
+  //   where: { id: boardId },
+  //   data: {
+  //     columns: {
+  //       update: [
+  //         {
+  //           where: { name: taskColumnName },
+  //           data: {
+  //             tasks: {
+  //               update: {
+  //                 where: { id: existingTaskId },
+  //                 data: {
+  //                   subtasks: {
+  //                     create: subtasks,
+  //                   },
+  //                 },
+  //               },
+  //             },
+  //           },
+  //         },
+  //       ],
+  //     },
+  //   },
+  //   include: {
+  //     columns: {
+  //       include: {
+  //         tasks: {
+  //           include: {
+  //             subtasks: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
+  revalidatePath("/");
+  return { error: "", modalState: "created" };
+};
+
+export const getAllTasks = async (boardId: string) => {
+  return await prisma.board.findUnique({
+    where: { id: boardId },
+    include: {
+      columns: {
+        include: {
+          tasks: {
+            include: {
+              subtasks: true,
+            },
+          },
+        },
+      },
+    },
+  });
 };

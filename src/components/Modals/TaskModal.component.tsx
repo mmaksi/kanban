@@ -1,3 +1,5 @@
+"use client";
+
 import { Dispatch, SetStateAction, useState } from "react";
 import { useFormState } from "react-dom";
 import Image from "next/image";
@@ -10,6 +12,8 @@ import * as actions from "@/actions/actions";
 import Cross from "public/icon-cross.svg";
 import Button from "../Button.component";
 import { OptionsInput } from "../OptionsInput.component";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -20,9 +24,9 @@ interface Props {
 
 interface FormFields {
   title: string;
-  description: string;
+  description?: string;
   status: string;
-  [key: string]: string;
+  [key: string]: string | undefined;
 }
 
 const initialState = { error: "", modalState: "" };
@@ -30,15 +34,34 @@ const initialState = { error: "", modalState: "" };
 export const TaskModal: React.FC<Props> = (props) => {
   const { setIsOpen, title, formAction, serializedSubtasks } = props;
 
+  const currentBoardId = useSelector((state: RootState) => state.board.id);
+  const currentBoardName = useSelector(
+    (state: RootState) => state.board.boardName
+  );
+  const currentBoardColumns = useSelector(
+    (state: RootState) => state.board.columns
+  );
+
+  const [taskColumnId, setTaskColumnId] = useState(currentBoardColumns[0].id);
   const [createFormFields, setCreateFormFields] = useState({} as FormFields);
   const [subtasksValues, setSubtasksValues] = useState<string[]>(
     Object.keys(serializedSubtasks)
   );
 
-  console.log({ serializedSubtasks });
+  const options: { id: string; value: string }[] = [];
+  currentBoardColumns.forEach((column) => {
+    options.push({ id: column.id, value: column.name });
+  });
+
+  const createTaskInfo = actions.createTask.bind(
+    null,
+    currentBoardId,
+    taskColumnId,
+    currentBoardColumns
+  );
 
   const [newTaskFormState, createTask] = useFormState(
-    actions.createBoard,
+    createTaskInfo,
     initialState
   );
   // const [editTaskFormState, editBoard] = useFormState(
@@ -48,6 +71,13 @@ export const TaskModal: React.FC<Props> = (props) => {
 
   const inputChangeHandler = (event: any) => {
     const { name, value } = event.target;
+    let selectedIndex = undefined;
+    if (event.target.selectedIndex) {
+      selectedIndex = event.target.selectedIndex;
+    }
+    if (selectedIndex !== "undefined") {
+      setTaskColumnId(currentBoardColumns[selectedIndex].id);
+    }
     value.length > 2 ? (newTaskFormState.error = "none") : null;
     // value.length > 2 ? (editTaskFormState.error = "none") : null;
 
@@ -71,12 +101,11 @@ export const TaskModal: React.FC<Props> = (props) => {
     return setSubtasksValues(modifiedArray);
   };
 
-  console.log(createFormFields);
-
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
       <h2 className={styles.modal__header}>{title}</h2>
-      <form action="">
+      {/* TODO edit task */}
+      <form action={formAction == "create task" ? createTask : ""}>
         <label className={styles.modalForm__label} htmlFor="title">
           Title
         </label>
@@ -127,9 +156,13 @@ export const TaskModal: React.FC<Props> = (props) => {
           >
             + Add New Subtask
           </Button>
-          <OptionsInput name="status" changeHandler={inputChangeHandler} />
+          <OptionsInput
+            name="status"
+            changeHandler={inputChangeHandler}
+            options={options}
+          />
           <Button
-            buttonType="button"
+            buttonType="submit"
             disabled={false}
             mode="dark"
             type="primary"

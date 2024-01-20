@@ -1,52 +1,25 @@
+"use client";
+
 import styles from "@/styles/Column.module.scss";
 import Task from "./Task.component";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+// import { getAllTasks } from "@/actions/actions";
 
 interface Props {
   header: string;
+  tasks?: any[];
 }
 
-// TODO replace with database logic
-const tasks = [
-  {
-    title: "Plan Product Hunt launch",
-    description: "",
-    status: "Todo",
-    subtasks: [
-      {
-        title: "Find hunter",
-        isCompleted: false,
-      },
-      {
-        title: "Gather assets",
-        isCompleted: false,
-      },
-      {
-        title: "Draft product page",
-        isCompleted: false,
-      },
-      {
-        title: "Notify customers",
-        isCompleted: false,
-      },
-      {
-        title: "Notify network",
-        isCompleted: false,
-      },
-      {
-        title: "Launch!",
-        isCompleted: false,
-      },
-    ],
-  },
-];
+const Column: React.FC<Props> = ({ header, tasks }) => {
+  const boardId = useSelector((state: RootState) => state.board.id);
 
-const Column: React.FC<Props> = ({ header }) => {
-  const columnHeader = `${header.toUpperCase()} (${tasks.length})`;
+  const columnHeader = `${header.toUpperCase()} (${"tasks.length"})`;
 
   return (
     <div className={styles.column__container}>
       <h3 className={styles.column__header}>{columnHeader}</h3>
-      <div className={styles.column__tasks}>
+      {/* <div className={styles.column__tasks}>
         {tasks.map((task) => {
           return (
             <Task
@@ -56,7 +29,7 @@ const Column: React.FC<Props> = ({ header }) => {
             />
           );
         })}
-      </div>
+      </div> */}
     </div>
   );
 };

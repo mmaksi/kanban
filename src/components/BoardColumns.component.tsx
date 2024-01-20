@@ -1,17 +1,19 @@
-// "use client";
-
 import styles from "@/styles/BoardColumns.module.scss";
 
 import { BoardColumnSchema } from "@/types/schemas";
 import Column from "./Column.component";
 import { AddColumn } from "./AddColumn.component";
+import { getAllTasks } from "@/actions/actions";
 
 interface Props {
   boardId: string;
   columns: BoardColumnSchema[];
 }
 
-export const BoardColumn = ({ boardId, columns }: Props) => {
+export const BoardColumn = async ({ boardId, columns }: Props) => {
+  const boardInfo = await getAllTasks(boardId);
+  console.log("first");
+
   const boardColumns = columns.map((boardColumn) => {
     return boardColumn.name;
   });

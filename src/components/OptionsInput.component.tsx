@@ -3,10 +3,11 @@ import styles from "@/styles/OptionsInput.module.scss";
 export interface OptionsInputInterface {
   name: string;
   changeHandler: (event: any) => void;
+  options: { id: string; value: string }[];
 }
 
 export const OptionsInput: React.FC<OptionsInputInterface> = (props) => {
-  const { name, changeHandler } = props;
+  const { name, changeHandler, options } = props;
 
   return (
     <>
@@ -19,10 +20,11 @@ export const OptionsInput: React.FC<OptionsInputInterface> = (props) => {
         name={name}
         id={name}
       >
-        <option value="volvo">Volvo</option>
-        <option value="saab">Saab</option>
-        <option value="opel">Opel</option>
-        <option value="audi">Audi</option>
+        {options.map((option) => (
+          <option key={option.id} value={option.value}>
+            {option.value}
+          </option>
+        ))}
       </select>
     </>
   );
