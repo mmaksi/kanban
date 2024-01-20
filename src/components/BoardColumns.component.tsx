@@ -11,9 +11,6 @@ interface Props {
 }
 
 export const BoardColumn = async ({ boardId, columns }: Props) => {
-  const boardInfo = await getAllTasks(boardId);
-  console.log("first");
-
   const boardColumns = columns.map((boardColumn) => {
     return boardColumn.name;
   });
