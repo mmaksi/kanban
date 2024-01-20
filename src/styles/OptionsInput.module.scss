@@ -1,0 +1,35 @@
+@import "../variables";
+@import "../mixins";
+
+.input {
+  padding: 0.8rem 1.6rem;
+  border-radius: 0.4rem;
+  background-color: $dark-grey;
+  border: 1px solid rgba(130, 143, 163, 0.25);
+  width: 100%;
+  color: white;
+  margin-top: 0.8rem;
+  @include body-L;
+  height: 4rem;
+
+  &__label {
+    display: block;
+    margin-top: 2.4rem;
+    color: $white;
+    @include body-M;
+  }
+}
+
+input.input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  @include body-L;
+}
+
+input.input::after {
+  content: "\25BC"; /* Unicode character for down arrow */
+  color: #007bff; /* Set the color of the arrow */
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}

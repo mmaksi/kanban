@@ -9,4 +9,39 @@
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
+
+  &__header {
+    color: $white;
+    @include heading-L;
+  }
+}
+
+.modalForm {
+  &__label {
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+}
+
+.subtasks {
+  margin-top: 2.4rem;
+
+  &__header {
+    @include body-M;
+  }
+
+  &__columns {
+    margin-top: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+}
+
+.input__container_row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 1.6rem;
 }

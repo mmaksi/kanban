@@ -29,6 +29,11 @@ export const Navbar = () => {
     (state: RootState) => state.board.boardName
   );
 
+  const serializedSubtasks = {
+    subtask0: "Drink coffee",
+    subtask1: "Cook potato",
+  };
+
   return (
     <div className={styles.navbar}>
       <div className={styles.navbar__headers}>
@@ -81,7 +86,12 @@ export const Navbar = () => {
         )}
         {isTaskModalOpen && (
           <ModalConatiner setIsOpen={setIsTaskModalOpen}>
-            <TaskModal setIsOpen={setIsTaskModalOpen} />
+            <TaskModal
+              setIsOpen={setIsTaskModalOpen}
+              title="Add New Task"
+              formAction="create task"
+              serializedSubtasks={serializedSubtasks}
+            />
           </ModalConatiner>
         )}
       </div>

@@ -4,17 +4,15 @@ import Image from "next/image";
 
 import Cross from "public/icon-cross.svg";
 import Button from "@/components/Button.component";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import * as actions from "@/actions/actions";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setCurrentBoardId,
   setCurrentBoardName,
-  setCurrentBoardColumns,
 } from "@/store/slices/board.slice";
 import { RootState } from "@/store/store";
-import { BoardColumnSchema } from "@/types/schemas";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
