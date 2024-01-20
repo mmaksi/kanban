@@ -13,11 +13,13 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const boards = await actions.getAllBoards();
 
+  console.log("rerender page");
+
   return (
     <div>
       <Navbar />
       <Sidebar boards={boards} />
-      <Board boards={boards} />
+      <Board boards={boards} getAllTasks={actions.getAllTasks} />
     </div>
   );
 }

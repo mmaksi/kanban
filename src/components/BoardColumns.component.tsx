@@ -1,16 +1,18 @@
+"use client";
+
 import styles from "@/styles/BoardColumns.module.scss";
 
 import { BoardColumnSchema } from "@/types/schemas";
 import Column from "./Column.component";
 import { AddColumn } from "./AddColumn.component";
-import { getAllTasks } from "@/actions/actions";
 
 interface Props {
   boardId: string;
   columns: BoardColumnSchema[];
+  getAllTasks: any;
 }
 
-export const BoardColumn = async ({ boardId, columns }: Props) => {
+export const BoardColumn = async ({ boardId, columns, getAllTasks }: Props) => {
   const boardColumns = columns.map((boardColumn) => {
     return boardColumn.name;
   });
@@ -18,7 +20,13 @@ export const BoardColumn = async ({ boardId, columns }: Props) => {
   return (
     <div className={`${styles.columns__container} ${styles.move_top}`}>
       {columns.map((column) => {
-        return <Column key={column.id} header={column.name} />;
+        return (
+          <Column
+            key={column.id}
+            header={column.name}
+            getAllTasks={getAllTasks}
+          />
+        );
       })}
       <AddColumn boardColumns={boardColumns} boardId={boardId} />
     </div>

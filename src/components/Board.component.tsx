@@ -21,9 +21,10 @@ const { darkLines, lightLines, darkGrey } =
 
 interface Props {
   boards: BoardSchema[];
+  getAllTasks: any;
 }
 
-export const Board = ({ boards }: Props) => {
+export const Board = ({ boards, getAllTasks }: Props) => {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -67,7 +68,11 @@ export const Board = ({ boards }: Props) => {
         )}
 
         {!isOpen && boardColumns.length > 0 && (
-          <BoardColumn columns={boardColumns} boardId={boardId} />
+          <BoardColumn
+            columns={boardColumns}
+            boardId={boardId}
+            getAllTasks={getAllTasks}
+          />
         )}
       </div>
       {isOpen && (
