@@ -83,9 +83,6 @@ const Button = (props: ButtonProps) => {
     }
   };
 
-  console.log("disabled button  ");
-  console.log({ disabled });
-
   return (
     <button
       disabled={disabled}

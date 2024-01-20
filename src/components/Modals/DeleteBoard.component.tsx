@@ -69,6 +69,7 @@ export const DeleteBoard: React.FC<Props> = ({
           buttonType="submit"
           size="L"
           customStyles={{ width: "100%" }}
+          disabled={false}
         >
           Delete
         </Button>
@@ -80,6 +81,7 @@ export const DeleteBoard: React.FC<Props> = ({
           size="L"
           customStyles={{ width: "100%" }}
           clickhandler={closeModal}
+          disabled={false}
         >
           Cancel
         </Button>
