@@ -138,13 +138,12 @@ const validateForm = (
 
 const validateTaskForm = (
   formData: FormData,
-  // foundBoards: any,
+  formValues: string[],
   action: "create" | "edit"
 ) => {
   const title = formData.get("title") as string;
-  const trimmedTitle = title.trim();
-
-  if (trimmedTitle === "") {
+  const hasEmptyString = formValues.some((item) => item.trim() === "");
+  if (hasEmptyString) {
     return {
       error: "Input fields cannot be empty",
       modalState: "",
@@ -153,7 +152,7 @@ const validateTaskForm = (
 
   if (typeof title === "string" && title.length < 3) {
     return {
-      error: "Task title must be longer than 2 characters",
+      error: "Input fields must be longer than 2 characters",
       modalState: "",
     };
   }
@@ -320,32 +319,37 @@ export const deleteBoardByName = async (
   formState: { error: string; modalState: string },
   formData: FormData
 ) => {
-  await prisma.$transaction(async (tx) => {
-    for (const column of currentBoardColumns) {
-      await prisma.subtask.deleteMany({
-        where: {
-          taskId: {
-            in: await prisma.task
-              .findMany({ where: { columnId: column.id } })
-              .then((tasks) => tasks.map((task) => task.id)),
+  try {
+    await prisma.$transaction(async (tx) => {
+      for (const column of currentBoardColumns) {
+        await prisma.subtask.deleteMany({
+          where: {
+            taskId: {
+              in: await prisma.task
+                .findMany({ where: { columnId: column.id } })
+                .then((tasks) => tasks.map((task) => task.id)),
+            },
           },
-        },
+        });
+
+        // Delete Tasks in the current column
+        await prisma.task.deleteMany({
+          where: { columnId: column.id },
+        });
+      }
+
+      await tx.column.deleteMany({
+        where: { boardId: currentBoardId },
       });
 
-      // Delete Tasks in the current column
-      await prisma.task.deleteMany({
-        where: { columnId: column.id },
+      await tx.board.delete({
+        where: { id: currentBoardId },
       });
-    }
-
-    await tx.column.deleteMany({
-      where: { boardId: currentBoardId },
     });
-
-    await tx.board.delete({
-      where: { id: currentBoardId },
-    });
-  });
+  } catch (error) {
+    console.error("Error during transaction:", error);
+    // Handle the error as needed (rollback, log, etc.)
+  }
 
   revalidatePath("/");
   return { error: "", modalState: "deleted" };
@@ -373,7 +377,7 @@ export const createTask = async (
   const status = formData.get("status")?.toString() as string;
   const description = formData.get("description")?.toString() as string;
 
-  const formValues: string[] = [];
+  const formValuesToValidate: string[] = [];
   const subtasks: { title: string; isCompleted: boolean }[] = [];
   const taskColumnName = formData.get("status") as string;
 
@@ -387,10 +391,13 @@ export const createTask = async (
     ) {
       subtasks.push({ title: value.toString(), isCompleted: false });
     }
-    formValues.push(value.toString());
+
+    if (key !== "description" && key !== "status") {
+      formValuesToValidate.push(value.toString());
+    }
   });
 
-  const results = validateTaskForm(formData, "create");
+  const results = validateTaskForm(formData, formValuesToValidate, "create");
   if (results) return results;
 
   await saveTaskAndSubtasks(

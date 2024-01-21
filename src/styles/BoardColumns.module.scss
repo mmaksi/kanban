@@ -6,4 +6,11 @@
   width: 100%;
   overflow-x: auto;
   display: flex;
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-color: $primary-purple;
+  }
 }

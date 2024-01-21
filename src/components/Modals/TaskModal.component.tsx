@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import Image from "next/image";
 
@@ -78,6 +78,15 @@ export const TaskModal: React.FC<Props> = (props) => {
   //   initialState
   // );
 
+  useEffect(() => {
+    if (
+      newTaskFormState.modalState === "created" ||
+      newTaskFormState.modalState === "edited"
+    ) {
+      setIsOpen(false);
+    }
+  }, [newTaskFormState.modalState, setIsOpen]);
+
   const inputChangeHandler = (event: any) => {
     const { name, value } = event.target;
     let selectedIndex = undefined;
@@ -138,23 +147,21 @@ export const TaskModal: React.FC<Props> = (props) => {
           <span className={styles.subtasks__header}>Subtasks</span>
           <div className={styles.subtasks__columns}>
             {formAction === "create task" &&
-              subtasksValues.map((_, index) => (
+              subtasksValues.map((subtaskValue, index) => (
                 // TODO key should not be the index
-                <div key={index} className={styles.input__container_row}>
+                <div key={subtaskValue} className={styles.input__container_row}>
                   <Input
                     label="Subtask"
                     placeholder="e.g. Drink coffee & smile"
                     id={`subtask${index}`}
                     displayLabel={false}
                     inputName={`subtask${index}`}
-                    defaultValue={createFormFields[`column${index}`]}
+                    defaultValue={createFormFields[`subtask${index}`]}
                     onChange={inputChangeHandler}
                   />
-                  <span
-                    className={styles.column__remove}
-                    onClick={removeSubtask}
-                  >
+                  <span onClick={removeSubtask}>
                     <Image
+                      className={styles.subtasks__remove}
                       src={Cross}
                       alt="cross icon to remove the input field"
                     />
@@ -188,6 +195,20 @@ export const TaskModal: React.FC<Props> = (props) => {
           >
             Create Task
           </Button>
+
+          {newTaskFormState.error !== "none" &&
+            newTaskFormState.error !== "" && (
+              <div className={styles.modal__error}>
+                {newTaskFormState.error}
+              </div>
+            )}
+
+          {/* {editTaskFormState.error !== "none" &&
+            newTaskFormState.error !== "" && (
+              <div className={styles.modal__error}>
+                {newTaskFormState.error}
+              </div>
+            )} */}
         </div>
       </form>
     </div>

@@ -85,7 +85,7 @@ const Button = (props: ButtonProps) => {
 
   return (
     <button
-      disabled={disabled}
+      disabled={disabled || pending}
       type={buttonType}
       className={`${styles.baseButton} ${
         size === "L"

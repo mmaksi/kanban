@@ -24,5 +24,15 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    max-height: calc(
+      100dvh - $navbar-lg-height - 2.4rem - 2.4rem - 2.4rem - 2.5rem
+    );
+    overflow-y: auto;
+
+    // Scroll bar styling
+    &::-webkit-scrollbar,
+    &::-webkit-scrollbar-thumb {
+      display: none;
+    }
   }
 }

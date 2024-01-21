@@ -55,6 +55,9 @@ export const DeleteBoard: React.FC<Props> = ({
       dispatch(setCurrentBoardId(""));
       dispatch(setCurrentBoardName(""));
       closeModal();
+      if (window) {
+        window.location.reload();
+      }
     }
   }, [deleteBoardFormState.modalState, closeModal, dispatch]);
 

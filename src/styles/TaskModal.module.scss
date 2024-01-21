@@ -11,10 +11,22 @@
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-color: $primary-purple;
+  }
 
   &__header {
     color: $white;
     @include heading-L;
+  }
+
+  &__error {
+    color: $primary-red;
+    margin-top: 2.4rem;
   }
 }
 
@@ -37,6 +49,12 @@
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
+  }
+
+  &__remove {
+    &:hover {
+      cursor: pointer;
+    }
   }
 }
 

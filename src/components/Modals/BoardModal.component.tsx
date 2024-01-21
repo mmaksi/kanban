@@ -88,10 +88,10 @@ export const BoardModal = ({
   const removeColumn = (event: any): void => {
     const inputElement = event.target.parentNode.previousElementSibling;
     const valueToRemove = inputElement.name;
-    const modifiedArray = columnsValues.filter(
+    const removeArray = columnsValues.filter(
       (column) => column !== valueToRemove
     );
-
+    const modifiedArray = removeArray.map((_, index) => `column${index}`);
     return setColumnsValues(modifiedArray);
   };
 

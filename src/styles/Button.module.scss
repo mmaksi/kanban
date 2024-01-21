@@ -21,13 +21,6 @@
   }
 }
 
-.baseButton:disabled,
-.baseButton:disabled:hover {
-  background-color: $medium-grey; /* Use a different color or style for disabled state */
-  color: $white; /* Adjust text color for better visibility */
-  cursor: not-allowed; /* Change cursor style to indicate unclickable */
-}
-
 /* Desktop view */
 @media screen and (min-width: 1024px) {
   .baseButton {
@@ -35,6 +28,13 @@
       padding: 1.5rem;
     }
   }
+}
+
+.baseButton:disabled,
+.baseButton:disabled:hover {
+  background-color: $medium-grey !important; /* Use a different color or style for disabled state */
+  color: $white !important; /* Adjust text color for better visibility */
+  cursor: not-allowed !important; /* Change cursor style to indicate unclickable */
 }
 
 // Types
