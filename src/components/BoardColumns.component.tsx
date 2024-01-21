@@ -2,14 +2,14 @@
 
 import styles from "@/styles/BoardColumns.module.scss";
 
-import { BoardColumnSchema } from "@/types/schemas";
-import Column from "./Column.component";
+import { ColumnSchema } from "@/types/schemas";
+import { Column } from "./Column.component";
 import { AddColumn } from "./AddColumn.component";
 
 interface Props {
   boardId: string;
-  columns: BoardColumnSchema[];
-  getAllTasks: any;
+  columns: ColumnSchema[];
+  getAllTasks?: any;
 }
 
 export const BoardColumn = async ({ boardId, columns, getAllTasks }: Props) => {
@@ -23,7 +23,7 @@ export const BoardColumn = async ({ boardId, columns, getAllTasks }: Props) => {
         return (
           <Column
             key={column.id}
-            header={column.name}
+            // header={column.name}
             getAllTasks={getAllTasks}
           />
         );

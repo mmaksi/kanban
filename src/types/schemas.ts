@@ -31,3 +31,13 @@ export interface SubtaskSchema {
   taskId: string;
   task: TaskSchema;
 }
+
+export interface BoardData {
+  id: string;
+  boardName: string;
+  columns: {
+    id: string;
+    name: string;
+    boardId: string;
+  }[];
+}

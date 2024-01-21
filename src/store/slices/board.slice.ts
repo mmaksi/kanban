@@ -1,4 +1,4 @@
-import { BoardColumnSchema, BoardSchema } from "@/types/schemas";
+import { ColumnSchema, BoardSchema } from "@/types/schemas";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -25,7 +25,7 @@ export const boardSlice = createSlice({
     setCurrentBoardName(state, action: PayloadAction<string>) {
       state.boardName = action.payload;
     },
-    setCurrentBoardColumns(state, action: PayloadAction<BoardColumnSchema[]>) {
+    setCurrentBoardColumns(state, action: PayloadAction<ColumnSchema[]>) {
       state.columns = action.payload;
     },
     setCurrentBoardSerializedColumns(

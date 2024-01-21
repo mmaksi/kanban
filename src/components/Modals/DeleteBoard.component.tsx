@@ -4,7 +4,7 @@ import * as actions from "@/actions/actions";
 import { useFormState } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 import {
   setCurrentBoardId,
   setCurrentBoardName,
@@ -41,19 +41,19 @@ export const DeleteBoard: React.FC<Props> = ({
     initialState
   );
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setDropDownOpen(false);
     setIsDeleteModalOpen(false);
-  };
+  }, [setDropDownOpen, setIsDeleteModalOpen]);
 
-  if (deleteBoardFormState.modalState === "deleted") {
-    dispatch(setCurrentBoardId(""));
-    dispatch(setCurrentBoardName(""));
-    closeModal();
-    if (window) {
-      window.location.reload();
+  useEffect(() => {
+    // Check if the board has been deleted
+    if (deleteBoardFormState.modalState === "deleted") {
+      dispatch(setCurrentBoardId(""));
+      dispatch(setCurrentBoardName(""));
+      closeModal();
     }
-  }
+  }, [deleteBoardFormState.modalState, closeModal, dispatch]);
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>

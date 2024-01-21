@@ -6,14 +6,13 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useEffect, useState } from "react";
 import { BoardSchema, TaskSchema } from "@/types/schemas";
-// import { getAllTasks } from "@/actions/actions";
 
 interface Props {
   // header: string;
-  getAllTasks: any;
+  getAllTasks?: any;
 }
 
-const Column: React.FC<Props> = ({ getAllTasks }) => {
+export const Column: React.FC<Props> = ({ getAllTasks }) => {
   const [tasks, setTasks] = useState<
     { title: string; tasksArray: TaskSchema[] }[]
   >([]);
@@ -22,16 +21,24 @@ const Column: React.FC<Props> = ({ getAllTasks }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = (await getAllTasks(currentBoardId)) as BoardSchema;
-      const serializedTasks: { title: string; tasksArray: TaskSchema[] }[] = [];
-      data.columns.forEach((column) => {
-        serializedTasks.push({ title: column.name, tasksArray: column.tasks });
-      });
-      setTasks(serializedTasks);
+      if (currentBoardId.length > 0) {
+        const data = (await getAllTasks(currentBoardId)) as BoardSchema | null;
+        if (data) {
+          const serializedTasks: { title: string; tasksArray: TaskSchema[] }[] =
+            [];
+          data.columns.forEach((column) => {
+            serializedTasks.push({
+              title: column.name,
+              tasksArray: column.tasks,
+            });
+          });
+          setTasks(serializedTasks);
+        }
+      }
     };
 
     fetchData();
-  }, [currentBoardId]);
+  }, [currentBoardId, getAllTasks]);
 
   const boardId = useSelector((state: RootState) => state.board.id);
 
@@ -48,5 +55,3 @@ const Column: React.FC<Props> = ({ getAllTasks }) => {
     </div>
   );
 };
-
-export default Column;

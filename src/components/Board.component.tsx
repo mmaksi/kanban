@@ -10,17 +10,14 @@ import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { BoardColumn } from "./BoardColumns.component";
-import { BoardColumnSchema, BoardSchema } from "@/types/schemas";
+import { BoardData, BoardSchema } from "@/types/schemas";
 import {
   setCurrentBoardColumns,
   setCurrentBoardId,
 } from "@/store/slices/board.slice";
 
-const { darkLines, lightLines, darkGrey } =
-  customStyles as unknown as ExportedStyles;
-
 interface Props {
-  boards: BoardSchema[];
+  boards: BoardData[];
   getAllTasks: any;
 }
 
@@ -32,6 +29,9 @@ export const Board = ({ boards, getAllTasks }: Props) => {
     (state: RootState) => state.board.boardName
   );
 
+  const boardColumns = useSelector((state: RootState) => state.board.columns);
+  const boardId = useSelector((state: RootState) => state.board.id);
+
   useEffect(() => {
     boards.forEach((board) => {
       if (board.boardName === currentBoardName) {
@@ -39,10 +39,7 @@ export const Board = ({ boards, getAllTasks }: Props) => {
         dispatch(setCurrentBoardId(board.id));
       }
     });
-  }, [boards, currentBoardName, dispatch]);
-
-  const boardColumns = useSelector((state: RootState) => state.board.columns);
-  const boardId = useSelector((state: RootState) => state.board.id);
+  }, [boards, currentBoardName, dispatch, boardColumns]);
 
   return (
     <>

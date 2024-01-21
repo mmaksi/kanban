@@ -8,7 +8,7 @@ import { MouseEvent, useEffect, useState } from "react";
 import boardIcon from "public/icon-board.svg";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { BoardModal as NewBoard } from "./Modals/BoardModal.component";
-import { BoardSchema } from "@/types/schemas";
+import { BoardData, BoardSchema } from "@/types/schemas";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setCurrentBoardColumns,
@@ -17,7 +17,7 @@ import {
 } from "@/store/slices/board.slice";
 
 interface Props {
-  boards: BoardSchema[] | undefined;
+  boards: BoardData[] | undefined;
 }
 
 const { darkLines, lightLines, darkGrey } =

@@ -4,7 +4,7 @@ import Image from "next/image";
 
 import Cross from "public/icon-cross.svg";
 import Button from "@/components/Button.component";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import * as actions from "@/actions/actions";
 import { useFormState } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -71,7 +71,9 @@ export const BoardModal = ({
   };
 
   // Create new board modal
-  const [createFormFields, setCreateFormFields] = useState({} as FormFields);
+  const [createFormFields, setCreateFormFields] = useState({
+    boardName: "",
+  } as FormFields);
   const [columnsValues, setColumnsValues] = useState<string[]>(
     Object.keys(serializedBoardColumns)
   );
@@ -106,23 +108,42 @@ export const BoardModal = ({
     currentBoardIndex = parseInt(currentBoardIndexString);
   }
 
-  if (newBoardFormState.modalState === "created") {
-    dispatch(setCurrentBoardId(boardId));
-    dispatch(setCurrentBoardName(createFormFields.boardName));
+  useEffect(() => {
+    if (newBoardFormState.modalState === "created") {
+      dispatch(setCurrentBoardId(boardId));
+      dispatch(setCurrentBoardName(createFormFields.boardName));
 
-    if (boardsLength) {
-      const newIndex = boardsLength - 1;
-      localStorage.setItem("currentBoardIndex", newIndex.toString());
-    } else {
-      localStorage.setItem("currentBoardIndex", "0");
+      if (boardsLength) {
+        const newIndex = boardsLength - 1;
+        localStorage.setItem("currentBoardIndex", newIndex.toString());
+      } else {
+        localStorage.setItem("currentBoardIndex", "0");
+      }
+      setIsOpen(false);
     }
-    setIsOpen(false);
-  }
-  if (editBoardFormState.modalState === "edited") {
-    dispatch(setCurrentBoardName(editFormFields.boardName));
-    dispatch(setCurrentBoardId(boardId));
-    setIsOpen(false);
-  }
+  }, [
+    newBoardFormState.modalState,
+    boardsLength,
+    boardId,
+    createFormFields.boardName,
+    setIsOpen,
+    dispatch,
+  ]);
+
+  // Edit board modal
+  useEffect(() => {
+    if (editBoardFormState.modalState === "edited") {
+      dispatch(setCurrentBoardName(editFormFields.boardName));
+      dispatch(setCurrentBoardId(boardId));
+      setIsOpen(false);
+    }
+  }, [
+    editBoardFormState.modalState,
+    editFormFields.boardName,
+    boardId,
+    setIsOpen,
+    dispatch,
+  ]);
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>

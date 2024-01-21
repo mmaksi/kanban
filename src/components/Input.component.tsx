@@ -12,7 +12,7 @@ interface Props {
   placeholder: string;
   displayLabel: boolean;
   id: string;
-  defaultValue?: string;
+  defaultValue: string;
   inputName: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
 }

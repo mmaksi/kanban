@@ -1,10 +1,6 @@
 "use server";
 
-import {
-  BoardColumnSchema,
-  BoardSchema,
-  NewBoardColumn,
-} from "@/types/schemas";
+import { ColumnSchema, BoardSchema, NewBoardColumn } from "@/types/schemas";
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -260,14 +256,14 @@ export const editBoard = async (
 
   // Step 2: Update the names of the existing columns
   const updatedColumns = serializeExistedBoardColumns(
-    existingBoard,
+    existingBoard as BoardSchema,
     formColumns,
     boardId
   );
 
   const updatedColumnsToAdd = updatedColumns.filter(
     (col) => !col.id
-  ) as unknown as BoardColumnSchema[];
+  ) as unknown as ColumnSchema[];
   const updatedColumnsToUpdate = updatedColumns.filter((col) => col.id);
   const updatedColumnsIdsToUpdate = updatedColumnsToUpdate.map(
     (column) => column.id
@@ -315,12 +311,23 @@ export const editBoard = async (
 
 export const deleteBoardByName = async (
   currentBoardId: string,
-  currentBoardColumns: BoardColumnSchema[],
+  currentBoardColumns: ColumnSchema[],
   formState: { error: string; modalState: string },
   formData: FormData
 ) => {
   await prisma.$transaction(async (tx) => {
     for (const column of currentBoardColumns) {
+      await prisma.subtask.deleteMany({
+        where: {
+          taskId: {
+            in: await prisma.task
+              .findMany({ where: { columnId: column.id } })
+              .then((tasks) => tasks.map((task) => task.id)),
+          },
+        },
+      });
+
+      // Delete Tasks in the current column
       await prisma.task.deleteMany({
         where: { columnId: column.id },
       });
@@ -354,7 +361,7 @@ export const getLastBoard = async () => {
 export const createTask = async (
   boardId: string,
   taskColumnId: string,
-  boardColumns: BoardColumnSchema[],
+  boardColumns: ColumnSchema[],
   formState: { error: string; modalState: string },
   formData: FormData
 ) => {
