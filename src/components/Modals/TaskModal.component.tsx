@@ -4,16 +4,17 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { useFormState } from "react-dom";
 import Image from "next/image";
 
-import { TextArea } from "../TextArea.component";
-import { Input } from "../Input.component";
-
 import styles from "@/styles/TaskModal.module.scss";
+
 import * as actions from "@/actions/actions";
 import Cross from "public/icon-cross.svg";
-import Button from "../Button.component";
-import { OptionsInput } from "../OptionsInput.component";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+
+import { OptionsInput } from "../OptionsInput.component";
+import { TextArea } from "../TextArea.component";
+import { Input } from "../Input.component";
+import Button from "../Button.component";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -24,10 +25,16 @@ interface Props {
 
 interface FormFields {
   title: string;
-  description?: string;
+  description: string;
   status: string;
-  [key: string]: string | undefined;
+  [key: string]: string;
 }
+
+const initialCreateFormState: FormFields = {
+  title: "",
+  description: "",
+  status: "",
+};
 
 const initialState = { error: "", modalState: "" };
 
@@ -43,7 +50,9 @@ export const TaskModal: React.FC<Props> = (props) => {
   );
 
   const [taskColumnId, setTaskColumnId] = useState(currentBoardColumns[0].id);
-  const [createFormFields, setCreateFormFields] = useState({} as FormFields);
+  const [createFormFields, setCreateFormFields] = useState(
+    initialCreateFormState
+  );
   const [subtasksValues, setSubtasksValues] = useState<string[]>(
     Object.keys(serializedSubtasks)
   );
@@ -56,8 +65,7 @@ export const TaskModal: React.FC<Props> = (props) => {
   const createTaskInfo = actions.createTask.bind(
     null,
     currentBoardId,
-    taskColumnId,
-    currentBoardColumns
+    taskColumnId
   );
 
   const [newTaskFormState, createTask] = useFormState(
@@ -75,7 +83,7 @@ export const TaskModal: React.FC<Props> = (props) => {
     if (event.target.selectedIndex) {
       selectedIndex = event.target.selectedIndex;
     }
-    if (selectedIndex !== "undefined") {
+    if (typeof selectedIndex !== "undefined") {
       setTaskColumnId(currentBoardColumns[selectedIndex].id);
     }
     value.length > 2 ? (newTaskFormState.error = "none") : null;
@@ -114,6 +122,7 @@ export const TaskModal: React.FC<Props> = (props) => {
           label="Title"
           id="title"
           inputName="title"
+          defaultValue={createFormFields["title"]}
           placeholder="e.g. Take coffee break"
           onChange={inputChangeHandler}
         />

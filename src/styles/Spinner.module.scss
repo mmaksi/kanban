@@ -11,12 +11,16 @@
   animation: spin 1s linear infinite;
 
   &__container {
-    background-color: $dark-background;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    margin: 0;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    background-color: $dark-background;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 

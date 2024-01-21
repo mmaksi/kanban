@@ -1,18 +1,20 @@
-import { Input } from "@/components/Input.component";
-import styles from "@/styles/Modal.module.scss";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useFormState } from "react-dom";
 import Image from "next/image";
 
-import Cross from "public/icon-cross.svg";
-import Button from "@/components/Button.component";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import styles from "@/styles/Modal.module.scss";
+
 import * as actions from "@/actions/actions";
-import { useFormState } from "react-dom";
-import { useDispatch, useSelector } from "react-redux";
+import Cross from "public/icon-cross.svg";
 import {
   setCurrentBoardId,
   setCurrentBoardName,
 } from "@/store/slices/board.slice";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+
+import { Input } from "@/components/Input.component";
+import Button from "@/components/Button.component";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -179,7 +181,7 @@ export const BoardModal = ({
                     id={`column${index}`}
                     displayLabel={false}
                     inputName={`column${index}`}
-                    defaultValue={createFormFields[`column${index}`]}
+                    defaultValue={createFormFields[`column${index}`] || ""}
                     onChange={changeHandler}
                   />
                   <span
@@ -203,7 +205,7 @@ export const BoardModal = ({
                     id={`column${index}`}
                     displayLabel={false}
                     inputName={`column${index}`}
-                    defaultValue={editFormFields[`column${index}`]}
+                    defaultValue={editFormFields[`column${index}`] || ""}
                     onChange={changeHandler}
                   />
                   <span

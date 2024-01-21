@@ -1,34 +1,29 @@
 "use client";
 
-import styles from "@/styles/AddColumn.module.scss";
-import customStyles from "../_exports.module.scss";
-import { ExportedStyles } from "@/types/CustomTypes";
 import { useEffect, useMemo, useState } from "react";
+
+import styles from "@/styles/AddColumn.module.scss";
+
+import { useDispatch } from "react-redux";
+import { setCurrentBoardSerializedColumns } from "@/store/slices/board.slice";
+
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
-import { useDispatch } from "react-redux";
-import {
-  setCurrentBoardColumns,
-  setCurrentBoardSerializedColumns,
-} from "@/store/slices/board.slice";
-
-const { darkLines, lightLines, darkGrey } =
-  customStyles as unknown as ExportedStyles;
 
 interface Props {
-  boardColumns: string[];
+  boardColumnsNames: string[];
   boardId: string;
 }
 
-export const AddColumn = ({ boardColumns, boardId }: Props) => {
+export const AddColumn = ({ boardColumnsNames, boardId }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
 
   const boardColumnsArray = useMemo(() => {
-    return boardColumns.map((value, index) => ({
+    return boardColumnsNames.map((value, index) => ({
       [`column${index}`]: value,
     }));
-  }, [boardColumns]);
+  }, [boardColumnsNames]);
 
   const boardColumnsObject = useMemo(() => {
     return Object.assign({}, ...boardColumnsArray) as

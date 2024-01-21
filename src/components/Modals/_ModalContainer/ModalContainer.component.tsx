@@ -1,8 +1,8 @@
 "use client";
 
-import styles from "@/styles/ModalContainer.module.scss";
-
 import { Dispatch, ReactNode, SetStateAction, useState } from "react";
+
+import styles from "@/styles/ModalContainer.module.scss";
 
 interface Props {
   children: ReactNode;

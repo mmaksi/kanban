@@ -41,3 +41,9 @@ export interface BoardData {
     boardId: string;
   }[];
 }
+
+export interface ColumnData {
+  id: string;
+  name: string;
+  boardId: string;
+}

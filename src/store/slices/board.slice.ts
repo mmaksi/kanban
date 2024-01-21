@@ -1,10 +1,10 @@
-import { ColumnSchema, BoardSchema } from "@/types/schemas";
-import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { BoardData } from "@/types/schemas";
 
 type SerializedBoardColumns = { [key: string]: string } | never[];
 
-export interface BoardState extends BoardSchema {
+export interface BoardState extends BoardData {
   serializedBoardColumns: SerializedBoardColumns;
 }
 
@@ -25,7 +25,10 @@ export const boardSlice = createSlice({
     setCurrentBoardName(state, action: PayloadAction<string>) {
       state.boardName = action.payload;
     },
-    setCurrentBoardColumns(state, action: PayloadAction<ColumnSchema[]>) {
+    setCurrentBoardColumns(
+      state,
+      action: PayloadAction<{ id: string; name: string; boardId: string }[]>
+    ) {
       state.columns = action.payload;
     },
     setCurrentBoardSerializedColumns(

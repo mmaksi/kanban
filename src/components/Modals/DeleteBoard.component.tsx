@@ -1,14 +1,17 @@
-import styles from "@/styles/DeleteBoard.module.scss";
-import Button from "@/components/Button.component";
-import * as actions from "@/actions/actions";
-import { useFormState } from "react-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
+
+import styles from "@/styles/DeleteBoard.module.scss";
+
+import { useFormState } from "react-dom";
+import { RootState } from "@/store/store";
+import * as actions from "@/actions/actions";
 import {
   setCurrentBoardId,
   setCurrentBoardName,
 } from "@/store/slices/board.slice";
+import { useDispatch, useSelector } from "react-redux";
+
+import Button from "@/components/Button.component";
 
 const initialState = { error: "", modalState: "" };
 

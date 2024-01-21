@@ -1,11 +1,14 @@
 "use client";
 
-import styles from "@/styles/DropDown.module.scss";
 import { Dispatch, SetStateAction, useState } from "react";
-import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
-import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
+
+import styles from "@/styles/DropDown.module.scss";
+
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+
+import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
+import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
 import { DeleteBoard } from "./Modals/DeleteBoard.component";
 
 interface Props {

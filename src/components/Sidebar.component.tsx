@@ -1,27 +1,25 @@
 "use client";
 
+import { useState } from "react";
+
 import styles from "@/styles/Sidebar.module.scss";
-import customStyles from "../_exports.module.scss";
-import { ExportedStyles } from "@/types/CustomTypes";
-import Image from "next/image";
-import { MouseEvent, useEffect, useState } from "react";
-import boardIcon from "public/icon-board.svg";
-import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
-import { BoardModal as NewBoard } from "./Modals/BoardModal.component";
-import { BoardData, BoardSchema } from "@/types/schemas";
-import { useDispatch, useSelector } from "react-redux";
+
+import { useDispatch } from "react-redux";
+import { BoardData } from "@/types/schemas";
 import {
   setCurrentBoardColumns,
   setCurrentBoardId,
   setCurrentBoardName,
 } from "@/store/slices/board.slice";
+import boardIcon from "public/icon-board.svg";
+import Image from "next/image";
+
+import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
+import { BoardModal as NewBoard } from "./Modals/BoardModal.component";
 
 interface Props {
   boards: BoardData[] | undefined;
 }
-
-const { darkLines, lightLines, darkGrey } =
-  customStyles as unknown as ExportedStyles;
 
 export const Sidebar = ({ boards }: Props) => {
   const dispatch = useDispatch();

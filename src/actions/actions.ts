@@ -1,6 +1,11 @@
 "use server";
 
-import { ColumnSchema, BoardSchema, NewBoardColumn } from "@/types/schemas";
+import {
+  ColumnSchema,
+  BoardSchema,
+  NewBoardColumn,
+  ColumnData,
+} from "@/types/schemas";
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -311,7 +316,7 @@ export const editBoard = async (
 
 export const deleteBoardByName = async (
   currentBoardId: string,
-  currentBoardColumns: ColumnSchema[],
+  currentBoardColumns: ColumnData[],
   formState: { error: string; modalState: string },
   formData: FormData
 ) => {
@@ -361,7 +366,6 @@ export const getLastBoard = async () => {
 export const createTask = async (
   boardId: string,
   taskColumnId: string,
-  boardColumns: ColumnSchema[],
   formState: { error: string; modalState: string },
   formData: FormData
 ) => {

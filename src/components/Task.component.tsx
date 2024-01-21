@@ -1,23 +1,24 @@
 import styles from "@/styles/Task.module.scss";
-import { SubtaskSchema, TaskSchema } from "@/types/schemas";
+
+import { SubtaskSchema } from "@/types/schemas";
 
 interface Props {
-  tasks: TaskSchema[];
+  title: string;
+  subtasks: SubtaskSchema[];
+  id: string;
 }
 
 const Task = (props: Props) => {
-  const { tasks } = props;
+  const { id, title, subtasks } = props;
 
   return (
     <>
-      {tasks.map((task) => (
-        <div key={task.id} className={styles.task__container}>
-          <p className={styles.task__title}>{task.title}</p>
-          <p
-            className={styles.task__subtasks}
-          >{`${task.subtasks.length} were finished`}</p>
-        </div>
-      ))}
+      <div key={id} className={styles.task__container}>
+        <p className={styles.task__title}>{title}</p>
+        <p
+          className={styles.task__subtasks}
+        >{`${subtasks.length} were finished`}</p>
+      </div>
     </>
   );
 };

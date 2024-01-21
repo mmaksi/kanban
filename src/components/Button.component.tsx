@@ -1,11 +1,11 @@
 "use client";
 
-import { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
+import { useFormStatus } from "react-dom";
 
 import styles from "@/styles/Button.module.scss";
 import exportedStyles from "../_exports.module.scss";
 import { ExportedStyles } from "@/types/CustomTypes";
-import { useFormStatus } from "react-dom";
 
 type buttonTypes = "primary" | "secondary" | "destructive";
 type buttonSizes = "L" | "S";

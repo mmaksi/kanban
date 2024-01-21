@@ -1,12 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 
-import Button from "./Button.component";
-
 import styles from "@/styles/Navbar.module.scss";
-import customStyles from "../_exports.module.scss";
-import { ExportedStyles } from "@/types/CustomTypes";
 
 import DesktopLogoDark from "public/logo-light.svg";
 import MobileLogo from "public/logo-mobile.svg";
@@ -14,13 +11,11 @@ import ArrowDwown from "@/icons/ArrowDown";
 import Ellipsis from "public/icon-vertical-ellipsis.svg";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import { DropDown } from "./DropDown.component";
-import { useState } from "react";
-import { TaskModal } from "./Modals/TaskModal.component";
-import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 
-const { darkLines, lightLines, sidebarWidth } =
-  customStyles as unknown as ExportedStyles;
+import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
+import { DropDown } from "./DropDown.component";
+import { TaskModal } from "./Modals/TaskModal.component";
+import Button from "./Button.component";
 
 export const Navbar = () => {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);

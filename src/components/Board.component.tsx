@@ -1,20 +1,21 @@
 "use client";
 
-import styles from "@/styles/Board.module.scss";
-import customStyles from "../_exports.module.scss";
-import { ExportedStyles } from "@/types/CustomTypes";
-import Button from "./Button.component";
 import { useEffect, useState } from "react";
-import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
-import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
+
 import { useDispatch, useSelector } from "react-redux";
+import { BoardData } from "@/types/schemas";
 import { RootState } from "@/store/store";
-import { BoardColumn } from "./BoardColumns.component";
-import { BoardData, BoardSchema } from "@/types/schemas";
 import {
   setCurrentBoardColumns,
   setCurrentBoardId,
 } from "@/store/slices/board.slice";
+
+import styles from "@/styles/Board.module.scss";
+
+import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
+import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
+import { BoardColumn } from "./BoardColumns.component";
+import Button from "./Button.component";
 
 interface Props {
   boards: BoardData[];

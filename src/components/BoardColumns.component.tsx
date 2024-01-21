@@ -1,34 +1,59 @@
 "use client";
 
+import { useEffect, useState, useTransition } from "react";
+
 import styles from "@/styles/BoardColumns.module.scss";
 
-import { ColumnSchema } from "@/types/schemas";
+import { BoardSchema, ColumnData, ColumnSchema } from "@/types/schemas";
+import Loading from "@/app/loading";
+
 import { Column } from "./Column.component";
 import { AddColumn } from "./AddColumn.component";
 
 interface Props {
   boardId: string;
-  columns: ColumnSchema[];
+  columns: ColumnData[];
   getAllTasks?: any;
 }
 
-export const BoardColumn = async ({ boardId, columns, getAllTasks }: Props) => {
-  const boardColumns = columns.map((boardColumn) => {
+export const BoardColumn = ({ boardId, columns, getAllTasks }: Props) => {
+  let [isPending, startTransition] = useTransition();
+  const boardColumnsNames = columns.map((boardColumn) => {
     return boardColumn.name;
   });
 
+  const [boardColumns, setColumns] = useState<ColumnSchema[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (boardId.length > 0) {
+        startTransition(async () => {
+          const data = (await getAllTasks(boardId)) as BoardSchema | null;
+          if (data) setColumns(data.columns);
+        });
+      }
+    };
+
+    fetchData();
+  }, [getAllTasks, boardId]);
+
   return (
-    <div className={`${styles.columns__container} ${styles.move_top}`}>
-      {columns.map((column) => {
-        return (
-          <Column
-            key={column.id}
-            // header={column.name}
-            getAllTasks={getAllTasks}
-          />
-        );
-      })}
-      <AddColumn boardColumns={boardColumns} boardId={boardId} />
-    </div>
+    <>
+      {!isPending && boardColumns.length > 0 && (
+        <div className={`${styles.columns__container} ${styles.move_top}`}>
+          {boardColumns.map((boardColumn) => {
+            return (
+              <Column
+                key={boardColumn.id}
+                tasks={boardColumn.tasks}
+                title={boardColumn.name}
+              />
+            );
+          })}
+          <AddColumn boardColumnsNames={boardColumnsNames} boardId={boardId} />;
+        </div>
+      )}
+
+      {isPending && <Loading />}
+    </>
   );
 };

@@ -1,11 +1,6 @@
 import { ChangeEventHandler } from "react";
 
 import styles from "@/styles/Input.module.scss";
-import customStyles from "../_exports.module.scss";
-import { ExportedStyles } from "@/types/CustomTypes";
-
-const { darkLines, lightLines, sidebarWidth } =
-  customStyles as unknown as ExportedStyles;
 
 interface Props {
   label: string;
