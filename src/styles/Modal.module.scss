@@ -3,6 +3,8 @@
 
 .modal {
   width: 48rem;
+  max-height: 90dvh;
+  overflow-y: auto;
   border-radius: 0.6rem;
   background-color: $dark-grey;
   padding: 3.2rem;

@@ -2,16 +2,8 @@
 @import "../mixins";
 
 .columns__container {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 2.4rem;
   height: 100%;
   width: 100%;
+  overflow-x: auto;
+  display: flex;
 }
-
-// .move_top {
-//   padding: 2.4rem;
-//   margin-top: $navbar-lg-height;
-// }

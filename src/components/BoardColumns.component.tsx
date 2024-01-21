@@ -39,7 +39,7 @@ export const BoardColumn = ({ boardId, columns, getAllTasks }: Props) => {
   return (
     <>
       {!isPending && boardColumns.length > 0 && (
-        <div className={`${styles.columns__container} ${styles.move_top}`}>
+        <div className={`${styles.columns__container}`}>
           {boardColumns.map((boardColumn) => {
             return (
               <Column
@@ -49,10 +49,9 @@ export const BoardColumn = ({ boardId, columns, getAllTasks }: Props) => {
               />
             );
           })}
-          <AddColumn boardColumnsNames={boardColumnsNames} boardId={boardId} />;
+          <AddColumn boardColumnsNames={boardColumnsNames} boardId={boardId} />
         </div>
       )}
-
       {isPending && <Loading />}
     </>
   );

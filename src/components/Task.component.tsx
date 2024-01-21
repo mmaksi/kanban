@@ -11,13 +11,15 @@ interface Props {
 const Task = (props: Props) => {
   const { id, title, subtasks } = props;
 
+  const finishedSubtasks = subtasks.filter((subtask) => subtask.isCompleted);
+
   return (
     <>
       <div key={id} className={styles.task__container}>
         <p className={styles.task__title}>{title}</p>
         <p
           className={styles.task__subtasks}
-        >{`${subtasks.length} were finished`}</p>
+        >{`${finishedSubtasks.length} of ${subtasks.length} subtasks`}</p>
       </div>
     </>
   );

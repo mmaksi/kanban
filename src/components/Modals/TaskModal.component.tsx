@@ -20,7 +20,6 @@ interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   title: string;
   formAction: "edit task" | "create task";
-  serializedSubtasks: { [key: string]: string } | never[];
 }
 
 interface FormFields {
@@ -38,13 +37,15 @@ const initialCreateFormState: FormFields = {
 
 const initialState = { error: "", modalState: "" };
 
+const serializedSubtasks = {
+  subtask0: "Drink coffee",
+  subtask1: "Cook potato",
+};
+
 export const TaskModal: React.FC<Props> = (props) => {
-  const { setIsOpen, title, formAction, serializedSubtasks } = props;
+  const { setIsOpen, title, formAction } = props;
 
   const currentBoardId = useSelector((state: RootState) => state.board.id);
-  const currentBoardName = useSelector(
-    (state: RootState) => state.board.boardName
-  );
   const currentBoardColumns = useSelector(
     (state: RootState) => state.board.columns
   );
@@ -103,10 +104,16 @@ export const TaskModal: React.FC<Props> = (props) => {
   const removeSubtask = (event: any): void => {
     const inputElement = event.target.parentNode.previousElementSibling;
     const valueToRemove = inputElement.name;
-    const modifiedArray = subtasksValues.filter(
+    const removeArray = subtasksValues.filter(
       (subtask) => subtask !== valueToRemove
     );
+    const modifiedArray = removeArray.map((_, index) => `subtask${index}`);
     return setSubtasksValues(modifiedArray);
+  };
+
+  const addNewTask = () => {
+    const newSubtaskIndex = subtasksValues.length;
+    return setSubtasksValues([...subtasksValues, `subtask${newSubtaskIndex}`]);
   };
 
   return (
@@ -162,6 +169,7 @@ export const TaskModal: React.FC<Props> = (props) => {
             type="secondary"
             size="L"
             customStyles={{ width: "100%", marginTop: "1.2rem" }}
+            clickhandler={addNewTask}
           >
             + Add New Subtask
           </Button>

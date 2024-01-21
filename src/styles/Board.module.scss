@@ -46,7 +46,7 @@
   .board_columns__container {
     height: calc(100dvh - $navbar-lg-height);
     margin-left: $sidebar-lg-width;
-    padding: 2.4rem;
+    overflow-x: auto;
 
     display: flex;
     align-items: flex-start;

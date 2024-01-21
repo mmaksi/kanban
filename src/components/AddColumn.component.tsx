@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const AddColumn = ({ boardColumnsNames, boardId }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isEditBoardOpen, setIsEditBoardOpen] = useState(false);
   const dispatch = useDispatch();
 
   const boardColumnsArray = useMemo(() => {
@@ -36,14 +36,17 @@ export const AddColumn = ({ boardColumnsNames, boardId }: Props) => {
   }, [boardColumnsObject, dispatch]);
 
   return (
-    <>
-      <div className={styles.container} onClick={() => setIsOpen(true)}>
-        <span className={styles.text}>+ New Column</span>
+    <div
+      className={styles.column__parentContainer}
+      onClick={() => setIsEditBoardOpen(!isEditBoardOpen)}
+    >
+      <div className={styles.column__container}>
+        <span className={styles.column__span}>+ New Column</span>
       </div>
-      {isOpen && (
-        <ModalConatiner setIsOpen={setIsOpen}>
+      {isEditBoardOpen && (
+        <ModalConatiner setIsOpen={setIsEditBoardOpen}>
           <EditBoard
-            setIsOpen={setIsOpen}
+            setIsOpen={setIsEditBoardOpen}
             formAction="edit board"
             header="Edit Board"
             serializedBoardColumns={boardColumnsObject}
@@ -51,6 +54,6 @@ export const AddColumn = ({ boardColumnsNames, boardId }: Props) => {
           />
         </ModalConatiner>
       )}
-    </>
+    </div>
   );
 };
