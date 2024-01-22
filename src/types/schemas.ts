@@ -17,7 +17,7 @@ export interface ColumnSchema {
 export interface TaskSchema {
   id: string;
   title: string;
-  description?: string | null;
+  description: string;
   status: string;
   subtasks: SubtaskSchema[];
   columnId: string;

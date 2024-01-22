@@ -69,7 +69,7 @@ export const Navbar = () => {
           onClick={() => setDropDownOpen(!DropDownIsOpen)}
           src={Ellipsis}
           alt="ellipsis to edit or delete the current board"
-          className={styles.ellipsis}
+          className="ellipsis"
         />
         {DropDownIsOpen && (
           <DropDown element="Board" setDropDownOpen={setDropDownOpen} />

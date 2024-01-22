@@ -11,7 +11,7 @@ export const OptionsInput: React.FC<OptionsInputInterface> = (props) => {
 
   return (
     <>
-      <label className={styles.input__label} htmlFor="options">
+      <label className={styles.input__label} htmlFor={name}>
         Status
       </label>
       <select

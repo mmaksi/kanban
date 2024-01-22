@@ -1,0 +1,50 @@
+@import "../variables";
+@import "../mixins";
+
+.subtask {
+  &__container {
+    min-height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1.2rem;
+    gap: 1.6rem;
+    border-radius: 4px;
+    background-color: $dark-background;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  &__checkbox {
+    height: 1.6rem;
+    width: 1.6rem;
+    flex: 0 0 auto;
+    outline: 0;
+    border: 1px solid rgba(130, 143, 163, 0.2489);
+    border-radius: 2px;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  &__content {
+    color: $white;
+    @include body-M;
+  }
+}
+
+.content__completed {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.checkbox__completed {
+  background-color: $primary-purple;
+}
+
+.checkbox__check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

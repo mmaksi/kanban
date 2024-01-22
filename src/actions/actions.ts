@@ -1,5 +1,6 @@
 "use server";
 
+import { CompletedTasks } from "@/components/Modals/ViewTask.component";
 import {
   ColumnSchema,
   BoardSchema,
@@ -463,4 +464,46 @@ export const getAllTasks = async (boardId: string) => {
       },
     },
   });
+};
+
+export const updateSubtasksStatus = async (
+  taskId: string,
+  columnId: string,
+  currentStatus: string,
+  completedTasksObject: CompletedTasks[]
+) => {
+  await prisma.$transaction(async (tx) => {
+    for (const completedTask of completedTasksObject) {
+      await prisma.subtask.update({
+        where: { id: completedTask.subtaskId },
+        data: { isCompleted: completedTask.isCompleted },
+      });
+    }
+
+    await prisma.task.update({
+      where: { id: taskId },
+      data: { status: currentStatus },
+    });
+
+    await prisma.task.update({
+      where: { id: taskId },
+      data: { columnId: columnId },
+    });
+  });
+
+  try {
+    await Promise.all(
+      completedTasksObject.map(async ({ subtaskId, isCompleted }) => {
+        await prisma.subtask.update({
+          where: { id: subtaskId },
+          data: { isCompleted },
+        });
+      })
+    );
+  } catch (error) {
+    console.error("Error updating subtasks:", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+  revalidatePath("/");
 };

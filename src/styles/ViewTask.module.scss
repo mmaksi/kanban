@@ -1,0 +1,59 @@
+@import "../variables";
+@import "../mixins";
+
+.modal {
+  width: 48rem;
+  max-height: 90dvh;
+  overflow-y: auto;
+  border-radius: 0.6rem;
+  background-color: $dark-grey;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+  padding: 3.2rem;
+
+  &__description {
+    @include body-L;
+    color: $medium-grey;
+  }
+}
+
+.header {
+  &__container {
+    // margin-top: 3.2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  &__header {
+    color: $white;
+    @include heading-L;
+  }
+
+  &__ellipsis {
+    height: 20px;
+  }
+}
+
+.subtasks {
+  &__header {
+    @include body-M;
+    color: $white;
+    margin-bottom: 1.6rem;
+  }
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}
+
+.status {
+  &__header {
+    @include body-M;
+    color: $white;
+    margin-bottom: 1.6rem;
+  }
+}

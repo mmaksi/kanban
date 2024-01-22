@@ -11,12 +11,13 @@ const { lightBackground, darkBackground, white, darkGrey, primaryPurple25 } =
   exportedStyles as unknown as ExportedStyles;
 
 interface CheckBoxProps {
-  mode: AppMode;
   children: ReactNode;
 }
 
 export const CheckBox = (props: CheckBoxProps) => {
-  const { mode, children } = props;
+  const { children } = props;
+
+  const mode: AppMode = "dark";
 
   const [isHovered, setIsHovered] = useState(false);
   const [isCompleted, setCompleted] = useState(false);
@@ -24,10 +25,10 @@ export const CheckBox = (props: CheckBoxProps) => {
 
   const getHoverStyle = () => {
     switch (mode) {
-      case "light":
-        return {
-          backgroundColor: primaryPurple25,
-        };
+      // case "light":
+      //   return {
+      //     backgroundColor: primaryPurple25,
+      //   };
       case "dark":
         return {
           backgroundColor: primaryPurple25, // rgba(99, 95, 199, 0.25)
@@ -38,10 +39,10 @@ export const CheckBox = (props: CheckBoxProps) => {
 
   const getModeStyle = () => {
     switch (mode) {
-      case "light":
-        return {
-          backgroundColor: lightBackground,
-        };
+      // case "light":
+      //   return {
+      //     backgroundColor: lightBackground,
+      //   };
       case "dark":
         return {
           backgroundColor: darkBackground,
@@ -70,13 +71,14 @@ export const CheckBox = (props: CheckBoxProps) => {
         id="checkbox"
         type="checkbox"
         className={styles.checkbox}
-        style={
-          !isChecked && mode === "light"
-            ? { backgroundColor: white }
-            : !isChecked && mode === "dark"
-            ? { backgroundColor: darkGrey }
-            : {}
-        }
+        style={{ backgroundColor: darkGrey }}
+        // style={
+        //   !isChecked && mode === "light"
+        //     ? { backgroundColor: white }
+        //     : !isChecked && mode === "dark"
+        //     ? { backgroundColor: darkGrey }
+        //     : {}
+        // }
         onChange={() => setIsChecked(!isChecked)}
       />
       <label

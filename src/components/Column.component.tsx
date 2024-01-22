@@ -22,6 +22,9 @@ export const Column: React.FC<Props> = ({ title, tasks }) => {
                 id={task.id}
                 title={task.title}
                 subtasks={task.subtasks}
+                description={task.description}
+                status={task.status}
+                columnId={task.columnId}
               />
             );
           })}
