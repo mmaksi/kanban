@@ -36,8 +36,6 @@ export const BoardColumn = ({ boardId, columns, getAllTasks }: Props) => {
     fetchData();
   }, [getAllTasks, boardId]);
 
-  console.log(boardColumns);
-
   return (
     <>
       {!isPending && boardColumns.length > 0 && (

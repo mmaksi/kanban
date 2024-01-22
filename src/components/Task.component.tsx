@@ -39,7 +39,7 @@ const Task = (props: Props) => {
         <ModalConatiner setIsOpen={setViewTaskIsOpen}>
           <ViewTask
             title={title}
-            columnId={columnId}
+            taskId={id}
             description={description}
             status={status}
             subtasks={subtasks}

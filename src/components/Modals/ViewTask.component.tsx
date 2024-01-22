@@ -17,10 +17,10 @@ import { updateSubtasksStatus } from "@/actions/actions";
 
 interface ViewTaskProps {
   title: string;
-  columnId: string;
+  taskId: string;
   description: string;
   status: string;
-  subtasks: SubtaskSchema[];
+  subtasks: SubtaskSchema[] | never[];
 }
 
 export interface CompletedTasks {
@@ -29,7 +29,7 @@ export interface CompletedTasks {
 }
 
 export const ViewTask: React.FC<ViewTaskProps> = (props) => {
-  const { title, columnId, description, status, subtasks } = props;
+  const { title, taskId, description, status, subtasks } = props;
 
   const [pending, startTransition] = useTransition();
   const [currentStatus, setCurrentStatus] = useState(status);
@@ -61,15 +61,22 @@ export const ViewTask: React.FC<ViewTaskProps> = (props) => {
   )[0].id;
 
   const updateTask = () => {
+    console.log(subtasks);
     startTransition(async () => {
       await updateSubtasksStatus(
-        subtasks[0].taskId,
+        taskId,
         newColumnId,
         currentStatus,
         completedTasksObject
       );
     });
   };
+
+  console.log("taskId");
+  console.log(taskId);
+
+  console.log("finishedSubtasks");
+  console.log(finishedSubtasks);
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -84,9 +91,13 @@ export const ViewTask: React.FC<ViewTaskProps> = (props) => {
       </div>
       <p className={`${styles.modal__description}`}>{description}</p>
       <div className={styles.subtasks}>
-        <h3 className={styles.subtasks__header}>
+        <h3
+          className={styles.subtasks__header}
+          style={finishedSubtasks.length === 0 ? { display: "none" } : {}}
+        >
           Subtasks {`${finishedSubtasks.length} of ${subtasks.length}`}
         </h3>
+
         <div className={styles.subtasks__container}>
           {subtasks.map((subtask) => (
             <SubTask
