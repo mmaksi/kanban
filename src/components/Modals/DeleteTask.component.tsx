@@ -1,46 +1,31 @@
 import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
+import { useFormState } from "react-dom";
 
 import styles from "@/styles/DeleteBoard.module.scss";
 
-import { useFormState } from "react-dom";
-import { RootState } from "@/store/store";
 import * as actions from "@/actions/actions";
-import {
-  setCurrentBoardId,
-  setCurrentBoardName,
-} from "@/store/slices/board.slice";
-import { useDispatch, useSelector } from "react-redux";
 
 import Button from "@/components/Button.component";
 
 const initialState = { error: "", modalState: "" };
 
 interface Props {
+  currentTaskId?: string;
+  currentTaskName?: string;
   setIsDeleteModalOpen: Dispatch<SetStateAction<boolean>>;
   setDropDownOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const DeleteBoard: React.FC<Props> = ({
+export const DeleteTask: React.FC<Props> = ({
+  currentTaskId,
+  currentTaskName,
   setIsDeleteModalOpen,
   setDropDownOpen,
 }) => {
-  const dispatch = useDispatch();
-  const currentBoardId = useSelector((state: RootState) => state.board.id);
-  const currentBoardName = useSelector(
-    (state: RootState) => state.board.boardName
-  );
-  const currentBoardColumns = useSelector(
-    (state: RootState) => state.board.columns
-  );
+  const deleteTask = actions.deleteTask.bind(null, currentTaskId);
 
-  const deletedBoard = actions.deleteBoardByName.bind(
-    null,
-    currentBoardId,
-    currentBoardColumns
-  );
-
-  const [deleteBoardFormState, deleteBoardInfo] = useFormState(
-    deletedBoard,
+  const [deleteTaskFormState, deleteTaskInfo] = useFormState(
+    deleteTask,
     initialState
   );
 
@@ -51,24 +36,19 @@ export const DeleteBoard: React.FC<Props> = ({
 
   useEffect(() => {
     // Check if the board has been deleted
-    if (deleteBoardFormState.modalState === "deleted") {
-      dispatch(setCurrentBoardId(""));
-      dispatch(setCurrentBoardName(""));
+    if (deleteTaskFormState.modalState === "deleted") {
       closeModal();
-      if (window) {
-        window.location.reload();
-      }
     }
-  }, [deleteBoardFormState.modalState, closeModal, dispatch]);
+  }, [deleteTaskFormState.modalState, closeModal]);
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-      <h3 className={styles.modal__header}>Delete this board?</h3>
+      <h3 className={styles.modal__header}>Delete this task?</h3>
       <p className={styles.modal__content}>
-        Are you sure you want to delete the {currentBoardName} board? This
-        action will remove all columns and tasks and cannot be reversed.
+        Are you sure you want to delete the {currentTaskName} task and its
+        subtasks? This action cannot be reversed.
       </p>
-      <form className={styles.modal__buttons} action={deleteBoardInfo}>
+      <form className={styles.modal__buttons} action={deleteTaskInfo}>
         <Button
           type="destructive"
           mode="dark"

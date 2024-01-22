@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, MutableRefObject, SetStateAction, useState } from "react";
 
 import styles from "@/styles/DropDown.module.scss";
 
@@ -10,13 +10,23 @@ import { RootState } from "@/store/store";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
 import { DeleteBoard } from "./Modals/DeleteBoard.component";
+import { DeleteTask } from "./Modals/DeleteTask.component";
 
 interface Props {
-  element: string;
+  element: "Board" | "Task";
+  currentTaskName?: string;
+  currentTaskId?: string;
   setDropDownOpen: Dispatch<SetStateAction<boolean>>;
+  divRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
-export const DropDown: React.FC<Props> = ({ element, setDropDownOpen }) => {
+export const DropDown: React.FC<Props> = ({
+  element,
+  currentTaskName,
+  setDropDownOpen,
+  currentTaskId,
+  divRef,
+}) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -31,14 +41,24 @@ export const DropDown: React.FC<Props> = ({ element, setDropDownOpen }) => {
     }
   };
 
-  const deleteBoardClickHandler = () => {
-    if (currentBoardId.length) {
+  const clickHandler = () => {
+    if (currentBoardId.length || currentTaskId?.length) {
       setIsDeleteModalOpen(true);
     }
   };
 
   return (
-    <div className={`${styles.dropdown__container} dark__bg`}>
+    <div
+      ref={divRef}
+      onClick={(event) => event.stopPropagation()}
+      className={`${styles.dropdown__container} ${
+        element === "Board"
+          ? styles.navbar__dropdown
+          : "Task"
+          ? styles.task__dropdown
+          : ""
+      } dark__bg`}
+    >
       <span
         className={`${styles.dropdown__element} ${
           !currentBoardId.length && styles.notAllowed
@@ -51,7 +71,7 @@ export const DropDown: React.FC<Props> = ({ element, setDropDownOpen }) => {
         className={`${styles.dropdown__element} ${styles.element__delete} ${
           !currentBoardId.length && styles.notAllowed
         }`}
-        onClick={deleteBoardClickHandler}
+        onClick={clickHandler}
       >
         Delete {element}
       </span>
@@ -68,11 +88,24 @@ export const DropDown: React.FC<Props> = ({ element, setDropDownOpen }) => {
         </ModalConatiner>
       )}
 
-      {currentBoardId.length > 0 && isDeleteModalOpen && (
-        <ModalConatiner setIsOpen={setIsEditModalOpen}>
-          <DeleteBoard
+      {currentBoardId.length > 0 &&
+        isDeleteModalOpen &&
+        element === "Board" && (
+          <ModalConatiner setIsOpen={setIsDeleteModalOpen}>
+            <DeleteBoard
+              setIsDeleteModalOpen={setIsDeleteModalOpen}
+              setDropDownOpen={setDropDownOpen}
+            />
+          </ModalConatiner>
+        )}
+
+      {currentBoardId.length > 0 && isDeleteModalOpen && element === "Task" && (
+        <ModalConatiner setIsOpen={setIsDeleteModalOpen}>
+          <DeleteTask
+            currentTaskName={currentTaskName}
             setIsDeleteModalOpen={setIsDeleteModalOpen}
             setDropDownOpen={setDropDownOpen}
+            currentTaskId={currentTaskId}
           />
         </ModalConatiner>
       )}

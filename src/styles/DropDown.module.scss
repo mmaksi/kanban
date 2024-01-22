@@ -13,7 +13,6 @@
     border-radius: 8px;
     padding: 1.6rem;
     position: absolute;
-    top: $navbar-lg-height - $p-lg;
   }
 
   .dropdown__element {
@@ -31,6 +30,15 @@
   .element__delete {
     color: $primary-red;
   }
+}
+
+.navbar__dropdown {
+  top: $navbar-lg-height - $p-lg;
+}
+
+.task__dropdown {
+  top: calc(3.2rem + 20px + 1rem);
+  right: 3.2rem;
 }
 
 .notAllowed:hover {

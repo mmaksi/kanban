@@ -369,6 +369,28 @@ export const deleteBoardByName = async (
   return { error: "", modalState: "deleted" };
 };
 
+export const deleteTask = async (
+  currentTaskId: string | undefined,
+  formState: { error: string; modalState: string },
+  formData: FormData
+) => {
+  try {
+    await prisma.subtask.deleteMany({
+      where: { taskId: currentTaskId },
+    });
+
+    await prisma.task.delete({
+      where: { id: currentTaskId },
+    });
+  } catch (error) {
+    console.error("Error during transaction:", error);
+    // Handle the error as needed (rollback, log, etc.)
+  }
+
+  revalidatePath("/");
+  return { error: "", modalState: "deleted" };
+};
+
 export const getAllBoards = async () => {
   const allBoards = await prisma.board.findMany({
     include: { columns: true },

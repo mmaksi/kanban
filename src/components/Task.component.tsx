@@ -3,7 +3,6 @@ import { useState } from "react";
 import styles from "@/styles/Task.module.scss";
 
 import { SubtaskSchema } from "@/types/schemas";
-import { useDrag } from "react-dnd";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { ViewTask } from "./Modals/ViewTask.component";
 

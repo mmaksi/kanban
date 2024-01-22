@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 import styles from "@/styles/Navbar.module.scss";
@@ -18,11 +18,33 @@ import { TaskModal } from "./Modals/TaskModal.component";
 import Button from "./Button.component";
 
 export const Navbar = () => {
+  const divRef = useRef<HTMLDivElement | null>(null);
+
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [DropDownIsOpen, setDropDownOpen] = useState(false);
   const currentBoardName = useSelector(
     (state: RootState) => state.board.boardName
   );
+
+  const globalCloseModal = useCallback(
+    (event: MouseEvent) => {
+      // Check if the click target is outside the div
+      if (divRef.current && !divRef.current.contains(event.target as Node)) {
+        setDropDownOpen(!DropDownIsOpen);
+      }
+    },
+    [divRef, DropDownIsOpen]
+  );
+
+  useEffect(() => {
+    // Add a global click event listener to close the modal when the user clicks outside the dropdown
+    document.addEventListener("click", globalCloseModal);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("click", globalCloseModal);
+    };
+  }, [globalCloseModal]);
 
   return (
     <div className={styles.navbar}>
@@ -72,7 +94,11 @@ export const Navbar = () => {
           className="ellipsis"
         />
         {DropDownIsOpen && (
-          <DropDown element="Board" setDropDownOpen={setDropDownOpen} />
+          <DropDown
+            element="Board"
+            setDropDownOpen={setDropDownOpen}
+            divRef={divRef}
+          />
         )}
         {isTaskModalOpen && (
           <ModalConatiner setIsOpen={setIsTaskModalOpen}>
