@@ -42,3 +42,7 @@ h4 {
 .ellipsis:hover {
   cursor: pointer;
 }
+
+.notAllowed {
+  cursor: not-allowed !important; /* Change cursor style to indicate unclickable */
+}

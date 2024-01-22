@@ -46,6 +46,12 @@ export const Navbar = () => {
     };
   }, [globalCloseModal]);
 
+  const clickHandler = () => {
+    if (currentBoardName.length !== 0) {
+      setDropDownOpen(!DropDownIsOpen);
+    }
+  };
+
   return (
     <div className={styles.navbar}>
       <div className={styles.navbar__headers}>
@@ -88,10 +94,11 @@ export const Navbar = () => {
           <span className={styles.button__cta}> Add New Task</span>
         </Button>
         <Image
-          onClick={() => setDropDownOpen(!DropDownIsOpen)}
+          onClick={clickHandler}
           src={Ellipsis}
           alt="ellipsis to edit or delete the current board"
           className="ellipsis"
+          style={currentBoardName.length === 0 ? { cursor: "not-allowed" } : {}}
         />
         {DropDownIsOpen && (
           <DropDown
