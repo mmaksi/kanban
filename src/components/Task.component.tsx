@@ -17,7 +17,7 @@ interface Props {
 }
 
 const Task = (props: Props) => {
-  const { id, columnId, title, description, status, subtasks } = props;
+  const { id, title, description, status, subtasks } = props;
 
   const [viewTaskIsOpen, setViewTaskIsOpen] = useState(false);
   const finishedSubtasks = subtasks.filter((subtask) => subtask.isCompleted);
