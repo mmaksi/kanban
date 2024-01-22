@@ -15,7 +15,7 @@ model Board {
 
 model Column {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
+  name    String @unique
   tasks   Task[]
   boardId String @db.ObjectId
   board   Board  @relation(fields: [boardId], references: [id])
@@ -27,8 +27,8 @@ model Task {
   description String?
   status      String
   subtasks    Subtask[]
-  columnId    String @db.ObjectId
-  column      Column   @relation(fields: [columnId], references: [id])
+  columnId    String    @db.ObjectId
+  column      Column    @relation(fields: [columnId], references: [id])
 }
 
 model Subtask {

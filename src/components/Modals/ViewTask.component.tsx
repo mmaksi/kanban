@@ -56,11 +56,15 @@ export const ViewTask: React.FC<ViewTaskProps> = (props) => {
     setCurrentStatus(e.target.value);
   };
 
+  const newColumnId = currentColumns.filter(
+    (columnInfo) => columnInfo.name === currentStatus
+  )[0].id;
+
   const updateTask = () => {
     startTransition(async () => {
       await updateSubtasksStatus(
         subtasks[0].taskId,
-        columnId,
+        newColumnId,
         currentStatus,
         completedTasksObject
       );
@@ -109,7 +113,7 @@ export const ViewTask: React.FC<ViewTaskProps> = (props) => {
         type="primary"
         mode="dark"
         size="L"
-        disabled={!subtasks.length || pending}
+        disabled={pending}
         clickhandler={updateTask}
       >
         Save Changes

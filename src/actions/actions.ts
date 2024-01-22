@@ -107,7 +107,7 @@ const getExistedBoards = async (boardName: string) => {
   });
 };
 
-const validateForm = (
+const validateBoardForm = (
   formData: FormData,
   formValues: string[],
   foundBoards: any,
@@ -118,6 +118,14 @@ const validateForm = (
     (action === "create" && foundBoards.length > 0)
   ) {
     return { error: "Board already exists with this name", modalState: "" };
+  }
+
+  for (let i = 0; i < formValues.length - 1; i++) {
+    for (let j = i + 1; j < formValues.length; j++) {
+      if (formValues[i] === formValues[j]) {
+        return { error: "Fields cannot have duplicate values", modalState: "" };
+      }
+    }
   }
   // Form validation
   const hasEmptyString = formValues.some((item) => item.trim() === "");
@@ -221,7 +229,12 @@ export const createBoard = async (
   const boardName = formData.get("boardName") as string;
   const foundBoards = await getExistedBoards(boardName);
 
-  const results = validateForm(formData, formValues, foundBoards, "create");
+  const results = validateBoardForm(
+    formData,
+    formValues,
+    foundBoards,
+    "create"
+  );
   if (results) return results;
 
   await prisma.board.create({
@@ -246,7 +259,7 @@ export const editBoard = async (
   const boardName = formData.get("boardName") as string;
   const foundBoards = await getExistedBoards(boardName);
 
-  const results = validateForm(formData, formValues, foundBoards, "edit");
+  const results = validateBoardForm(formData, formValues, foundBoards, "edit");
   if (results) return results;
 
   // Look for existing board for TypeScript
@@ -468,7 +481,7 @@ export const getAllTasks = async (boardId: string) => {
 
 export const updateSubtasksStatus = async (
   taskId: string,
-  columnId: string,
+  newColumnId: string,
   currentStatus: string,
   completedTasksObject: CompletedTasks[]
 ) => {
@@ -487,7 +500,7 @@ export const updateSubtasksStatus = async (
 
     await prisma.task.update({
       where: { id: taskId },
-      data: { columnId: columnId },
+      data: { columnId: newColumnId },
     });
   });
 
