@@ -59,11 +59,13 @@ export const Navbar = () => {
           src={DesktopLogoDark}
           alt="Kanban - task management application"
           className={styles.navbar__desktopLogo}
+          priority={true}
         />
         <Image
           src={MobileLogo}
           alt="Kanban - task management application"
           className={styles.navbar__mobileLogo}
+          priority={true}
         />
         <h2
           className={`${styles.navbar__boardName} ${styles.header__border} {

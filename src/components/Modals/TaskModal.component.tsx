@@ -1,6 +1,12 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { useFormState } from "react-dom";
 import Image from "next/image";
 
@@ -15,21 +21,30 @@ import { OptionsInput } from "../OptionsInput.component";
 import { TextArea } from "../TextArea.component";
 import { Input } from "../Input.component";
 import Button from "../Button.component";
+import { SubtaskSchema, TaskData, TaskSchema } from "@/types/schemas";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   title: string;
   formAction: "edit task" | "create task";
+  task?: TaskData; // in case of editing the task at hand
 }
 
-interface FormFields {
+interface CreateFormFields {
   title: string;
   description: string;
   status: string;
   [key: string]: string;
 }
 
-const initialCreateFormState: FormFields = {
+interface EditFormFields {
+  title: string;
+  description: string;
+  status: string;
+  subtasks: SubtaskSchema[];
+}
+
+const initialCreateFormState: CreateFormFields = {
   title: "",
   description: "",
   status: "",
@@ -42,8 +57,17 @@ const serializedSubtasks = {
   subtask1: "Cook potato",
 };
 
+type TaskEvent = ChangeEvent<any>;
+
 export const TaskModal: React.FC<Props> = (props) => {
-  const { setIsOpen, title, formAction } = props;
+  const { setIsOpen, title, formAction, task } = props;
+
+  const initialEditFormState: EditFormFields = {
+    title: task?.title || "",
+    description: task?.description || "",
+    status: task?.status || "",
+    subtasks: task?.subtasks || [],
+  };
 
   const currentBoardId = useSelector((state: RootState) => state.board.id);
   const currentBoardColumns = useSelector(
@@ -54,6 +78,7 @@ export const TaskModal: React.FC<Props> = (props) => {
   const [createFormFields, setCreateFormFields] = useState(
     initialCreateFormState
   );
+  const [editFormFields, setEditFormFields] = useState(initialEditFormState);
   const [subtasksValues, setSubtasksValues] = useState<string[]>(
     Object.keys(serializedSubtasks)
   );
@@ -68,15 +93,13 @@ export const TaskModal: React.FC<Props> = (props) => {
     currentBoardId,
     taskColumnId
   );
+  const updatedTask = actions.editBoard.bind(null, "boardId"); // TODO
 
   const [newTaskFormState, createTask] = useFormState(
     createTaskInfo,
     initialState
   );
-  // const [editTaskFormState, editBoard] = useFormState(
-  //   updatedBoard,
-  //   initialState
-  // );
+  const [editTaskFormState, editTask] = useFormState(updatedTask, initialState);
 
   useEffect(() => {
     if (
@@ -87,7 +110,7 @@ export const TaskModal: React.FC<Props> = (props) => {
     }
   }, [newTaskFormState.modalState, setIsOpen]);
 
-  const inputChangeHandler = (event: any) => {
+  const inputChangeHandler = (event: TaskEvent) => {
     const { name, value } = event.target;
     let selectedIndex = undefined;
     if (event.target.selectedIndex) {
@@ -100,9 +123,9 @@ export const TaskModal: React.FC<Props> = (props) => {
     // value.length > 2 ? (editTaskFormState.error = "none") : null;
 
     switch (formAction) {
-      // case "edit task":
-      //   setEditFormFields({ ...editFormFields, [name]: value });
-      //   break;
+      case "edit task":
+        setEditFormFields({ ...editFormFields, [name]: value });
+        break;
       case "create task":
         setCreateFormFields({ ...createFormFields, [name]: value });
       default:
@@ -125,11 +148,16 @@ export const TaskModal: React.FC<Props> = (props) => {
     return setSubtasksValues([...subtasksValues, `subtask${newSubtaskIndex}`]);
   };
 
+  console.log(editFormFields);
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
       <h2 className={styles.modal__header}>{title}</h2>
       {/* TODO edit task */}
-      <form action={formAction == "create task" ? createTask : ""}>
+      <form
+        action={
+          formAction == "create task" ? createTask : "" ? "edit task" : editTask
+        }
+      >
         <label className={styles.modalForm__label} htmlFor="title">
           Title
         </label>
@@ -138,11 +166,18 @@ export const TaskModal: React.FC<Props> = (props) => {
           label="Title"
           id="title"
           inputName="title"
-          defaultValue={createFormFields["title"]}
+          defaultValue={createFormFields["title"] || editFormFields["title"]}
           placeholder="e.g. Take coffee break"
           onChange={inputChangeHandler}
         />
-        <TextArea label="Description" name="description" />
+        <TextArea
+          onChange={inputChangeHandler}
+          label="Description"
+          name="description"
+          defaultValue={
+            createFormFields["description"] || editFormFields["description"]
+          }
+        />
         <div className={styles.subtasks}>
           <span className={styles.subtasks__header}>Subtasks</span>
           <div className={styles.subtasks__columns}>
@@ -157,6 +192,28 @@ export const TaskModal: React.FC<Props> = (props) => {
                     displayLabel={false}
                     inputName={`subtask${index}`}
                     defaultValue={createFormFields[`subtask${index}`]}
+                    onChange={inputChangeHandler}
+                  />
+                  <span onClick={removeSubtask}>
+                    <Image
+                      className={styles.subtasks__remove}
+                      src={Cross}
+                      alt="cross icon to remove the input field"
+                    />
+                  </span>
+                </div>
+              ))}
+            {formAction === "edit task" &&
+              initialEditFormState.subtasks.map((subtask, index) => (
+                // TODO key should not be the index
+                <div key={subtask.id} className={styles.input__container_row}>
+                  <Input
+                    label="Subtask"
+                    placeholder="e.g. Drink coffee & smile"
+                    id={`subtask${index}`}
+                    displayLabel={false}
+                    inputName={`subtask${index}`}
+                    defaultValue={subtask.title}
                     onChange={inputChangeHandler}
                   />
                   <span onClick={removeSubtask}>

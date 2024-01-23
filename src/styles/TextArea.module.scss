@@ -8,6 +8,9 @@
 .textarea__label {
   display: block;
   margin-bottom: 0.8rem;
+  @include body-M;
+  line-height: normal;
+  color: $white;
 }
 
 .textarea__input {
@@ -17,4 +20,5 @@
   border-radius: 4px;
   border: 1px solid rgba(130, 143, 163, 0.25);
   @include body-L;
+  color: $white;
 }

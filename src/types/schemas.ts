@@ -47,3 +47,12 @@ export interface ColumnData {
   name: string;
   boardId: string;
 }
+
+export interface TaskData {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  subtasks: SubtaskSchema[];
+  columnId: string;
+}

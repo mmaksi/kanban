@@ -1,8 +1,9 @@
 import styles from "@/styles/OptionsInput.module.scss";
+import { ChangeEvent } from "react";
 
 export interface OptionsInputInterface {
   name: string;
-  changeHandler: (event: any) => void;
+  changeHandler: (event: ChangeEvent<HTMLSelectElement>) => void;
   options: { id: string; value: string }[];
 }
 

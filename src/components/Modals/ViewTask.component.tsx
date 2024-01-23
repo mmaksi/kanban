@@ -7,7 +7,7 @@ import styles from "@/styles/ViewTask.module.scss";
 
 import Ellipsis from "public/icon-vertical-ellipsis.svg";
 import { updateSubtasksStatus } from "@/actions/actions";
-import { SubtaskSchema } from "@/types/schemas";
+import { SubtaskSchema, TaskData } from "@/types/schemas";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 
@@ -17,11 +17,7 @@ import { SubTask } from "../Subtask.component";
 import Button from "../Button.component";
 
 interface ViewTaskProps {
-  title: string;
-  taskId: string;
-  description: string;
-  status: string;
-  subtasks: SubtaskSchema[] | undefined;
+  task: TaskData;
 }
 
 export interface CompletedTasks {
@@ -30,7 +26,7 @@ export interface CompletedTasks {
 }
 
 export const ViewTask: React.FC<ViewTaskProps> = (props) => {
-  const { title, taskId, description, status, subtasks } = props;
+  const { title, id: taskId, description, status, subtasks } = props.task;
 
   const [pending, startTransition] = useTransition();
   const [currentStatus, setCurrentStatus] = useState(status);
@@ -93,6 +89,7 @@ export const ViewTask: React.FC<ViewTaskProps> = (props) => {
       {DropDownIsOpen && (
         <DropDown
           element="Task"
+          task={props.task}
           currentTaskName={title}
           setDropDownOpen={setDropDownOpen}
           currentTaskId={taskId}

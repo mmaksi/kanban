@@ -9,11 +9,14 @@ import { RootState } from "@/store/store";
 
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
+import { TaskModal as EditTask } from "./Modals/TaskModal.component";
 import { DeleteBoard } from "./Modals/DeleteBoard.component";
 import { DeleteTask } from "./Modals/DeleteTask.component";
+import { TaskData } from "@/types/schemas";
 
 interface Props {
   element: "Board" | "Task";
+  task?: TaskData;
   currentTaskName?: string;
   currentTaskId?: string;
   setDropDownOpen: Dispatch<SetStateAction<boolean>>;
@@ -22,6 +25,7 @@ interface Props {
 
 export const DropDown: React.FC<Props> = ({
   element,
+  task,
   currentTaskName,
   setDropDownOpen,
   currentTaskId,
@@ -84,6 +88,17 @@ export const DropDown: React.FC<Props> = ({
             formAction="edit board"
             serializedBoardColumns={serializedBoardColumns}
             boardId={currentBoardId}
+          />
+        </ModalConatiner>
+      )}
+
+      {currentBoardId.length > 0 && isEditModalOpen && element === "Task" && (
+        <ModalConatiner setIsOpen={setIsEditModalOpen}>
+          <EditTask
+            title="Edit Task"
+            formAction="edit task"
+            setIsOpen={setIsEditModalOpen}
+            task={task}
           />
         </ModalConatiner>
       )}

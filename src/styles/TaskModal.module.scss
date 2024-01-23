@@ -32,6 +32,9 @@
 
 .modalForm {
   &__label {
+    @include body-M;
+    line-height: normal;
+    color: $white;
     margin-bottom: 0.8rem;
     display: block;
   }
@@ -42,6 +45,8 @@
 
   &__header {
     @include body-M;
+    line-height: normal;
+    color: $white;
   }
 
   &__columns {

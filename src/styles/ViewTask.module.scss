@@ -3,7 +3,7 @@
 
 .modal {
   width: 48rem;
-  max-height: 90dvh;
+  max-height: 80dvh;
   overflow-y: auto;
   border-radius: 0.6rem;
   background-color: $dark-grey;
@@ -12,6 +12,13 @@
   gap: 2.4rem;
   padding: 3.2rem;
   position: relative;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-color: $primary-purple;
+  }
 
   &__description {
     @include body-L;

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import styles from "@/styles/Task.module.scss";
 
-import { SubtaskSchema } from "@/types/schemas";
+import { SubtaskSchema, TaskData } from "@/types/schemas";
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { ViewTask } from "./Modals/ViewTask.component";
 
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const Task = (props: Props) => {
-  const { id, title, description, status, subtasks } = props;
+  const { id, title, description, status, subtasks, columnId } = props;
 
   const [viewTaskIsOpen, setViewTaskIsOpen] = useState(false);
   const finishedSubtasks = subtasks.filter((subtask) => subtask.isCompleted);
@@ -24,6 +24,8 @@ const Task = (props: Props) => {
   const showTask = () => {
     setViewTaskIsOpen(!viewTaskIsOpen);
   };
+
+  const task: TaskData = { id, title, description, status, subtasks, columnId };
 
   return (
     <>
@@ -36,13 +38,7 @@ const Task = (props: Props) => {
 
       {viewTaskIsOpen && (
         <ModalConatiner setIsOpen={setViewTaskIsOpen}>
-          <ViewTask
-            title={title}
-            taskId={id}
-            description={description}
-            status={status}
-            subtasks={subtasks}
-          />
+          <ViewTask task={task} />
         </ModalConatiner>
       )}
     </>
