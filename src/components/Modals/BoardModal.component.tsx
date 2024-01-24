@@ -32,19 +32,38 @@ interface FormFields {
 
 const initialState = { error: "", modalState: "" };
 
-export const BoardModal = ({
-  setIsOpen,
-  header,
-  formAction,
-  boardsLength,
-  serializedBoardColumns,
-  boardId,
-}: Props) => {
-  const updatedBoard = actions.editBoard.bind(null, boardId);
+export const BoardModal = (props: Props) => {
+  const {
+    setIsOpen,
+    header,
+    formAction,
+    boardsLength,
+    serializedBoardColumns,
+    boardId,
+  } = props;
+
+  const [updatedColumns, setUpdatedColumns] = useState<
+    { id: string; name: string }[]
+  >([]);
+  const [deletedColumns, setDeletedColumns] = useState<
+    { id: string; name: string }[]
+  >([]);
+
+  const dispatch = useDispatch();
   const currentBoardName = useSelector(
     (state: RootState) => state.board.boardName
   );
-  const dispatch = useDispatch();
+  const columnsIds = useSelector((state: RootState) => state.board.columns).map(
+    (column) => column.id
+  );
+
+  const updatedBoard = actions.editBoard.bind(
+    null,
+    boardId,
+    updatedColumns,
+    deletedColumns
+  );
+
   // Form action
   const [newBoardFormState, createBoard] = useFormState(
     actions.createBoard,
@@ -63,6 +82,12 @@ export const BoardModal = ({
 
     switch (formAction) {
       case "edit board":
+        const updatedIds = updatedColumns.map((col) => col.id);
+        const updatedId: string | undefined =
+          columnsIds[parseInt(name.replace(/\D/g, ""), 10)];
+        if (updatedId && !updatedIds.includes(updatedId))
+          setUpdatedColumns([...updatedColumns, { id: updatedId, name: "" }]);
+
         setEditFormFields({ ...editFormFields, [name]: value });
         break;
       case "create board":
@@ -81,18 +106,27 @@ export const BoardModal = ({
   );
 
   const addColumn = () => {
-    const newColumnIndex = columnsValues.length;
-    return setColumnsValues([...columnsValues, `column${newColumnIndex}`]);
+    return setColumnsValues([
+      ...columnsValues,
+      `column${columnsValues.length}`,
+    ]);
   };
 
-  const removeColumn = (event: any): void => {
-    const inputElement = event.target.parentNode.previousElementSibling;
-    const valueToRemove = inputElement.name;
-    const removeArray = columnsValues.filter(
-      (column) => column !== valueToRemove
-    );
-    const modifiedArray = removeArray.map((_, index) => `column${index}`);
-    return setColumnsValues(modifiedArray);
+  const removeColumn = (e: any, index: number): void => {
+    const deletedColumnName = e.target.parentNode.previousElementSibling.value;
+    console.log(deletedColumnName);
+    if (columnsIds[index]) {
+      setDeletedColumns([
+        ...deletedColumns,
+        { id: columnsIds[index], name: deletedColumnName }, // todo
+      ]);
+      // setIdsToDelete([...idsToDelete, ]);
+    }
+    setEditFormFields({ ...editFormFields, [`column${index}`]: "" });
+
+    const newColumnsValues = [...columnsValues];
+    newColumnsValues.splice(index, 1);
+    return setColumnsValues(newColumnsValues);
   };
 
   // Edit board modal
@@ -178,15 +212,17 @@ export const BoardModal = ({
                   <Input
                     label="Board Column"
                     placeholder="Todo/Doing/Done.."
-                    id={`column${index}`}
+                    id={`${columnsValues[index]}`}
                     displayLabel={false}
-                    inputName={`column${index}`}
-                    defaultValue={createFormFields[`column${index}`] || ""}
+                    inputName={`${columnsValues[index]}`}
+                    defaultValue={
+                      createFormFields[`${columnsValues[index]}`] || ""
+                    }
                     onChange={changeHandler}
                   />
                   <span
                     className={styles.column__remove}
-                    onClick={removeColumn}
+                    onClick={(e) => removeColumn(e, index)}
                   >
                     <Image
                       src={Cross}
@@ -202,15 +238,17 @@ export const BoardModal = ({
                   <Input
                     label="Board Column"
                     placeholder="Todo/Doing/Done.."
-                    id={`column${index}`}
+                    id={`${columnsValues[index]}`}
                     displayLabel={false}
-                    inputName={`column${index}`}
-                    defaultValue={editFormFields[`column${index}`] || ""}
+                    inputName={`${columnsValues[index]}`}
+                    defaultValue={
+                      editFormFields[`${columnsValues[index]}`] || ""
+                    }
                     onChange={changeHandler}
                   />
                   <span
                     className={styles.column__remove}
-                    onClick={removeColumn}
+                    onClick={(e) => removeColumn(e, index)}
                   >
                     <Image
                       src={Cross}

@@ -52,6 +52,8 @@ export const Navbar = () => {
     }
   };
 
+  const boardColumns = useSelector((state: RootState) => state.board.columns);
+
   return (
     <div className={styles.navbar}>
       <div className={styles.navbar__headers}>
@@ -85,7 +87,9 @@ export const Navbar = () => {
       </div>
       <div className={styles.navbar__button}>
         <Button
-          disabled={!!(currentBoardName.length === 0)}
+          disabled={
+            !!(currentBoardName.length === 0) || !!(boardColumns.length === 0)
+          }
           size="L"
           type="primary"
           mode="dark"

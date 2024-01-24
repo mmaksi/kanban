@@ -84,6 +84,7 @@ const serializeExistedBoardColumns = (
 ) => {
   const existingColumns = existingBoard.columns;
   const updatedColumns: NewBoardColumn[] = [];
+
   formColumns.forEach((formColumn, index) => {
     const existingColumn = existingColumns[index];
     if (existingColumn) {
@@ -251,6 +252,8 @@ export const createBoard = async (
 
 export const editBoard = async (
   boardId: string,
+  updatedColumns: { id: string; name: string }[],
+  deletedColumns: { id: string; name: string }[],
   formState: { error: string; modalState: string },
   formData: FormData
 ) => {
@@ -258,6 +261,24 @@ export const editBoard = async (
 
   const boardName = formData.get("boardName") as string;
   const foundBoards = await getExistedBoards(boardName);
+
+  const existedColumns = await prisma.board.findUnique({
+    where: { id: boardId },
+    include: { columns: true },
+  });
+  const existedColumnsNames = existedColumns?.columns.map((col) => {
+    return { name: col.name };
+  });
+
+  const colIdsToDelete = deletedColumns.map(
+    (deletedColumn) => deletedColumn.id
+  );
+  const columnsToAdd = formColumns.filter(
+    (formColumn) =>
+      !existedColumnsNames?.some(
+        (existedColumn) => existedColumn.name === formColumn.name
+      )
+  );
 
   const results = validateBoardForm(formData, formValues, foundBoards, "edit");
   if (results) return results;
@@ -272,41 +293,20 @@ export const editBoard = async (
     throw new Error(`Board with ID ${boardId} not found`);
   }
 
-  // Step 2: Update the names of the existing columns
-  const updatedColumns = serializeExistedBoardColumns(
-    existingBoard as BoardSchema,
-    formColumns,
-    boardId
-  );
-
-  const updatedColumnsToAdd = updatedColumns.filter(
-    (col) => !col.id
-  ) as unknown as ColumnSchema[];
-  const updatedColumnsToUpdate = updatedColumns.filter((col) => col.id);
-  const updatedColumnsIdsToUpdate = updatedColumnsToUpdate.map(
-    (column) => column.id
-  ) as string[];
-  const existingColumns = existingBoard.columns;
-  const columnsToDelete = existingColumns.filter(
-    (column) => !updatedColumns.includes(column)
-  );
-
   await prisma.$transaction(async (tx) => {
-    // Update existing columns
-    for (const updatedColumn of updatedColumnsToUpdate) {
+    // Update columns names
+    for (const updatedColumn of updatedColumns) {
       await tx.column.update({
         where: { id: updatedColumn.id },
         data: { name: updatedColumn.name },
       });
     }
-
     // Create new columns
-    if (updatedColumnsToAdd.length > 0) {
+    if (columnsToAdd.length > 0) {
       await tx.column.createMany({
-        data: updatedColumnsToAdd,
+        data: columnsToAdd,
       });
     }
-
     // Update board name
     await tx.board.update({
       where: { id: boardId },
@@ -314,11 +314,28 @@ export const editBoard = async (
         boardName,
       },
     });
-
     // Delete extra columns
-    for (const column of columnsToDelete) {
+    for (const columnId of colIdsToDelete) {
+      await tx.subtask.deleteMany({
+        where: {
+          taskId: {
+            in: await prisma.task
+              .findMany({ where: { columnId } })
+              .then((tasks) => tasks.map((task) => task.id)),
+          },
+        },
+      });
+      await tx.task.deleteMany({
+        where: {
+          id: {
+            in: await prisma.task
+              .findMany({ where: { columnId } })
+              .then((tasks) => tasks.map((task) => task.id)),
+          },
+        },
+      });
       await tx.column.delete({
-        where: { id: column.id },
+        where: { id: columnId },
       });
     }
   });

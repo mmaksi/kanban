@@ -148,7 +148,6 @@ export const TaskModal: React.FC<Props> = (props) => {
     return setSubtasksValues([...subtasksValues, `subtask${newSubtaskIndex}`]);
   };
 
-  console.log(editFormFields);
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
       <h2 className={styles.modal__header}>{title}</h2>
