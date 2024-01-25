@@ -86,7 +86,10 @@ export const BoardModal = (props: Props) => {
         const updatedId: string | undefined =
           columnsIds[parseInt(name.replace(/\D/g, ""), 10)];
         if (updatedId && !updatedIds.includes(updatedId))
-          setUpdatedColumns([...updatedColumns, { id: updatedId, name: "" }]);
+          setUpdatedColumns([
+            ...updatedColumns,
+            { id: updatedId, name: value },
+          ]);
 
         setEditFormFields({ ...editFormFields, [name]: value });
         break;
@@ -114,7 +117,6 @@ export const BoardModal = (props: Props) => {
 
   const removeColumn = (e: any, index: number): void => {
     const deletedColumnName = e.target.parentNode.previousElementSibling.value;
-    console.log(deletedColumnName);
     if (columnsIds[index]) {
       setDeletedColumns([
         ...deletedColumns,

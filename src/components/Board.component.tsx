@@ -13,7 +13,7 @@ import {
 import styles from "@/styles/Board.module.scss";
 
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
-import { BoardModal as EditBoard } from "./Modals/BoardModal.component";
+import { EditBoard } from "./Modals/EditBoardModal.component";
 import { BoardColumn } from "./BoardColumns.component";
 import Button from "./Button.component";
 

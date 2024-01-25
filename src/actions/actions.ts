@@ -1,5 +1,6 @@
 "use server";
 
+import { InputFields } from "@/components/Modals/EditBoardModal.component";
 import { CompletedTasks } from "@/components/Modals/ViewTask.component";
 import {
   ColumnSchema,
@@ -83,7 +84,7 @@ const serializeExistedBoardColumns = (
   boardId: string
 ) => {
   const existingColumns = existingBoard.columns;
-  const updatedColumns: NewBoardColumn[] = [];
+  const columnsToUpdate: NewBoardColumn[] = [];
 
   formColumns.forEach((formColumn, index) => {
     const existingColumn = existingColumns[index];
@@ -92,12 +93,12 @@ const serializeExistedBoardColumns = (
         name: formColumn.name,
         boardId,
       });
-      updatedColumns.push(updatedColumn);
+      columnsToUpdate.push(updatedColumn);
     }
     if (!existingColumn)
-      updatedColumns.push({ name: formColumn.name, boardId });
+      columnsToUpdate.push({ name: formColumn.name, boardId });
   });
-  return updatedColumns;
+  return columnsToUpdate;
 };
 
 const getExistedBoards = async (boardName: string) => {
@@ -108,12 +109,14 @@ const getExistedBoards = async (boardName: string) => {
   });
 };
 
-const validateBoardForm = (
+const validateBoardForm = async (
   formData: FormData,
   formValues: string[],
-  foundBoards: any,
   action: "create" | "edit"
 ) => {
+  const boardName = formData.get("boardName") as string;
+  const foundBoards = await getExistedBoards(boardName);
+
   if (
     (action === "edit" && foundBoards.length > 1) ||
     (action === "create" && foundBoards.length > 0)
@@ -123,7 +126,9 @@ const validateBoardForm = (
 
   for (let i = 0; i < formValues.length - 1; i++) {
     for (let j = i + 1; j < formValues.length; j++) {
-      if (formValues[i] === formValues[j]) {
+      if (
+        formValues[i].toLocaleLowerCase() === formValues[j].toLocaleLowerCase()
+      ) {
         return { error: "Fields cannot have duplicate values", modalState: "" };
       }
     }
@@ -137,7 +142,6 @@ const validateBoardForm = (
     };
   }
 
-  const boardName = formData.get("boardName");
   if (typeof boardName === "string" && boardName.length < 3) {
     return {
       error: "Input fields must be longer than 2 characters",
@@ -230,12 +234,7 @@ export const createBoard = async (
   const boardName = formData.get("boardName") as string;
   const foundBoards = await getExistedBoards(boardName);
 
-  const results = validateBoardForm(
-    formData,
-    formValues,
-    foundBoards,
-    "create"
-  );
+  const results = await validateBoardForm(formData, formValues, "create");
   if (results) return results;
 
   await prisma.board.create({
@@ -252,35 +251,15 @@ export const createBoard = async (
 
 export const editBoard = async (
   boardId: string,
-  updatedColumns: { id: string; name: string }[],
-  deletedColumns: { id: string; name: string }[],
+  boardColumns: InputFields[],
   formState: { error: string; modalState: string },
   formData: FormData
 ) => {
   const [formValues, formColumns] = serializeFormData(formData, boardId);
 
   const boardName = formData.get("boardName") as string;
-  const foundBoards = await getExistedBoards(boardName);
 
-  const existedColumns = await prisma.board.findUnique({
-    where: { id: boardId },
-    include: { columns: true },
-  });
-  const existedColumnsNames = existedColumns?.columns.map((col) => {
-    return { name: col.name };
-  });
-
-  const colIdsToDelete = deletedColumns.map(
-    (deletedColumn) => deletedColumn.id
-  );
-  const columnsToAdd = formColumns.filter(
-    (formColumn) =>
-      !existedColumnsNames?.some(
-        (existedColumn) => existedColumn.name === formColumn.name
-      )
-  );
-
-  const results = validateBoardForm(formData, formValues, foundBoards, "edit");
+  const results = await validateBoardForm(formData, formValues, "edit");
   if (results) return results;
 
   // Look for existing board for TypeScript
@@ -293,54 +272,78 @@ export const editBoard = async (
     throw new Error(`Board with ID ${boardId} not found`);
   }
 
-  await prisma.$transaction(async (tx) => {
-    // Update columns names
-    for (const updatedColumn of updatedColumns) {
-      await tx.column.update({
-        where: { id: updatedColumn.id },
-        data: { name: updatedColumn.name },
-      });
-    }
-    // Create new columns
-    if (columnsToAdd.length > 0) {
-      await tx.column.createMany({
-        data: columnsToAdd,
-      });
-    }
-    // Update board name
-    await tx.board.update({
-      where: { id: boardId },
-      data: {
-        boardName,
-      },
-    });
-    // Delete extra columns
-    for (const columnId of colIdsToDelete) {
-      await tx.subtask.deleteMany({
-        where: {
-          taskId: {
-            in: await prisma.task
-              .findMany({ where: { columnId } })
-              .then((tasks) => tasks.map((task) => task.id)),
-          },
-        },
-      });
-      await tx.task.deleteMany({
-        where: {
-          id: {
-            in: await prisma.task
-              .findMany({ where: { columnId } })
-              .then((tasks) => tasks.map((task) => task.id)),
-          },
-        },
-      });
-      await tx.column.delete({
-        where: { id: columnId },
-      });
-    }
+  const existingColumns = existingBoard.columns;
+
+  const columnsToWithId = boardColumns.filter(
+    (boardColumn) => boardColumn.id !== null
+  );
+  const columnsToUpdate = existingColumns!.filter((existingColumn) => {
+    return columnsToWithId.some((col) => col.name === existingColumn.name);
+  });
+  const columnsToAdd = boardColumns.filter(
+    (boardColumn) => boardColumn.id === null
+  );
+  const columnsToDelete = existingColumns!.filter((existingColumn) => {
+    return !formColumns.some(
+      (formColumn) => formColumn.name === existingColumn.name
+    );
   });
 
-  revalidatePath("/");
+  // console.log(columnsToAdd);
+  console.log(columnsToUpdate);
+  // console.log(columnsToDelete);
+
+  // await prisma.$transaction(async (tx) => {
+  //   // Update columns names
+  //   for (const updatedColumn of columnsToUpdate) {
+  //     await tx.column.update({
+  //       where: { id: updatedColumn.id },
+  //       data: { name: updatedColumn.name },
+  //     });
+  //   }
+  //   // Create new columns
+  //   if (columnsToAdd.length > 0) {
+  //     await tx.column.createMany({
+  //       data: columnsToAdd,
+  //     });
+  //   }
+  //   // Update board name
+  //   await tx.board.update({
+  //     where: { id: boardId },
+  //     data: {
+  //       boardName,
+  //     },
+  //   });
+  //   // Delete extra columns/tasks/subtasks
+  //   const colIdsToDelete = columnsToDelete.map(
+  //     (deletedColumn) => deletedColumn.id
+  //   );
+  //   for (const columnId of colIdsToDelete) {
+  //     await tx.subtask.deleteMany({
+  //       where: {
+  //         taskId: {
+  //           in: await prisma.task
+  //             .findMany({ where: { columnId } })
+  //             .then((tasks) => tasks.map((task) => task.id)),
+  //         },
+  //       },
+  //     });
+  //     await tx.task.deleteMany({
+  //       where: {
+  //         id: {
+  //           in: await prisma.task
+  //             .findMany({ where: { columnId } })
+  //             .then((tasks) => tasks.map((task) => task.id)),
+  //         },
+  //       },
+  //     });
+  //     await tx.column.delete({
+  //       where: { id: columnId },
+  //     });
+  //   }
+  // });
+
+  // revalidatePath("/");
   return { error: "", modalState: "edited" };
 };
 
