@@ -85,7 +85,6 @@ export const DropDown: React.FC<Props> = ({
           <EditBoard
             setIsOpen={setIsEditModalOpen}
             header="Edit Board"
-            formAction="edit board"
             serializedBoardColumns={serializedBoardColumns}
             boardId={currentBoardId}
           />
@@ -96,7 +95,6 @@ export const DropDown: React.FC<Props> = ({
         <ModalConatiner setIsOpen={setIsEditModalOpen}>
           <EditTask
             title="Edit Task"
-            formAction="edit task"
             setIsOpen={setIsEditModalOpen}
             task={task}
           />

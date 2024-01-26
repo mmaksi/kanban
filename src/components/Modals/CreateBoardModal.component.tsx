@@ -10,62 +10,47 @@ import {
   setCurrentBoardId,
   setCurrentBoardName,
 } from "@/store/slices/board.slice";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { useDispatch } from "react-redux";
 
 import { Input } from "@/components/Input.component";
 import Button from "@/components/Button.component";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  header: string;
+  boardsLength?: number | undefined;
   serializedBoardColumns: { [key: string]: string } | never[];
   boardId: string;
 }
 
-export interface InputFields {
+interface InputField {
   name: string;
   value: string;
-  id: string | null;
 }
 
 const initialState = { error: "", modalState: "" };
 
-export const EditBoard = (props: Props) => {
-  const { setIsOpen, header, serializedBoardColumns, boardId } = props;
-
-  const currentBoardName = useSelector(
-    (state: RootState) => state.board.boardName
-  );
-  const [boardName, setBoardName] = useState(currentBoardName);
-  const columnsIds = useSelector((state: RootState) => state.board.columns).map(
-    (column) => column.id
-  );
-
-  // Form input values
-  const initialFormFields: InputFields[] = Object.entries(
-    serializedBoardColumns
-  ).map(([key, value], index) => ({
-    name: key,
-    value,
-    id: columnsIds[index],
-  }));
-  const initialCounter = initialFormFields.length - 1;
-  const [formFields, setFormFields] = useState(initialFormFields);
-  const [counter, setCounter] = useState(initialCounter);
-
-  const updatedBoard = actions.editBoard.bind(null, boardId, formFields);
-  const [formState, editBoard] = useFormState(updatedBoard, initialState);
+export const BoardModal = (props: Props) => {
+  const { setIsOpen, boardsLength, serializedBoardColumns, boardId } = props;
 
   const dispatch = useDispatch();
 
+  const [formFields, setFormFields] = useState<InputField[]>([]);
+  const [boardName, setBoardName] = useState("");
+  const [counter, setCounter] = useState(0);
+
+  const [formState, createBoard] = useFormState(
+    actions.createBoard,
+    initialState
+  );
+
   const changeHandler = (event: any) => {
     // Client side input validation
-    const { name: inputName, value } = event.target;
-    // value.length > 2 ? (formState.error = "none") : null;
+    const { name, value } = event.target;
+    value.length > 2 ? (formState.error = "none") : null;
+
     setFormFields((prevInputs) =>
       prevInputs.map((input) =>
-        input.name === inputName ? { ...input, value } : input
+        input.name === name ? { ...input, value } : input
       )
     );
   };
@@ -73,7 +58,7 @@ export const EditBoard = (props: Props) => {
   const addInput = () => {
     const name = `column${counter + 1}`;
     setCounter((prevCounter) => prevCounter + 1);
-    setFormFields([...formFields, { name, value: "", id: null }]);
+    setFormFields([...formFields, { name, value: "" }]);
   };
 
   const removeInput = (idx: number) => {
@@ -81,21 +66,40 @@ export const EditBoard = (props: Props) => {
     setFormFields(newFormFields);
   };
 
-  // Changes after editing the board
+  const currentBoardIndexString = localStorage.getItem("currentBoardIndex");
+  let currentBoardIndex: number | null = null;
+  if (currentBoardIndexString) {
+    currentBoardIndex = parseInt(currentBoardIndexString);
+  }
+
   useEffect(() => {
-    if (formState.modalState === "edited") {
-      dispatch(setCurrentBoardName(boardName));
+    if (formState.modalState === "created") {
       dispatch(setCurrentBoardId(boardId));
+      dispatch(setCurrentBoardName(boardName));
+
+      if (boardsLength) {
+        const newIndex = boardsLength - 1;
+        localStorage.setItem("currentBoardIndex", newIndex.toString());
+      } else {
+        localStorage.setItem("currentBoardIndex", "0");
+      }
       setIsOpen(false);
     }
-  }, [formState.modalState, boardName, boardId, setIsOpen, dispatch]);
+  }, [
+    formState.modalState,
+    boardsLength,
+    boardId,
+    boardName,
+    setIsOpen,
+    dispatch,
+  ]);
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
       <h2 className={styles.modal__header} style={{ marginTop: 0 }}>
-        {header}
+        Add New Boards
       </h2>
-      <form action={editBoard}>
+      <form action={createBoard}>
         <div className={styles.input__container}>
           <Input
             label="Board Name"
@@ -119,7 +123,7 @@ export const EditBoard = (props: Props) => {
                   id={field.name}
                   displayLabel={false}
                   inputName={field.name}
-                  defaultValue={field.value || ""}
+                  defaultValue={field.value}
                   onChange={changeHandler}
                 />
                 <span
@@ -157,7 +161,7 @@ export const EditBoard = (props: Props) => {
               buttonType="submit"
               setIsOpen={setIsOpen}
             >
-              Save Changes
+              + Create New Board
             </Button>
 
             {formState.error !== "none" && formState.error !== "" && (

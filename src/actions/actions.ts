@@ -232,7 +232,6 @@ export const createBoard = async (
   });
 
   const boardName = formData.get("boardName") as string;
-  const foundBoards = await getExistedBoards(boardName);
 
   const results = await validateBoardForm(formData, formValues, "create");
   if (results) return results;
@@ -306,55 +305,61 @@ export const editBoard = async (
     boardId,
   }));
 
-  await prisma.$transaction(async (tx) => {
-    // Update columns names
-    for (const updatedColumn of columnsToUpdate) {
-      await tx.column.update({
-        where: { id: updatedColumn.id as string },
-        data: { name: updatedColumn.value },
-      });
-    }
-    // Create new columns
-    if (columnsToAdd.length > 0) {
-      await tx.column.createMany({
-        data: columnsToAdd,
-      });
-    }
-    // Update board name
-    await tx.board.update({
-      where: { id: boardId },
-      data: {
-        boardName,
-      },
-    });
-    // Delete extra columns/tasks/subtasks
-    const colIdsToDelete = columnsToDelete.map(
-      (deletedColumn) => deletedColumn.id
-    );
-    for (const columnId of colIdsToDelete) {
-      await tx.subtask.deleteMany({
-        where: {
-          taskId: {
-            in: await prisma.task
-              .findMany({ where: { columnId } })
-              .then((tasks) => tasks.map((task) => task.id)),
-          },
+  await prisma.$transaction(
+    async (tx) => {
+      // Update columns names
+      for (const updatedColumn of columnsToUpdate) {
+        await tx.column.update({
+          where: { id: updatedColumn.id as string },
+          data: { name: updatedColumn.value },
+        });
+      }
+      // Create new columns
+      if (columnsToAdd.length > 0) {
+        await tx.column.createMany({
+          data: columnsToAdd,
+        });
+      }
+      // Update board name
+      await tx.board.update({
+        where: { id: boardId },
+        data: {
+          boardName,
         },
       });
-      await tx.task.deleteMany({
-        where: {
-          id: {
-            in: await prisma.task
-              .findMany({ where: { columnId } })
-              .then((tasks) => tasks.map((task) => task.id)),
+      // Delete extra columns/tasks/subtasks
+      const colIdsToDelete = columnsToDelete.map(
+        (deletedColumn) => deletedColumn.id
+      );
+      for (const columnId of colIdsToDelete) {
+        await tx.subtask.deleteMany({
+          where: {
+            taskId: {
+              in: await prisma.task
+                .findMany({ where: { columnId } })
+                .then((tasks) => tasks.map((task) => task.id)),
+            },
           },
-        },
-      });
-      await tx.column.delete({
-        where: { id: columnId },
-      });
+        });
+        await tx.task.deleteMany({
+          where: {
+            id: {
+              in: await prisma.task
+                .findMany({ where: { columnId } })
+                .then((tasks) => tasks.map((task) => task.id)),
+            },
+          },
+        });
+        await tx.column.delete({
+          where: { id: columnId },
+        });
+      }
+    },
+    {
+      maxWait: 5000,
+      timeout: 10000,
     }
-  });
+  );
 
   revalidatePath("/");
   return { error: "", modalState: "edited" };

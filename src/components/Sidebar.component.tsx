@@ -15,7 +15,7 @@ import boardIcon from "public/icon-board.svg";
 import Image from "next/image";
 
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
-import { BoardModal as NewBoard } from "./Modals/BoardModal.component";
+import { BoardModal as NewBoard } from "./Modals/CreateBoardModal.component";
 
 interface Props {
   boards: BoardData[] | undefined;
@@ -92,8 +92,6 @@ export const Sidebar = ({ boards }: Props) => {
         <ModalConatiner setIsOpen={setIsOpen}>
           <NewBoard
             setIsOpen={setIsOpen}
-            header="Add New Boards"
-            formAction="create board"
             boardsLength={boards?.length}
             serializedBoardColumns={[]}
             boardId=""

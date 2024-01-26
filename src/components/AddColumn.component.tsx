@@ -47,7 +47,6 @@ export const AddColumn = ({ boardColumnsNames, boardId }: Props) => {
         <ModalConatiner setIsOpen={setIsEditBoardOpen}>
           <EditBoard
             setIsOpen={setIsEditBoardOpen}
-            formAction="edit board"
             header="Edit Board"
             serializedBoardColumns={boardColumnsObject}
             boardId={boardId}

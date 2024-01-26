@@ -78,7 +78,6 @@ export const Board = ({ boards, getAllTasks }: Props) => {
           <EditBoard
             setIsOpen={setIsOpen}
             header="Edit Board"
-            formAction="edit board"
             serializedBoardColumns={[]}
             boardId={boardId}
           />
