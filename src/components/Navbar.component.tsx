@@ -14,7 +14,7 @@ import { RootState } from "@/store/store";
 
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { DropDown } from "./DropDown.component";
-import { TaskModal } from "./Modals/TaskModal.component";
+import { TaskModal } from "./Modals/EditTaskModal.component";
 import Button from "./Button.component";
 
 export const Navbar = () => {

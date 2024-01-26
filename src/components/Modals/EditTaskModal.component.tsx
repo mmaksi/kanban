@@ -152,11 +152,7 @@ export const TaskModal: React.FC<Props> = (props) => {
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
       <h2 className={styles.modal__header}>{title}</h2>
       {/* TODO edit task */}
-      <form
-        action={
-          formAction == "create task" ? createTask : "" ? "edit task" : editTask
-        }
-      >
+      <form action={editTask}>
         <label className={styles.modalForm__label} htmlFor="title">
           Title
         </label>
@@ -180,50 +176,27 @@ export const TaskModal: React.FC<Props> = (props) => {
         <div className={styles.subtasks}>
           <span className={styles.subtasks__header}>Subtasks</span>
           <div className={styles.subtasks__columns}>
-            {formAction === "create task" &&
-              subtasksValues.map((subtaskValue, index) => (
-                // TODO key should not be the index
-                <div key={subtaskValue} className={styles.input__container_row}>
-                  <Input
-                    label="Subtask"
-                    placeholder="e.g. Drink coffee & smile"
-                    id={`subtask${index}`}
-                    displayLabel={false}
-                    inputName={`subtask${index}`}
-                    defaultValue={createFormFields[`subtask${index}`]}
-                    onChange={inputChangeHandler}
+            {initialEditFormState.subtasks.map((subtask, index) => (
+              // TODO key should not be the index
+              <div key={subtask.id} className={styles.input__container_row}>
+                <Input
+                  label="Subtask"
+                  placeholder="e.g. Drink coffee & smile"
+                  id={`subtask${index}`}
+                  displayLabel={false}
+                  inputName={`subtask${index}`}
+                  defaultValue={subtask.title}
+                  onChange={inputChangeHandler}
+                />
+                <span onClick={removeSubtask}>
+                  <Image
+                    className={styles.subtasks__remove}
+                    src={Cross}
+                    alt="cross icon to remove the input field"
                   />
-                  <span onClick={removeSubtask}>
-                    <Image
-                      className={styles.subtasks__remove}
-                      src={Cross}
-                      alt="cross icon to remove the input field"
-                    />
-                  </span>
-                </div>
-              ))}
-            {formAction === "edit task" &&
-              initialEditFormState.subtasks.map((subtask, index) => (
-                // TODO key should not be the index
-                <div key={subtask.id} className={styles.input__container_row}>
-                  <Input
-                    label="Subtask"
-                    placeholder="e.g. Drink coffee & smile"
-                    id={`subtask${index}`}
-                    displayLabel={false}
-                    inputName={`subtask${index}`}
-                    defaultValue={subtask.title}
-                    onChange={inputChangeHandler}
-                  />
-                  <span onClick={removeSubtask}>
-                    <Image
-                      className={styles.subtasks__remove}
-                      src={Cross}
-                      alt="cross icon to remove the input field"
-                    />
-                  </span>
-                </div>
-              ))}
+                </span>
+              </div>
+            ))}
           </div>
           <Button
             buttonType="button"
