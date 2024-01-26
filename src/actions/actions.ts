@@ -277,73 +277,86 @@ export const editBoard = async (
   const columnsToWithId = boardColumns.filter(
     (boardColumn) => boardColumn.id !== null
   );
-  const columnsToUpdate = existingColumns!.filter((existingColumn) => {
-    return columnsToWithId.some((col) => col.name === existingColumn.name);
-  });
-  const columnsToAdd = boardColumns.filter(
+  const columnsToUpdate = columnsToWithId.filter(
+    (col) =>
+      !existingColumns.some(
+        (existingColumn) => existingColumn.name === col.value
+      )
+  );
+  const filteredColumnsToAdd = boardColumns.filter(
     (boardColumn) => boardColumn.id === null
   );
-  const columnsToDelete = existingColumns!.filter((existingColumn) => {
+  const updatedAndToDelete = existingColumns!.filter((existingColumn) => {
     return !formColumns.some(
       (formColumn) => formColumn.name === existingColumn.name
     );
   });
 
-  // console.log(columnsToAdd);
-  console.log(columnsToUpdate);
-  // console.log(columnsToDelete);
+  const columnsToDelete =
+    columnsToUpdate.length > 0
+      ? updatedAndToDelete.filter((col) => {
+          return columnsToUpdate.some(
+            (colToUpdate) => colToUpdate.id !== col.id
+          );
+        })
+      : updatedAndToDelete;
 
-  // await prisma.$transaction(async (tx) => {
-  //   // Update columns names
-  //   for (const updatedColumn of columnsToUpdate) {
-  //     await tx.column.update({
-  //       where: { id: updatedColumn.id },
-  //       data: { name: updatedColumn.name },
-  //     });
-  //   }
-  //   // Create new columns
-  //   if (columnsToAdd.length > 0) {
-  //     await tx.column.createMany({
-  //       data: columnsToAdd,
-  //     });
-  //   }
-  //   // Update board name
-  //   await tx.board.update({
-  //     where: { id: boardId },
-  //     data: {
-  //       boardName,
-  //     },
-  //   });
-  //   // Delete extra columns/tasks/subtasks
-  //   const colIdsToDelete = columnsToDelete.map(
-  //     (deletedColumn) => deletedColumn.id
-  //   );
-  //   for (const columnId of colIdsToDelete) {
-  //     await tx.subtask.deleteMany({
-  //       where: {
-  //         taskId: {
-  //           in: await prisma.task
-  //             .findMany({ where: { columnId } })
-  //             .then((tasks) => tasks.map((task) => task.id)),
-  //         },
-  //       },
-  //     });
-  //     await tx.task.deleteMany({
-  //       where: {
-  //         id: {
-  //           in: await prisma.task
-  //             .findMany({ where: { columnId } })
-  //             .then((tasks) => tasks.map((task) => task.id)),
-  //         },
-  //       },
-  //     });
-  //     await tx.column.delete({
-  //       where: { id: columnId },
-  //     });
-  //   }
-  // });
+  const columnsToAdd = filteredColumnsToAdd.map((col, index) => ({
+    name: col.value,
+    boardId,
+  }));
 
-  // revalidatePath("/");
+  await prisma.$transaction(async (tx) => {
+    // Update columns names
+    for (const updatedColumn of columnsToUpdate) {
+      await tx.column.update({
+        where: { id: updatedColumn.id as string },
+        data: { name: updatedColumn.value },
+      });
+    }
+    // Create new columns
+    if (columnsToAdd.length > 0) {
+      await tx.column.createMany({
+        data: columnsToAdd,
+      });
+    }
+    // Update board name
+    await tx.board.update({
+      where: { id: boardId },
+      data: {
+        boardName,
+      },
+    });
+    // Delete extra columns/tasks/subtasks
+    const colIdsToDelete = columnsToDelete.map(
+      (deletedColumn) => deletedColumn.id
+    );
+    for (const columnId of colIdsToDelete) {
+      await tx.subtask.deleteMany({
+        where: {
+          taskId: {
+            in: await prisma.task
+              .findMany({ where: { columnId } })
+              .then((tasks) => tasks.map((task) => task.id)),
+          },
+        },
+      });
+      await tx.task.deleteMany({
+        where: {
+          id: {
+            in: await prisma.task
+              .findMany({ where: { columnId } })
+              .then((tasks) => tasks.map((task) => task.id)),
+          },
+        },
+      });
+      await tx.column.delete({
+        where: { id: columnId },
+      });
+    }
+  });
+
+  revalidatePath("/");
   return { error: "", modalState: "edited" };
 };
 

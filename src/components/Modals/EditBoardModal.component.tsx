@@ -27,7 +27,7 @@ interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   header: string;
   formAction: "edit board" | "create board";
-  serializedBoardColumns: { [key: string]: string } | never[];
+  serializedBoardColumns: { [key: string]: string };
   boardId: string;
 }
 
@@ -62,7 +62,9 @@ export const EditBoard = (props: Props) => {
     value,
     id: columnsIds[index],
   }));
+  const initialCounter = initialFormFields.length - 1;
   const [formFields, setFormFields] = useState(initialFormFields);
+  const [counter, setCounter] = useState(initialCounter);
 
   const updatedBoard = actions.editBoard.bind(null, boardId, formFields);
   const [formState, editBoard] = useFormState(updatedBoard, initialState);
@@ -81,7 +83,8 @@ export const EditBoard = (props: Props) => {
   };
 
   const addInput = () => {
-    const name = `column${formFields.length}`;
+    const name = `column${counter + 1}`;
+    setCounter((prevCounter) => prevCounter + 1);
     setFormFields([...formFields, { name, value: "", id: null }]);
   };
 
