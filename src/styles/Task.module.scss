@@ -22,6 +22,10 @@
     color: $white;
     @include heading-M;
     line-height: normal;
+    overflow: hidden;
+    width: 20rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   &__subtasks {
