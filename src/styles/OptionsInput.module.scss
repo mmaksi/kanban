@@ -24,12 +24,3 @@ input.input::placeholder {
   color: rgba(255, 255, 255, 0.25);
   @include body-L;
 }
-
-input.input::after {
-  content: "\25BC"; /* Unicode character for down arrow */
-  color: #007bff; /* Set the color of the arrow */
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-}
