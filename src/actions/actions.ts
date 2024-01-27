@@ -211,14 +211,27 @@ export const createBoard = async (
   const results = await validateBoardForm(formData, formValues, "create");
   if (results) return results;
 
-  await prisma.board.create({
-    data: {
-      boardName,
-      columns: {
-        create: boardColumns,
+  try {
+    await prisma.board.create({
+      data: {
+        boardName,
+        columns: {
+          create: boardColumns,
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      await prisma.$disconnect();
+      return {
+        error: "Failed to create a new board. Please try again.",
+        modalState: "",
+      };
+    }
+  } finally {
+    await prisma.$disconnect();
+  }
+
   revalidatePath("/");
   return { error: "", modalState: "created" };
 };
@@ -280,61 +293,73 @@ export const editBoard = async (
     boardId,
   }));
 
-  await prisma.$transaction(
-    async (tx) => {
-      // Update columns names
-      for (const updatedColumn of columnsToUpdate) {
-        await tx.column.update({
-          where: { id: updatedColumn.id as string },
-          data: { name: updatedColumn.value },
-        });
-      }
-      // Create new columns
-      if (columnsToAdd.length > 0) {
-        await tx.column.createMany({
-          data: columnsToAdd,
-        });
-      }
-      // Update board name
-      await tx.board.update({
-        where: { id: boardId },
-        data: {
-          boardName,
-        },
-      });
-      // Delete extra columns/tasks/subtasks
-      const colIdsToDelete = columnsToDelete.map(
-        (deletedColumn) => deletedColumn.id
-      );
-      for (const columnId of colIdsToDelete) {
-        await tx.subtask.deleteMany({
-          where: {
-            taskId: {
-              in: await prisma.task
-                .findMany({ where: { columnId } })
-                .then((tasks) => tasks.map((task) => task.id)),
-            },
+  try {
+    await prisma.$transaction(
+      async (tx) => {
+        // Update columns names
+        for (const updatedColumn of columnsToUpdate) {
+          await tx.column.update({
+            where: { id: updatedColumn.id as string },
+            data: { name: updatedColumn.value },
+          });
+        }
+        // Create new columns
+        if (columnsToAdd.length > 0) {
+          await tx.column.createMany({
+            data: columnsToAdd,
+          });
+        }
+        // Update board name
+        await tx.board.update({
+          where: { id: boardId },
+          data: {
+            boardName,
           },
         });
-        await tx.task.deleteMany({
-          where: {
-            id: {
-              in: await prisma.task
-                .findMany({ where: { columnId } })
-                .then((tasks) => tasks.map((task) => task.id)),
+        // Delete extra columns/tasks/subtasks
+        const colIdsToDelete = columnsToDelete.map(
+          (deletedColumn) => deletedColumn.id
+        );
+        for (const columnId of colIdsToDelete) {
+          await tx.subtask.deleteMany({
+            where: {
+              taskId: {
+                in: await prisma.task
+                  .findMany({ where: { columnId } })
+                  .then((tasks) => tasks.map((task) => task.id)),
+              },
             },
-          },
-        });
-        await tx.column.delete({
-          where: { id: columnId },
-        });
+          });
+          await tx.task.deleteMany({
+            where: {
+              id: {
+                in: await prisma.task
+                  .findMany({ where: { columnId } })
+                  .then((tasks) => tasks.map((task) => task.id)),
+              },
+            },
+          });
+          await tx.column.delete({
+            where: { id: columnId },
+          });
+        }
+      },
+      {
+        maxWait: 5000,
+        timeout: 10000,
       }
-    },
-    {
-      maxWait: 5000,
-      timeout: 10000,
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      await prisma.$disconnect();
+      return {
+        error: "Failed to save changes. Please try again.",
+        modalState: "",
+      };
     }
-  );
+  } finally {
+    await prisma.$disconnect();
+  }
 
   revalidatePath("/");
   return { error: "", modalState: "edited" };
@@ -390,44 +415,54 @@ export const editTask = async (
     (subtask) => subtask.toDelete === true
   );
 
-  await prisma.$transaction(
-    async (tx) => {
-      // Update subtasks names
-      for (const subtaskToUpdate of subtasksToUpdate) {
-        await tx.subtask.update({
-          where: { id: subtaskToUpdate.id as string },
-          data: { title: subtaskToUpdate.value },
-        });
-      }
-      // Create new subtasks
-      if (subtasksToAdd.length > 0) {
-        await tx.subtask.createMany({
-          data: subtasksToAdd,
-        });
-      }
-      // Update task title and description
-      await tx.task.update({
-        where: { id: taskId },
-        data: {
-          title: taskTitle,
-          description,
-          columnId: taskColumnId,
-        },
-      });
-      // Delete extra tasks/subtasks
-      for (const subtask of subtasksToDelete) {
-        await tx.subtask.deleteMany({
-          where: {
-            id: subtask.id!, // we filtered the null ids
+  try {
+    await prisma.$transaction(
+      async (tx) => {
+        // Update subtasks names
+        for (const subtaskToUpdate of subtasksToUpdate) {
+          await tx.subtask.update({
+            where: { id: subtaskToUpdate.id as string },
+            data: { title: subtaskToUpdate.value },
+          });
+        }
+        // Create new subtasks
+        if (subtasksToAdd.length > 0) {
+          await tx.subtask.createMany({
+            data: subtasksToAdd,
+          });
+        }
+        // Update task title and description
+        await tx.task.update({
+          where: { id: taskId },
+          data: {
+            title: taskTitle,
+            description,
+            columnId: taskColumnId,
           },
         });
+        // Delete extra tasks/subtasks
+        for (const subtask of subtasksToDelete) {
+          await tx.subtask.deleteMany({
+            where: {
+              id: subtask.id!, // we filtered the null ids
+            },
+          });
+        }
+      },
+      {
+        maxWait: 5000,
+        timeout: 10000,
       }
-    },
-    {
-      maxWait: 5000,
-      timeout: 10000,
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      await prisma.$disconnect();
+      return {
+        error: "Failed to save changes. Please try again.",
+        modalState: "",
+      };
     }
-  );
+  }
 
   revalidatePath("/");
   return { error: "", modalState: "edited" };
@@ -467,8 +502,11 @@ export const deleteBoardByName = async (
       });
     });
   } catch (error) {
-    console.error("Error during transaction:", error);
-    // Handle the error as needed (rollback, log, etc.)
+    await prisma.$disconnect();
+    return {
+      error: "Failed to delete the board. Please try again.",
+      modalState: "",
+    };
   }
 
   revalidatePath("/");
@@ -489,8 +527,11 @@ export const deleteTask = async (
       where: { id: currentTaskId },
     });
   } catch (error) {
-    console.error("Error during transaction:", error);
-    // Handle the error as needed (rollback, log, etc.)
+    await prisma.$disconnect();
+    return {
+      error: "Failed to delete the task. Please try again.",
+      modalState: "",
+    };
   }
 
   revalidatePath("/");
@@ -498,11 +539,15 @@ export const deleteTask = async (
 };
 
 export const getAllBoards = async () => {
-  const allBoards = await prisma.board.findMany({
-    include: { columns: true },
-  });
-  lastBoard = allBoards[allBoards.length - 1];
-  return allBoards;
+  try {
+    const allBoards = await prisma.board.findMany({
+      include: { columns: true },
+    });
+    lastBoard = allBoards[allBoards.length - 1];
+    return allBoards;
+  } catch (error) {
+    await prisma.$disconnect();
+  }
 };
 
 export const getLastBoard = async () => {
@@ -542,14 +587,22 @@ export const createTask = async (
   const results = validateTaskForm(formData, formValuesToValidate);
   if (results) return results;
 
-  await saveTaskAndSubtasks(
-    boardId,
-    taskColumnId,
-    title,
-    description,
-    status,
-    subtasks
-  );
+  try {
+    await saveTaskAndSubtasks(
+      boardId,
+      taskColumnId,
+      title,
+      description,
+      status,
+      subtasks
+    );
+  } catch (error) {
+    await prisma.$disconnect();
+    return {
+      error: "Failed to save the changes. Please try again.",
+      modalState: "",
+    };
+  }
 
   // await prisma.board.update({
   //   where: { id: boardId },
@@ -591,20 +644,28 @@ export const createTask = async (
 };
 
 export const getAllTasks = async (boardId: string) => {
-  return await prisma.board.findUnique({
-    where: { id: boardId },
-    include: {
-      columns: {
-        include: {
-          tasks: {
-            include: {
-              subtasks: true,
+  try {
+    return await prisma.board.findUnique({
+      where: { id: boardId },
+      include: {
+        columns: {
+          include: {
+            tasks: {
+              include: {
+                subtasks: true,
+              },
             },
           },
         },
       },
-    },
-  });
+    });
+  } catch (error) {
+    await prisma.$disconnect();
+    return {
+      error: "Failed to fetch tasks data. Please try again.",
+      modalState: "",
+    };
+  }
 };
 
 export const updateSubtasksStatus = async (
@@ -642,7 +703,11 @@ export const updateSubtasksStatus = async (
       })
     );
   } catch (error) {
-    console.error("Error updating subtasks:", error);
+    await prisma.$disconnect();
+    return {
+      error: "Failed to save changes. Please try again.",
+      modalState: "",
+    };
   } finally {
     await prisma.$disconnect();
   }
