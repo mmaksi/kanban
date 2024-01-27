@@ -14,8 +14,8 @@ import { RootState } from "@/store/store";
 
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { DropDown } from "./DropDown.component";
-import { TaskModal } from "./Modals/EditTaskModal.component";
 import Button from "./Button.component";
+import { CreateTask } from "./Modals/CreateTaskModal.component";
 
 export const Navbar = () => {
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -115,11 +115,7 @@ export const Navbar = () => {
         )}
         {isTaskModalOpen && (
           <ModalConatiner setIsOpen={setIsTaskModalOpen}>
-            <TaskModal
-              setIsOpen={setIsTaskModalOpen}
-              title="Add New Task"
-              formAction="create task"
-            />
+            <CreateTask setIsOpen={setIsTaskModalOpen} />
           </ModalConatiner>
         )}
       </div>

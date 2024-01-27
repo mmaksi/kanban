@@ -21,96 +21,63 @@ import { OptionsInput } from "../OptionsInput.component";
 import { TextArea } from "../TextArea.component";
 import { Input } from "../Input.component";
 import Button from "../Button.component";
-import { SubtaskSchema, TaskData, TaskSchema } from "@/types/schemas";
+import { TaskData } from "@/types/schemas";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  title: string;
-  formAction: "edit task" | "create task";
-  task?: TaskData; // in case of editing the task at hand
+  task: TaskData;
 }
 
-interface CreateFormFields {
-  title: string;
-  description: string;
-  status: string;
-  [key: string]: string;
+export interface TaskInputField {
+  name: string;
+  value: string;
+  toDelete: boolean;
+  toAdd: boolean;
+  id: string | null;
 }
-
-interface EditFormFields {
-  title: string;
-  description: string;
-  status: string;
-  subtasks: SubtaskSchema[];
-}
-
-const initialCreateFormState: CreateFormFields = {
-  title: "",
-  description: "",
-  status: "",
-};
 
 const initialState = { error: "", modalState: "" };
 
-const serializedSubtasks = {
-  subtask0: "Drink coffee",
-  subtask1: "Cook potato",
-};
-
 type TaskEvent = ChangeEvent<any>;
 
-export const TaskModal: React.FC<Props> = (props) => {
-  const { setIsOpen, title, formAction, task } = props;
+export const EditTask: React.FC<Props> = (props) => {
+  const { setIsOpen, task } = props;
 
-  const initialEditFormState: EditFormFields = {
-    title: task?.title || "",
-    description: task?.description || "",
-    status: task?.status || "",
-    subtasks: task?.subtasks || [],
-  };
-
-  const currentBoardId = useSelector((state: RootState) => state.board.id);
   const currentBoardColumns = useSelector(
     (state: RootState) => state.board.columns
   );
 
+  const initialFormFields: TaskInputField[] = Object.entries(task.subtasks).map(
+    ([key, value]) => ({
+      name: `subtask${key}`,
+      value: value.title,
+      toDelete: false,
+      toAdd: false,
+      id: value.id,
+    })
+  );
+  const [formFields, setFormFields] =
+    useState<TaskInputField[]>(initialFormFields);
+  const [description, setDescription] = useState(task.description);
+  const [taskTitle, setTaskTitle] = useState(task.title);
+  const [counter, setCounter] = useState(task.subtasks.length);
+  const [status, setStatus] = useState(task.status);
   const [taskColumnId, setTaskColumnId] = useState(currentBoardColumns[0].id);
-  const [createFormFields, setCreateFormFields] = useState(
-    initialCreateFormState
-  );
-  const [editFormFields, setEditFormFields] = useState(initialEditFormState);
-  const [subtasksValues, setSubtasksValues] = useState<string[]>(
-    Object.keys(serializedSubtasks)
-  );
 
   const options: { id: string; value: string }[] = [];
   currentBoardColumns.forEach((column) => {
     options.push({ id: column.id, value: column.name });
   });
 
-  const createTaskInfo = actions.createTask.bind(
+  const updatedTask = actions.editTask.bind(
     null,
-    currentBoardId,
-    taskColumnId
+    task.id,
+    taskColumnId,
+    formFields
   );
-  const updatedTask = actions.editBoard.bind(null, "boardId"); // TODO
+  const [formState, editTask] = useFormState(updatedTask, initialState);
 
-  const [newTaskFormState, createTask] = useFormState(
-    createTaskInfo,
-    initialState
-  );
-  const [editTaskFormState, editTask] = useFormState(updatedTask, initialState);
-
-  useEffect(() => {
-    if (
-      newTaskFormState.modalState === "created" ||
-      newTaskFormState.modalState === "edited"
-    ) {
-      setIsOpen(false);
-    }
-  }, [newTaskFormState.modalState, setIsOpen]);
-
-  const inputChangeHandler = (event: TaskEvent) => {
+  const changeHandler = (event: TaskEvent) => {
     const { name, value } = event.target;
     let selectedIndex = undefined;
     if (event.target.selectedIndex) {
@@ -118,40 +85,43 @@ export const TaskModal: React.FC<Props> = (props) => {
     }
     if (typeof selectedIndex !== "undefined") {
       setTaskColumnId(currentBoardColumns[selectedIndex].id);
+      setStatus(value);
     }
-    value.length > 2 ? (newTaskFormState.error = "none") : null;
-    // value.length > 2 ? (editTaskFormState.error = "none") : null;
-
-    switch (formAction) {
-      case "edit task":
-        setEditFormFields({ ...editFormFields, [name]: value });
-        break;
-      case "create task":
-        setCreateFormFields({ ...createFormFields, [name]: value });
-      default:
-        break;
-    }
+    value.length > 2 ? (formState.error = "none") : null;
+    setFormFields((prevInputs) =>
+      prevInputs.map((input) =>
+        input.name === name ? { ...input, value } : input
+      )
+    );
   };
 
-  const removeSubtask = (event: any): void => {
-    const inputElement = event.target.parentNode.previousElementSibling;
-    const valueToRemove = inputElement.name;
-    const removeArray = subtasksValues.filter(
-      (subtask) => subtask !== valueToRemove
+  const removeSubtask = (idx: number): void => {
+    const updatedTasks = formFields.map((subtask) =>
+      subtask.name === `subtask${idx}`
+        ? { ...subtask, toDelete: true }
+        : subtask
     );
-    const modifiedArray = removeArray.map((_, index) => `subtask${index}`);
-    return setSubtasksValues(modifiedArray);
+    setFormFields(updatedTasks);
   };
 
   const addNewTask = () => {
-    const newSubtaskIndex = subtasksValues.length;
-    return setSubtasksValues([...subtasksValues, `subtask${newSubtaskIndex}`]);
+    const name = `subtask${counter + 1}`;
+    setCounter((prevCounter) => prevCounter + 1);
+    setFormFields([
+      ...formFields,
+      { name, value: "", toDelete: false, toAdd: true, id: null },
+    ]);
   };
+
+  useEffect(() => {
+    if (formState.modalState === "edited") {
+      setIsOpen(false);
+    }
+  }, [formState.modalState, setIsOpen]);
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-      <h2 className={styles.modal__header}>{title}</h2>
-      {/* TODO edit task */}
+      <h2 className={styles.modal__header}>Edit Task</h2>
       <form action={editTask}>
         <label className={styles.modalForm__label} htmlFor="title">
           Title
@@ -161,42 +131,42 @@ export const TaskModal: React.FC<Props> = (props) => {
           label="Title"
           id="title"
           inputName="title"
-          defaultValue={createFormFields["title"] || editFormFields["title"]}
+          defaultValue={taskTitle}
           placeholder="e.g. Take coffee break"
-          onChange={inputChangeHandler}
+          onChange={(e) => setTaskTitle(e.target.value)}
         />
         <TextArea
-          onChange={inputChangeHandler}
+          onChange={(e) => setDescription(e.target.value)}
           label="Description"
           name="description"
-          defaultValue={
-            createFormFields["description"] || editFormFields["description"]
-          }
+          defaultValue={description}
         />
         <div className={styles.subtasks}>
           <span className={styles.subtasks__header}>Subtasks</span>
           <div className={styles.subtasks__columns}>
-            {initialEditFormState.subtasks.map((subtask, index) => (
-              // TODO key should not be the index
-              <div key={subtask.id} className={styles.input__container_row}>
-                <Input
-                  label="Subtask"
-                  placeholder="e.g. Drink coffee & smile"
-                  id={`subtask${index}`}
-                  displayLabel={false}
-                  inputName={`subtask${index}`}
-                  defaultValue={subtask.title}
-                  onChange={inputChangeHandler}
-                />
-                <span onClick={removeSubtask}>
-                  <Image
-                    className={styles.subtasks__remove}
-                    src={Cross}
-                    alt="cross icon to remove the input field"
-                  />
-                </span>
-              </div>
-            ))}
+            {formFields.map(
+              (subtask, index) =>
+                !subtask.toDelete && (
+                  <div key={index} className={styles.input__container_row}>
+                    <Input
+                      label="Subtask"
+                      placeholder="e.g. Drink coffee & smile"
+                      id={subtask.name}
+                      displayLabel={false}
+                      inputName={subtask.name}
+                      defaultValue={subtask.value}
+                      onChange={changeHandler}
+                    />
+                    <span onClick={() => removeSubtask(index)}>
+                      <Image
+                        className={styles.subtasks__remove}
+                        src={Cross}
+                        alt="cross icon to remove the input field"
+                      />
+                    </span>
+                  </div>
+                )
+            )}
           </div>
           <Button
             buttonType="button"
@@ -211,7 +181,8 @@ export const TaskModal: React.FC<Props> = (props) => {
           </Button>
           <OptionsInput
             name="status"
-            changeHandler={inputChangeHandler}
+            changeHandler={changeHandler}
+            firstValue={status}
             options={options}
           />
           <Button
@@ -222,22 +193,12 @@ export const TaskModal: React.FC<Props> = (props) => {
             size="L"
             customStyles={{ width: "100%", marginTop: "2.4rem" }}
           >
-            Create Task
+            Save Changes
           </Button>
 
-          {newTaskFormState.error !== "none" &&
-            newTaskFormState.error !== "" && (
-              <div className={styles.modal__error}>
-                {newTaskFormState.error}
-              </div>
-            )}
-
-          {/* {editTaskFormState.error !== "none" &&
-            newTaskFormState.error !== "" && (
-              <div className={styles.modal__error}>
-                {newTaskFormState.error}
-              </div>
-            )} */}
+          {formState.error !== "none" && (
+            <div className={styles.modal__error}>{formState.error}</div>
+          )}
         </div>
       </form>
     </div>

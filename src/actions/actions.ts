@@ -1,12 +1,14 @@
 "use server";
 
-import { InputFields } from "@/components/Modals/EditBoardModal.component";
+import { BoardInputField } from "@/components/Modals/EditBoardModal.component";
+import { TaskInputField } from "@/components/Modals/EditTaskModal.component";
 import { CompletedTasks } from "@/components/Modals/ViewTask.component";
 import {
   ColumnSchema,
   BoardSchema,
   NewBoardColumn,
   ColumnData,
+  SubtaskData,
 } from "@/types/schemas";
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
@@ -78,29 +80,6 @@ const serializeFormData = (
   return [formValues, formColumns];
 };
 
-const serializeExistedBoardColumns = (
-  existingBoard: BoardSchema,
-  formColumns: { name: string; boardId: string }[],
-  boardId: string
-) => {
-  const existingColumns = existingBoard.columns;
-  const columnsToUpdate: NewBoardColumn[] = [];
-
-  formColumns.forEach((formColumn, index) => {
-    const existingColumn = existingColumns[index];
-    if (existingColumn) {
-      const updatedColumn = Object.assign(existingColumn, {
-        name: formColumn.name,
-        boardId,
-      });
-      columnsToUpdate.push(updatedColumn);
-    }
-    if (!existingColumn)
-      columnsToUpdate.push({ name: formColumn.name, boardId });
-  });
-  return columnsToUpdate;
-};
-
 const getExistedBoards = async (boardName: string) => {
   return await prisma.board.findMany({
     where: {
@@ -150,11 +129,7 @@ const validateBoardForm = async (
   }
 };
 
-const validateTaskForm = (
-  formData: FormData,
-  formValues: string[],
-  action: "create" | "edit"
-) => {
+const validateTaskForm = (formData: FormData, formValues: string[]) => {
   const title = formData.get("title") as string;
   const hasEmptyString = formValues.some((item) => item.trim() === "");
   if (hasEmptyString) {
@@ -250,7 +225,7 @@ export const createBoard = async (
 
 export const editBoard = async (
   boardId: string,
-  boardColumns: InputFields[],
+  boardColumns: BoardInputField[],
   formState: { error: string; modalState: string },
   formData: FormData
 ) => {
@@ -352,6 +327,99 @@ export const editBoard = async (
         });
         await tx.column.delete({
           where: { id: columnId },
+        });
+      }
+    },
+    {
+      maxWait: 5000,
+      timeout: 10000,
+    }
+  );
+
+  revalidatePath("/");
+  return { error: "", modalState: "edited" };
+};
+
+export const editTask = async (
+  taskId: string,
+  taskColumnId: string,
+  subtasksArray: TaskInputField[],
+  formState: { error: string; modalState: string },
+  formData: FormData
+) => {
+  const [formValues, formColumns] = serializeFormData(formData, taskId);
+
+  const taskTitle = formData.get("title") as string;
+  const description = formData.get("description") as string;
+
+  const results = await validateTaskForm(formData, formValues);
+  if (results) return results;
+
+  // Look for existing board for TypeScript
+  const existingTask = await prisma.task.findUnique({
+    where: { id: taskId },
+    include: { subtasks: true },
+  });
+
+  if (!existingTask) {
+    throw new Error(`Task with ID ${taskId} not found`);
+  }
+
+  const existingSubtasks = existingTask.subtasks;
+
+  // Get new subtasks with null ids
+  const toBeAdded = subtasksArray.filter((subtask) => subtask.toAdd === true);
+  const subtasksToAdd: SubtaskData[] = [];
+  toBeAdded.forEach((subtask) => {
+    subtasksToAdd.push({ title: subtask.value, isCompleted: false, taskId });
+  });
+
+  // Keep untouched and updated subtasks
+  const subtasksToWithId = subtasksArray.filter(
+    (subtask) => subtask.id !== null
+  );
+  // Get subtasks to be updated, subtasks don't exist already
+  const subtasksToUpdate = subtasksToWithId.filter(
+    (subtask) =>
+      !existingSubtasks.some(
+        (existingColumn) => existingColumn.id === subtask.id
+      )
+  );
+  // get subtasks to delete
+  const subtasksToDelete = subtasksArray.filter(
+    (subtask) => subtask.toDelete === true
+  );
+
+  await prisma.$transaction(
+    async (tx) => {
+      // Update subtasks names
+      for (const subtaskToUpdate of subtasksToUpdate) {
+        await tx.subtask.update({
+          where: { id: subtaskToUpdate.id as string },
+          data: { title: subtaskToUpdate.value },
+        });
+      }
+      // Create new subtasks
+      if (subtasksToAdd.length > 0) {
+        await tx.subtask.createMany({
+          data: subtasksToAdd,
+        });
+      }
+      // Update task title and description
+      await tx.task.update({
+        where: { id: taskId },
+        data: {
+          title: taskTitle,
+          description,
+          columnId: taskColumnId,
+        },
+      });
+      // Delete extra tasks/subtasks
+      for (const subtask of subtasksToDelete) {
+        await tx.subtask.deleteMany({
+          where: {
+            id: subtask.id!, // we filtered the null ids
+          },
         });
       }
     },
@@ -471,7 +539,7 @@ export const createTask = async (
     }
   });
 
-  const results = validateTaskForm(formData, formValuesToValidate, "create");
+  const results = validateTaskForm(formData, formValuesToValidate);
   if (results) return results;
 
   await saveTaskAndSubtasks(

@@ -36,7 +36,7 @@ const initialState = { error: "", modalState: "" };
 
 type TaskEvent = ChangeEvent<any>;
 
-export const TaskModal: React.FC<Props> = ({ setIsOpen }) => {
+export const CreateTask: React.FC<Props> = ({ setIsOpen }) => {
   const currentBoardId = useSelector((state: RootState) => state.board.id);
   const currentBoardColumns = useSelector(
     (state: RootState) => state.board.columns

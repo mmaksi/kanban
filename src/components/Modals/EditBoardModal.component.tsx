@@ -23,7 +23,7 @@ interface Props {
   boardId: string;
 }
 
-export interface InputFields {
+export interface BoardInputField {
   name: string;
   value: string;
   id: string | null;
@@ -43,7 +43,7 @@ export const EditBoard = (props: Props) => {
   );
 
   // Form input values
-  const initialFormFields: InputFields[] = Object.entries(
+  const initialFormFields: BoardInputField[] = Object.entries(
     serializedBoardColumns
   ).map(([key, value], index) => ({
     name: key,

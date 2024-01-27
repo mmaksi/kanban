@@ -9,7 +9,7 @@ import { RootState } from "@/store/store";
 
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { EditBoard } from "./Modals/EditBoardModal.component";
-import { TaskModal as EditTask } from "./Modals/EditTaskModal.component";
+import { EditTask } from "./Modals/EditTaskModal.component";
 import { DeleteBoard } from "./Modals/DeleteBoard.component";
 import { DeleteTask } from "./Modals/DeleteTask.component";
 import { TaskData } from "@/types/schemas";
@@ -91,15 +91,14 @@ export const DropDown: React.FC<Props> = ({
         </ModalConatiner>
       )}
 
-      {currentBoardId.length > 0 && isEditModalOpen && element === "Task" && (
-        <ModalConatiner setIsOpen={setIsEditModalOpen}>
-          <EditTask
-            title="Edit Task"
-            setIsOpen={setIsEditModalOpen}
-            task={task}
-          />
-        </ModalConatiner>
-      )}
+      {currentBoardId.length > 0 &&
+        isEditModalOpen &&
+        element === "Task" &&
+        task && (
+          <ModalConatiner setIsOpen={setIsEditModalOpen}>
+            <EditTask setIsOpen={setIsEditModalOpen} task={task} />
+          </ModalConatiner>
+        )}
 
       {currentBoardId.length > 0 &&
         isDeleteModalOpen &&

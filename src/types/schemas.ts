@@ -56,3 +56,9 @@ export interface TaskData {
   subtasks: SubtaskSchema[];
   columnId: string;
 }
+
+export interface SubtaskData {
+  title: string;
+  isCompleted: boolean;
+  taskId: string;
+}
