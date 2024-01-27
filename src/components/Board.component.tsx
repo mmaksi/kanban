@@ -18,7 +18,7 @@ import { BoardColumn } from "./BoardColumns.component";
 import Button from "./Button.component";
 
 interface Props {
-  boards: BoardData[] | undefined;
+  boards: any;
   getAllTasks: any;
 }
 
@@ -35,7 +35,7 @@ export const Board = ({ boards, getAllTasks }: Props) => {
 
   useEffect(() => {
     if (boards) {
-      boards.forEach((board) => {
+      boards.forEach((board: any) => {
         if (board.boardName === currentBoardName) {
           dispatch(setCurrentBoardColumns(board.columns));
           dispatch(setCurrentBoardId(board.id));
