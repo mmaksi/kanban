@@ -470,9 +470,7 @@ export const editTask = async (
 
 export const deleteBoardByName = async (
   currentBoardId: string,
-  currentBoardColumns: ColumnData[],
-  formState: { error: string; modalState: string },
-  formData: FormData
+  currentBoardColumns: ColumnData[]
 ) => {
   try {
     await prisma.$transaction(async (tx) => {
@@ -502,11 +500,9 @@ export const deleteBoardByName = async (
       });
     });
   } catch (error) {
+    throw new Error();
+  } finally {
     await prisma.$disconnect();
-    return {
-      error: "Failed to delete the board. Please try again.",
-      modalState: "",
-    };
   }
 
   revalidatePath("/");
@@ -527,11 +523,9 @@ export const deleteTask = async (
       where: { id: currentTaskId },
     });
   } catch (error) {
+    throw new Error();
+  } finally {
     await prisma.$disconnect();
-    return {
-      error: "Failed to delete the task. Please try again.",
-      modalState: "",
-    };
   }
 
   revalidatePath("/");
@@ -546,6 +540,8 @@ export const getAllBoards = async () => {
     lastBoard = allBoards[allBoards.length - 1];
     return allBoards;
   } catch (error) {
+    throw new Error();
+  } finally {
     await prisma.$disconnect();
   }
 };
@@ -660,11 +656,9 @@ export const getAllTasks = async (boardId: string) => {
       },
     });
   } catch (error) {
+    throw new Error();
+  } finally {
     await prisma.$disconnect();
-    return {
-      error: "Failed to fetch tasks data. Please try again.",
-      modalState: "",
-    };
   }
 };
 
@@ -703,11 +697,7 @@ export const updateSubtasksStatus = async (
       })
     );
   } catch (error) {
-    await prisma.$disconnect();
-    return {
-      error: "Failed to save changes. Please try again.",
-      modalState: "",
-    };
+    throw new Error();
   } finally {
     await prisma.$disconnect();
   }
