@@ -13,8 +13,10 @@ export default async function Home() {
   return (
     <div>
       <Navbar />
-      <Sidebar boards={boards} />
-      <Board boards={boards} getAllTasks={actions.getAllTasks} />
+      <div className="app__main">
+        <Sidebar boards={boards} />
+        <Board boards={boards} getAllTasks={actions.getAllTasks} />
+      </div>
     </div>
   );
 }

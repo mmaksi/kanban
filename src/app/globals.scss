@@ -46,3 +46,8 @@ h4 {
 .notAllowed {
   cursor: not-allowed !important; /* Change cursor style to indicate unclickable */
 }
+
+.app__main {
+  display: flex;
+  flex-direction: column;
+}
