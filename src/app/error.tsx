@@ -9,16 +9,15 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const clickHandler = () => {
+    window.location.reload();
+    reset();
+  };
+
   return (
     <div className="error__container">
       <h2>Something went wrong! Please click the button below to try again.</h2>
-      <button
-        className="error__button"
-        onClick={
-          // Attempt to recover by trying to re-render the segment
-          () => reset()
-        }
-      >
+      <button className="error__button" onClick={clickHandler}>
         Try again
       </button>
     </div>
