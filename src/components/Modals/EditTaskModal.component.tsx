@@ -125,6 +125,8 @@ export const EditTask: React.FC<Props> = (props) => {
     }
   }, [formState.modalState, setIsOpen]);
 
+  console.log(status);
+
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
       <h2 className={styles.modal__header}>Edit Task</h2>

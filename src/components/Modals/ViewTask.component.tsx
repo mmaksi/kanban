@@ -1,6 +1,6 @@
 "use react";
 
-import { MouseEventHandler, useState, useTransition } from "react";
+import { MouseEventHandler, useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 
 import styles from "@/styles/ViewTask.module.scss";
@@ -40,26 +40,32 @@ export const ViewTask: React.FC<ViewTaskProps> = (props) => {
     finishedSubtasks = subtasks.filter((subtask) => subtask.isCompleted);
 
   const currentColumns = useSelector((state: RootState) => state.board.columns);
+  const currentColumn = currentColumns.find((column) => column.name === status);
+  let currentColumnId = "";
+  if (currentColumn) {
+    currentColumnId = currentColumn.id;
+  }
+
   let options: { id: string; value: string }[] = [];
-  const currentColumnId = currentColumns.filter(
-    (column) => column.name === status
-  )[0].id;
-  options.push({ id: currentColumnId, value: status });
   currentColumns.forEach((column) => {
-    if (column.name !== options[0].value) {
-      options.push({ id: column.id, value: column.name });
-    }
+    options.push({ id: column.id, value: column.name });
   });
 
   const changeHandler = (e: any) => {
     setCurrentStatus(e.target.value);
   };
 
-  const newColumnId = currentColumns.filter(
+  let newColumnId = "";
+  const newColumn = currentColumns.find(
     (columnInfo) => columnInfo.name === currentStatus
-  )[0].id;
+  );
+  if (newColumn) {
+    newColumnId = newColumn.id;
+  }
 
   const updateTask = () => {
+    console.log("cols");
+    console.log(taskId, newColumnId, currentStatus, completedTasksObject);
     startTransition(async () => {
       await updateSubtasksStatus(
         taskId,
@@ -124,6 +130,7 @@ export const ViewTask: React.FC<ViewTaskProps> = (props) => {
           name="options"
           options={options}
           changeHandler={changeHandler}
+          firstValue={currentStatus}
         />
       </div>
       <Button

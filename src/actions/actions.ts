@@ -308,39 +308,36 @@ export const editBoard = async (
     throw new Error(`Board with ID ${boardId} not found`);
   }
 
-  const existingColumns = existingBoard.columns;
-
-  const columnsToWithId = boardColumns.filter(
-    (boardColumn) => boardColumn.id !== null
+  // New columns to add
+  const toBeAdded = boardColumns.filter(
+    (boardColumn) =>
+      boardColumn.toAdd === true && boardColumn.toDelete === false
   );
-  const columnsToUpdate = columnsToWithId.filter(
-    (col) =>
-      !existingColumns.some(
-        (existingColumn) => existingColumn.name === col.value
-      )
-  );
-  const filteredColumnsToAdd = boardColumns.filter(
-    (boardColumn) => boardColumn.id === null
-  );
-  const updatedAndToDelete = existingColumns!.filter((existingColumn) => {
-    return !formColumns.some(
-      (formColumn) => formColumn.name === existingColumn.name
-    );
+  const columnsToAdd: {
+    name: string;
+    boardId: string;
+  }[] = [];
+  toBeAdded.forEach((col) => {
+    columnsToAdd.push({ name: col.value, boardId });
   });
 
-  const columnsToDelete =
-    columnsToUpdate.length > 0
-      ? updatedAndToDelete.filter((col) => {
-          return columnsToUpdate.some(
-            (colToUpdate) => colToUpdate.id !== col.id
-          );
-        })
-      : updatedAndToDelete;
+  // Columns to update
+  const columnsToUpdate = boardColumns.filter(
+    (col) => col.id !== null && col.toDelete === false
+  );
 
-  const columnsToAdd = filteredColumnsToAdd.map((col, index) => ({
-    name: col.value,
-    boardId,
-  }));
+  // get subtasks to delete
+  const columnsToDelete: {
+    id: string | null;
+    name: string;
+    boardId: string;
+  }[] = [];
+  const toBeDeleted = boardColumns.filter(
+    (col) => col.toDelete === true && col.toAdd === false
+  );
+  toBeDeleted.forEach((col) => {
+    columnsToDelete.push({ id: col.id, name: col.value, boardId });
+  });
 
   try {
     await prisma.$transaction(
@@ -370,27 +367,29 @@ export const editBoard = async (
           (deletedColumn) => deletedColumn.id
         );
         for (const columnId of colIdsToDelete) {
-          await tx.subtask.deleteMany({
-            where: {
-              taskId: {
-                in: await prisma.task
-                  .findMany({ where: { columnId } })
-                  .then((tasks) => tasks.map((task) => task.id)),
+          if (columnId) {
+            await tx.subtask.deleteMany({
+              where: {
+                taskId: {
+                  in: await prisma.task
+                    .findMany({ where: { columnId } })
+                    .then((tasks) => tasks.map((task) => task.id)),
+                },
               },
-            },
-          });
-          await tx.task.deleteMany({
-            where: {
-              id: {
-                in: await prisma.task
-                  .findMany({ where: { columnId } })
-                  .then((tasks) => tasks.map((task) => task.id)),
+            });
+            await tx.task.deleteMany({
+              where: {
+                id: {
+                  in: await prisma.task
+                    .findMany({ where: { columnId } })
+                    .then((tasks) => tasks.map((task) => task.id)),
+                },
               },
-            },
-          });
-          await tx.column.delete({
-            where: { id: columnId },
-          });
+            });
+            await tx.column.delete({
+              where: { id: columnId },
+            });
+          }
         }
       },
       {

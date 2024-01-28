@@ -24,9 +24,11 @@ interface Props {
 }
 
 export interface BoardInputField {
+  id: string | null;
   name: string;
   value: string;
-  id: string | null;
+  toDelete: boolean;
+  toAdd: boolean;
 }
 
 const initialState = { error: "", modalState: "" };
@@ -46,9 +48,11 @@ export const EditBoard = (props: Props) => {
   const initialFormFields: BoardInputField[] = Object.entries(
     serializedBoardColumns
   ).map(([key, value], index) => ({
+    id: columnsIds[index],
     name: key,
     value,
-    id: columnsIds[index],
+    toDelete: false,
+    toAdd: false,
   }));
   const initialCounter = initialFormFields.length - 1;
   const [formFields, setFormFields] = useState(initialFormFields);
@@ -73,12 +77,23 @@ export const EditBoard = (props: Props) => {
   const addInput = () => {
     const name = `column${counter + 1}`;
     setCounter((prevCounter) => prevCounter + 1);
-    setFormFields([...formFields, { name, value: "", id: null }]);
+    setFormFields([
+      ...formFields,
+      { name, value: "", toAdd: true, toDelete: false, id: null },
+    ]);
   };
 
-  const removeInput = (idx: number) => {
-    const newFormFields = formFields.filter((_, index) => index !== idx);
-    setFormFields(newFormFields);
+  const removeInput = (e: any) => {
+    const deletedInputName =
+      e.target.parentNode.parentNode.querySelector("input").name;
+    const updatedTasks = formFields.map((col) => {
+      if (col.name === deletedInputName) {
+        return { ...col, toDelete: true, toAdd: false };
+      } else {
+        return col;
+      }
+    });
+    setFormFields(updatedTasks);
   };
 
   // Changes after editing the board
@@ -111,28 +126,31 @@ export const EditBoard = (props: Props) => {
         <div>
           <h3 className={styles.modal__header}>Board Columns</h3>
           <div className={styles.modal__columns}>
-            {formFields.map((field, index) => (
-              <div key={index} className={styles.input__container_row}>
-                <Input
-                  label="Board Column"
-                  placeholder="Todo/Doing/Done.."
-                  id={field.name}
-                  displayLabel={false}
-                  inputName={field.name}
-                  defaultValue={field.value || ""}
-                  onChange={changeHandler}
-                />
-                <span
-                  className={styles.column__remove}
-                  onClick={() => removeInput(index)}
-                >
-                  <Image
-                    src={Cross}
-                    alt="cross icon to remove the input field"
-                  />
-                </span>
-              </div>
-            ))}
+            {formFields.map(
+              (field, index) =>
+                !field.toDelete && (
+                  <div key={index} className={styles.input__container_row}>
+                    <Input
+                      label="Board Column"
+                      placeholder="Todo/Doing/Done.."
+                      id={field.name}
+                      displayLabel={false}
+                      inputName={field.name}
+                      defaultValue={field.value || ""}
+                      onChange={changeHandler}
+                    />
+                    <span
+                      className={styles.column__remove}
+                      onClick={(e) => removeInput(e)}
+                    >
+                      <Image
+                        src={Cross}
+                        alt="cross icon to remove the input field"
+                      />
+                    </span>
+                  </div>
+                )
+            )}
           </div>
 
           <div className={styles.modal__buttons}>

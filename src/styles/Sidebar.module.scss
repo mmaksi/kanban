@@ -46,7 +46,7 @@
 }
 
 .sidebarItem_selected {
-  background-color: $primary-purple;
+  background-color: $primary-purple !important;
   border-radius: 0px 10rem 10rem 0;
   border-bottom: 1px solid #444;
 }

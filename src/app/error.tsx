@@ -10,7 +10,7 @@ export default function Error({
   reset: () => void;
 }) {
   const clickHandler = () => {
-    window.location.reload();
+    // window.location.reload();
     reset();
   };
 

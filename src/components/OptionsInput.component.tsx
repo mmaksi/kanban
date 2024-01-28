@@ -3,7 +3,7 @@ import { ChangeEvent } from "react";
 
 export interface OptionsInputInterface {
   name: string;
-  firstValue?: string;
+  firstValue: string;
   changeHandler: (event: ChangeEvent<HTMLSelectElement>) => void;
   options: { id: string; value: string }[];
 }
@@ -29,11 +29,13 @@ export const OptionsInput: React.FC<OptionsInputInterface> = (props) => {
         id={name}
       >
         {firstValue &&
-          orderedOptions.map((option) => (
-            <option key={option.id} value={option.value}>
-              {option.value}
-            </option>
-          ))}
+          orderedOptions.map((option) =>
+            option ? (
+              <option key={option.id} value={option.value}>
+                {option.value}
+              </option>
+            ) : null
+          )}
         {!firstValue &&
           options.map((option) => (
             <option key={option.id} value={option.value}>
