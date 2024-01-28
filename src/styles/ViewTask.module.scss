@@ -2,7 +2,8 @@
 @import "../mixins";
 
 .modal {
-  width: 48rem;
+  width: 80%;
+  max-height: 80vh;
   max-height: 80dvh;
   overflow-y: auto;
   border-radius: 0.6rem;
@@ -62,5 +63,11 @@
     @include body-M;
     color: $white;
     margin-bottom: 1.6rem;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .modal {
+    width: 80%;
   }
 }

@@ -9,16 +9,19 @@ import DesktopLogoDark from "public/logo-light.svg";
 import MobileLogo from "public/logo-mobile.svg";
 import ArrowDwown from "@/icons/ArrowDown";
 import Ellipsis from "public/icon-vertical-ellipsis.svg";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { DropDown } from "./DropDown.component";
 import Button from "./Button.component";
 import { CreateTask } from "./Modals/CreateTaskModal.component";
+import { setIsSidebarOpen } from "@/store/slices/sidebar.slice";
 
 export const Navbar = () => {
   const divRef = useRef<HTMLDivElement | null>(null);
+
+  const dispatch = useDispatch();
 
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [DropDownIsOpen, setDropDownOpen] = useState(false);
@@ -81,7 +84,10 @@ export const Navbar = () => {
         >
           {currentBoardName}
         </h2>
-        <span className={styles.navbar__arrowDown}>
+        <span
+          className={styles.navbar__arrowDown}
+          onClick={() => dispatch(setIsSidebarOpen())}
+        >
           <ArrowDwown />
         </span>
       </div>

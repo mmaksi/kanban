@@ -16,9 +16,10 @@ import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.componen
 import { EditBoard } from "./Modals/EditBoardModal.component";
 import { BoardColumn } from "./BoardColumns.component";
 import Button from "./Button.component";
+import { closeSidebar, setIsSidebarOpen } from "@/store/slices/sidebar.slice";
 
 interface Props {
-  boards: any;
+  boards: BoardData[] | undefined;
   getAllTasks: any;
 }
 
@@ -35,7 +36,7 @@ export const Board = ({ boards, getAllTasks }: Props) => {
 
   useEffect(() => {
     if (boards) {
-      boards.forEach((board: any) => {
+      boards.forEach((board) => {
         if (board.boardName === currentBoardName) {
           dispatch(setCurrentBoardColumns(board.columns));
           dispatch(setCurrentBoardId(board.id));
@@ -50,6 +51,7 @@ export const Board = ({ boards, getAllTasks }: Props) => {
         className={`${boardColumns.length === 0 && styles.board__container} ${
           styles.board__lightBackground
         } ${boardColumns.length > 0 && styles.board_columns__container}`}
+        onClick={() => dispatch(closeSidebar())}
       >
         {!isOpen && boardColumns.length === 0 && (
           <div className={styles.board__emptyContent}>

@@ -3,12 +3,18 @@
 
 /* Mobile view */
 .board__container {
+  height: calc(100vh - $navbar-sm-height);
   height: calc(100dvh - $navbar-sm-height);
 
   display: flex;
   justify-content: center;
   align-items: center;
   color: $medium-grey;
+}
+
+.board_columns__container {
+  height: calc(100vh - $navbar-sm-height);
+  height: calc(100dvh - $navbar-sm-height);
 }
 
 .board__emptyContent {
@@ -39,11 +45,13 @@
 /* Desktop view */
 @media screen and (min-width: 1024px) {
   .board__container {
+    height: calc(100vh - $navbar-lg-height);
     height: calc(100dvh - $navbar-lg-height);
     margin-left: $sidebar-lg-width;
   }
 
   .board_columns__container {
+    height: calc(100vh - $navbar-lg-height);
     height: calc(100dvh - $navbar-lg-height);
     margin-left: $sidebar-lg-width;
     overflow-x: auto;

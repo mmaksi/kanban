@@ -2,38 +2,38 @@
 @import "../mixins";
 
 /* Desktop view */
-@media screen and (min-width: 1024px) {
-  .dropdown__container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    width: 19.2rem;
-    gap: 1.6rem;
-    border-radius: 8px;
-    padding: 1.6rem;
-    position: absolute;
-  }
 
-  .dropdown__element {
-    color: $medium-grey;
-    text-align: left;
-    @include body-L;
-    font-weight: 500;
-    width: 100%;
+.dropdown__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 19.2rem;
+  gap: 1.6rem;
+  border-radius: 8px;
+  padding: 1.6rem;
+  position: absolute;
+}
 
-    &:hover {
-      cursor: pointer;
-    }
-  }
+.dropdown__element {
+  color: $medium-grey;
+  text-align: left;
+  @include body-L;
+  font-weight: 500;
+  width: 100%;
 
-  .element__delete {
-    color: $primary-red;
+  &:hover {
+    cursor: pointer;
   }
 }
 
 .navbar__dropdown {
-  top: $navbar-lg-height - $p-lg;
+  top: $navbar-sm-height - $p-sm;
+  right: 1rem;
+}
+
+.element__delete {
+  color: $primary-red;
 }
 
 .task__dropdown {
@@ -43,4 +43,10 @@
 
 .notAllowed:hover {
   cursor: not-allowed !important;
+}
+
+@media screen and (min-width: 600px) {
+  .navbar__dropdown {
+    top: $navbar-lg-height - $p-lg;
+  }
 }

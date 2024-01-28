@@ -2,7 +2,8 @@
 @import "../mixins";
 
 .modal {
-  width: 48rem;
+  width: 80%;
+  max-height: 90vh;
   max-height: 90dvh;
   overflow-y: auto;
   border-radius: 0.6rem;
@@ -69,4 +70,10 @@
   align-items: center;
   flex-direction: row;
   gap: 1.6rem;
+}
+
+@media screen and (min-width: 600px) {
+  .modal {
+    width: 48rem;
+  }
 }

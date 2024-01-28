@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import styles from "@/styles/Sidebar.module.scss";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BoardData } from "@/types/schemas";
 import {
   setCurrentBoardColumns,
@@ -16,6 +16,8 @@ import Image from "next/image";
 
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { BoardModal as NewBoard } from "./Modals/CreateBoardModal.component";
+import { RootState } from "@/store/store";
+import { closeSidebar } from "@/store/slices/sidebar.slice";
 
 interface Props {
   boards: BoardData[] | undefined;
@@ -23,6 +25,8 @@ interface Props {
 
 export const Sidebar = ({ boards }: Props) => {
   const dispatch = useDispatch();
+
+  const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
 
   const initialSelectionState: boolean[] = boards
     ? Array(boards.length).fill(false)
@@ -51,13 +55,18 @@ export const Sidebar = ({ boards }: Props) => {
       dispatch(setCurrentBoardId(currentBoard.id));
       dispatch(setCurrentBoardName(currentBoard.boardName));
       dispatch(setCurrentBoardColumns(currentBoard.columns));
+      dispatch(closeSidebar());
       localStorage.setItem("currentBoardIndex", index.toString());
     }
   };
 
   return (
     <>
-      <div className={styles.sidebar}>
+      <div
+        className={`${styles.sidebar} ${
+          !isSidebarOpen ? styles.sidebar__mobileHide : ""
+        }`}
+      >
         <p className={styles.sidebar__boardsTitle}>{`All Boards (${
           boards ? boards.length : 0
         })`}</p>
@@ -87,6 +96,45 @@ export const Sidebar = ({ boards }: Props) => {
           </span>
         </div>
       </div>
+
+      {isSidebarOpen && (
+        <ModalConatiner>
+          <div
+            className={`${styles.sidebar} ${
+              !isSidebarOpen ? styles.sidebar__mobileHide : ""
+            }`}
+          >
+            <p className={styles.sidebar__boardsTitle}>{`All Boards (${
+              boards ? boards.length : 0
+            })`}</p>
+            <div className={styles.sidebar__boardsList}>
+              {boards &&
+                boards.map((board, index) => {
+                  return (
+                    <div
+                      key={board.id}
+                      onClick={() => handleItemClick(index)}
+                      className={`${styles.sidebarItem} ${
+                        currentBoardIndex == index
+                          ? styles.sidebarItem_selected
+                          : ""
+                      }`}
+                    >
+                      <Image src={boardIcon} alt="board icon" />
+                      <span>{board.boardName}</span>
+                    </div>
+                  );
+                })}
+              <span
+                onClick={() => setIsOpen(!isOpen)}
+                className={`${styles.sidebarItem} ${styles.sidebarItem__addBoard}`}
+              >
+                + Create New Board
+              </span>
+            </div>
+          </div>
+        </ModalConatiner>
+      )}
 
       {isOpen && (
         <ModalConatiner setIsOpen={setIsOpen}>
