@@ -182,7 +182,7 @@ export const EditTask: React.FC<Props> = (props) => {
           <OptionsInput
             name="status"
             changeHandler={changeHandler}
-            firstValue={status}
+            firstValue={task.status}
             options={options}
           />
           <Button

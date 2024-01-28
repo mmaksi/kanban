@@ -98,7 +98,7 @@ export const ViewTask: React.FC<ViewTaskProps> = (props) => {
       <p className={`${styles.modal__description}`}>{description}</p>
       <div className={styles.subtasks}>
         <h3 className={styles.subtasks__header}>
-          {finishedSubtasks.length === 0
+          {subtasks.length === 0
             ? "No subtasks"
             : `Subtasks ${finishedSubtasks.length} of ${subtasks!.length}`}
         </h3>
