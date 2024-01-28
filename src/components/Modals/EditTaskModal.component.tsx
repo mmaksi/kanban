@@ -3,6 +3,7 @@
 import {
   ChangeEvent,
   Dispatch,
+  MouseEvent,
   SetStateAction,
   useEffect,
   useState,
@@ -73,6 +74,7 @@ export const EditTask: React.FC<Props> = (props) => {
     null,
     task.id,
     taskColumnId,
+    status,
     formFields
   );
   const [formState, editTask] = useFormState(updatedTask, initialState);
@@ -95,12 +97,16 @@ export const EditTask: React.FC<Props> = (props) => {
     );
   };
 
-  const removeSubtask = (idx: number): void => {
-    const updatedTasks = formFields.map((subtask) =>
-      subtask.name === `subtask${idx}`
-        ? { ...subtask, toDelete: true }
-        : subtask
-    );
+  const removeSubtask = (e: any): void => {
+    const deletedInputName =
+      e.target.parentNode.parentNode.querySelector("input").name;
+    const updatedTasks = formFields.map((subtask) => {
+      if (subtask.name === deletedInputName) {
+        return { ...subtask, toDelete: true };
+      } else {
+        return subtask;
+      }
+    });
     setFormFields(updatedTasks);
   };
 
@@ -157,7 +163,7 @@ export const EditTask: React.FC<Props> = (props) => {
                       defaultValue={subtask.value}
                       onChange={changeHandler}
                     />
-                    <span onClick={() => removeSubtask(index)}>
+                    <span onClick={(e) => removeSubtask(e)}>
                       <Image
                         className={styles.subtasks__remove}
                         src={Cross}

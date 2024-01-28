@@ -80,6 +80,17 @@ const serializeFormData = (
   return [formValues, formColumns];
 };
 
+const checkEmptyValues = (values: string[]) => {
+  values.forEach((value) => {
+    if (value.length) {
+      return {
+        error: "Input fields cannot be empty",
+        modalState: "",
+      };
+    }
+  });
+};
+
 const getExistedBoards = async (boardName: string) => {
   return await prisma.board.findMany({
     where: {
@@ -96,13 +107,15 @@ const validateBoardForm = async (
   const boardName = formData.get("boardName") as string;
   const foundBoards = await getExistedBoards(boardName);
 
+  formData.forEach((value, key) => {});
+
   if (
     (action === "edit" && foundBoards.length > 1) ||
     (action === "create" && foundBoards.length > 0)
   ) {
     return { error: "Board already exists with this name", modalState: "" };
   }
-
+  console.log(formValues);
   // Check for empty values
   const hasEmptyString = formValues.some((item) => item.trim() === "");
   if (hasEmptyString) {
@@ -131,16 +144,39 @@ const validateBoardForm = async (
   }
 };
 
-const validateTaskForm = (formData: FormData, formValues: string[]) => {
+const validateCreateTaskForm = (formData: FormData, formValues: string[]) => {
   const title = formData.get("title") as string;
   // Check for empty values
-  const hasEmptyString = formValues.some((item) => item.trim() === "");
-  if (hasEmptyString) {
+  checkEmptyValues(formValues);
+
+  // Check for duplicate values
+  for (let i = 0; i < formValues.length - 1; i++) {
+    for (let j = i + 1; j < formValues.length; j++) {
+      if (
+        formValues[i].toLocaleLowerCase() === formValues[j].toLocaleLowerCase()
+      ) {
+        return { error: "Fields cannot have duplicate values", modalState: "" };
+      }
+    }
+  }
+
+  if (typeof title === "string" && title.length < 3) {
     return {
-      error: "Input fields cannot be empty",
+      error: "Input fields must be longer than 2 characters",
       modalState: "",
     };
   }
+};
+
+const validateEditTaskForm = (
+  formData: FormData,
+  formValues: string[],
+  subtasksArray: TaskInputField[]
+) => {
+  const title = formData.get("title") as string;
+  // Check for empty values
+  const subtasksValues = subtasksArray.map((item) => item.value.trim());
+  checkEmptyValues(subtasksValues);
 
   // Check for duplicate values
   for (let i = 0; i < formValues.length - 1; i++) {
@@ -382,6 +418,7 @@ export const editBoard = async (
 export const editTask = async (
   taskId: string,
   taskColumnId: string,
+  status: string,
   subtasksArray: TaskInputField[],
   formState: { error: string; modalState: string },
   formData: FormData
@@ -390,9 +427,12 @@ export const editTask = async (
 
   const taskTitle = formData.get("title") as string;
   const description = formData.get("description") as string;
-  const status = formData.get("staus") as string;
 
-  const results = await validateTaskForm(formData, formValues);
+  const results = await validateEditTaskForm(
+    formData,
+    formValues,
+    subtasksArray
+  );
   if (results) return results;
 
   // Look for existing board for TypeScript
@@ -408,7 +448,9 @@ export const editTask = async (
   const existingSubtasks = existingTask.subtasks;
 
   // Get new subtasks with null ids
-  const toBeAdded = subtasksArray.filter((subtask) => subtask.toAdd === true);
+  const toBeAdded = subtasksArray.filter(
+    (subtask) => subtask.toAdd === true && subtask.toDelete === false
+  );
   const subtasksToAdd: SubtaskData[] = [];
   toBeAdded.forEach((subtask) => {
     subtasksToAdd.push({ title: subtask.value, isCompleted: false, taskId });
@@ -427,58 +469,50 @@ export const editTask = async (
   );
   // get subtasks to delete
   const subtasksToDelete = subtasksArray.filter(
-    (subtask) => subtask.toDelete === true
+    (subtask) => subtask.toDelete === true && subtask.toAdd === false
   );
 
-  try {
-    await prisma.$transaction(
-      async (tx) => {
-        // Update subtasks names
-        for (const subtaskToUpdate of subtasksToUpdate) {
-          await tx.subtask.update({
-            where: { id: subtaskToUpdate.id as string },
-            data: { title: subtaskToUpdate.value },
-          });
-        }
-        // Create new subtasks
-        if (subtasksToAdd.length > 0) {
-          await tx.subtask.createMany({
-            data: subtasksToAdd,
-          });
-        }
-        // Update task title, description and status
-        await tx.task.update({
-          where: { id: taskId },
-          data: {
-            title: taskTitle,
-            description,
-            status,
-            columnId: taskColumnId,
-          },
+  await prisma.$transaction(
+    async (tx) => {
+      // Update subtasks names
+      for (const subtaskToUpdate of subtasksToUpdate) {
+        await tx.subtask.update({
+          where: { id: subtaskToUpdate.id as string },
+          data: { title: subtaskToUpdate.value },
         });
-        // Delete extra tasks/subtasks
-        for (const subtask of subtasksToDelete) {
+      }
+      // Create new subtasks
+      if (subtasksToAdd.length > 0) {
+        await tx.subtask.createMany({
+          data: subtasksToAdd,
+        });
+      }
+      // Update task title, description and status
+      await tx.task.update({
+        where: { id: taskId },
+        data: {
+          title: taskTitle,
+          description,
+          status,
+          columnId: taskColumnId,
+        },
+      });
+      // Delete extra tasks/subtasks
+      for (const subtask of subtasksToDelete) {
+        if (subtask.id) {
           await tx.subtask.deleteMany({
             where: {
-              id: subtask.id!, // we filtered the null ids
+              id: subtask.id,
             },
           });
         }
-      },
-      {
-        maxWait: 5000,
-        timeout: 10000,
       }
-    );
-  } catch (error) {
-    if (error instanceof Error) {
-      await prisma.$disconnect();
-      return {
-        error: "Failed to save changes. Please try again.",
-        modalState: "",
-      };
+    },
+    {
+      maxWait: 5000,
+      timeout: 10000,
     }
-  }
+  );
 
   revalidatePath("/");
   return { error: "", modalState: "edited" };
@@ -596,7 +630,7 @@ export const createTask = async (
     }
   });
 
-  const results = validateTaskForm(formData, formValuesToValidate);
+  const results = validateCreateTaskForm(formData, formValuesToValidate);
   if (results) return results;
 
   try {
