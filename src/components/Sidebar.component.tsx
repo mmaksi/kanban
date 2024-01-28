@@ -26,26 +26,15 @@ interface Props {
 export const Sidebar = ({ boards }: Props) => {
   const dispatch = useDispatch();
 
-  const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
-
+  const [currentBoardIndex, setCurrentBoardIndex] = useState<null | number>(
+    null
+  );
   const initialSelectionState: boolean[] = boards
     ? Array(boards.length).fill(false)
     : [];
 
   initialSelectionState.length ? (initialSelectionState[0] = true) : null;
   const [isOpen, setIsOpen] = useState(false);
-
-  let currentBoardIndex: number | null = null;
-  const currentBoardIndexRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const currentBoardIndexString = localStorage.getItem("currentBoardIndex");
-      if (currentBoardIndexString) {
-        currentBoardIndexRef.current = parseInt(currentBoardIndexString);
-      }
-    }
-  }, []);
 
   const handleItemClick = (index: number) => {
     if (boards) {
@@ -57,7 +46,7 @@ export const Sidebar = ({ boards }: Props) => {
       dispatch(setCurrentBoardId(currentBoard.id));
       dispatch(setCurrentBoardName(currentBoard.boardName));
       dispatch(setCurrentBoardColumns(currentBoard.columns));
-      dispatch(closeSidebar());
+      setCurrentBoardIndex(index);
       localStorage.setItem("currentBoardIndex", index.toString());
     }
   };
@@ -71,7 +60,6 @@ export const Sidebar = ({ boards }: Props) => {
         <div className={styles.sidebar__boardsList}>
           {boards &&
             boards.map((board, index) => {
-              console.log("index", currentBoardIndex === index);
               return (
                 <div
                   key={board.id}
@@ -79,7 +67,7 @@ export const Sidebar = ({ boards }: Props) => {
                   className={`${styles.sidebarItem} ${
                     currentBoardIndex === index
                       ? styles.sidebarItem_selected
-                      : styles.sidebarItem_selected
+                      : ""
                   }`}
                 >
                   <Image src={boardIcon} alt="board icon" />
