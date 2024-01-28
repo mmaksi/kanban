@@ -115,7 +115,6 @@ const validateBoardForm = async (
   ) {
     return { error: "Board already exists with this name", modalState: "" };
   }
-  console.log(formValues);
   // Check for empty values
   const hasEmptyString = formValues.some((item) => item.trim() === "");
   if (hasEmptyString) {
@@ -457,15 +456,8 @@ export const editTask = async (
   });
 
   // Keep untouched and updated subtasks
-  const subtasksToWithId = subtasksArray.filter(
-    (subtask) => subtask.id !== null
-  );
-  // Get subtasks to be updated, subtasks don't exist already
-  const subtasksToUpdate = subtasksToWithId.filter(
-    (subtask) =>
-      !existingSubtasks.some(
-        (existingColumn) => existingColumn.id === subtask.id
-      )
+  const subtasksToUpdate = subtasksArray.filter(
+    (subtask) => subtask.id !== null && subtask.toDelete === false
   );
   // get subtasks to delete
   const subtasksToDelete = subtasksArray.filter(
