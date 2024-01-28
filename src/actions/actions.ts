@@ -103,6 +103,16 @@ const validateBoardForm = async (
     return { error: "Board already exists with this name", modalState: "" };
   }
 
+  // Check for empty values
+  const hasEmptyString = formValues.some((item) => item.trim() === "");
+  if (hasEmptyString) {
+    return {
+      error: "Input fields cannot be empty",
+      modalState: "",
+    };
+  }
+
+  // Check for duplicate values
   for (let i = 0; i < formValues.length - 1; i++) {
     for (let j = i + 1; j < formValues.length; j++) {
       if (
@@ -111,14 +121,6 @@ const validateBoardForm = async (
         return { error: "Fields cannot have duplicate values", modalState: "" };
       }
     }
-  }
-  // Form validation
-  const hasEmptyString = formValues.some((item) => item.trim() === "");
-  if (hasEmptyString) {
-    return {
-      error: "Input fields cannot be empty",
-      modalState: "",
-    };
   }
 
   if (typeof boardName === "string" && boardName.length < 3) {
@@ -131,12 +133,24 @@ const validateBoardForm = async (
 
 const validateTaskForm = (formData: FormData, formValues: string[]) => {
   const title = formData.get("title") as string;
+  // Check for empty values
   const hasEmptyString = formValues.some((item) => item.trim() === "");
   if (hasEmptyString) {
     return {
       error: "Input fields cannot be empty",
       modalState: "",
     };
+  }
+
+  // Check for duplicate values
+  for (let i = 0; i < formValues.length - 1; i++) {
+    for (let j = i + 1; j < formValues.length; j++) {
+      if (
+        formValues[i].toLocaleLowerCase() === formValues[j].toLocaleLowerCase()
+      ) {
+        return { error: "Fields cannot have duplicate values", modalState: "" };
+      }
+    }
   }
 
   if (typeof title === "string" && title.length < 3) {
@@ -376,6 +390,7 @@ export const editTask = async (
 
   const taskTitle = formData.get("title") as string;
   const description = formData.get("description") as string;
+  const status = formData.get("staus") as string;
 
   const results = await validateTaskForm(formData, formValues);
   if (results) return results;
@@ -431,12 +446,13 @@ export const editTask = async (
             data: subtasksToAdd,
           });
         }
-        // Update task title and description
+        // Update task title, description and status
         await tx.task.update({
           where: { id: taskId },
           data: {
             title: taskTitle,
             description,
+            status,
             columnId: taskColumnId,
           },
         });
