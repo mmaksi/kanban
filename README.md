@@ -1,6 +1,6 @@
 # Kanban - Task Management App
 
-<img src="https://i.ibb.co/HtZRLKy/8dxjr9.gif" alt="GIF that shows major app features" style="width: 100%;">
+<img src="https://i.ibb.co/jh7x6ky/Untitled-design.gif" alt="GIF that shows major app features" style="width: 100%;">
 
 👉 100% pixel-perfect development from Figma designs.  
 👉 100% responsive on all devices.  
