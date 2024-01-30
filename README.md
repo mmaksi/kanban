@@ -1,11 +1,13 @@
 # Kanban - Task Management App
 
-**App Architecture**
+## App Architecture
 ![app relationship with the database and redux](https://i.ibb.co/2WQ15CT/1.png)
 <br />
 ![board component architecture](https://i.ibb.co/ZH8szwy/2.png)
 
 <img src="https://i.ibb.co/jh7x6ky/Untitled-design.gif" alt="GIF that shows major app features" style="width: 100%;">
+
+## App Metrics and Outcomes
 
 👉 100% pixel-perfect development from Figma designs.
 
@@ -23,7 +25,7 @@
 
 👉 👉 [Live Demo](https://markmaksi-kantask.vercel.app/)
 
-**App features:**
+## App Features
 
 🟣 Create/Edit/Delete boards with names and columns.
 
