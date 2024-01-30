@@ -35,8 +35,6 @@ export const ViewTask: React.FC<ViewTaskProps> = (props) => {
     CompletedTasks[]
   >([]);
 
-  console.log({ currentStatus });
-
   let finishedSubtasks: SubtaskSchema[] = [];
   if (typeof subtasks !== "undefined")
     finishedSubtasks = subtasks.filter((subtask) => subtask.isCompleted);
