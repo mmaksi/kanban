@@ -15,6 +15,9 @@ interface Props {
   status: string;
 }
 
+console.log("Task");
+console.log({ status });
+
 const Task = (props: Props) => {
   const { id, title, description, status, subtasks, columnId } = props;
 

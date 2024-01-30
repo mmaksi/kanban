@@ -49,7 +49,7 @@ export const Sidebar = ({ boards }: Props) => {
       dispatch(setCurrentBoardColumns(currentBoard.columns));
       dispatch(closeSidebar());
       setCurrentBoardIndex(index);
-      localStorage.setItem("currentBoardIndex", index.toString());
+      // localStorage.setItem("currentBoardIndex", index.toString());
     }
   };
 

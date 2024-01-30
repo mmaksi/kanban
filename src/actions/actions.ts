@@ -3,64 +3,12 @@
 import { BoardInputField } from "@/components/Modals/EditBoardModal.component";
 import { TaskInputField } from "@/components/Modals/EditTaskModal.component";
 import { CompletedTasks } from "@/components/Modals/ViewTask.component";
-import {
-  ColumnSchema,
-  BoardSchema,
-  NewBoardColumn,
-  ColumnData,
-  SubtaskData,
-} from "@/types/schemas";
+import { ColumnData, SubtaskData } from "@/types/schemas";
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
-// export const createBoard = async (
-//   boardName: string,
-//   columnName: string,
-//   taskTitle: string
-// ) => {
-//   try {
-//     return await prisma.board.create({
-//       data: {
-//         boardName: boardName,
-//         columns: {
-//           create: [
-//             {
-//               name: columnName,
-//               tasks: {
-//                 create: {
-//                   title: taskTitle,
-//                   description: "description of task 1",
-//                   status: "active",
-//                   subtasks: {
-//                     create: [
-//                       {
-//                         title: "subtask title 1",
-//                         isCompleted: true,
-//                       },
-//                       {
-//                         title: "subtask title 2",
-//                         isCompleted: true,
-//                       },
-//                     ],
-//                   },
-//                 },
-//               },
-//             },
-//           ],
-//         },
-//       },
-//     });
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       console.error(`Error: ${error.message}`);
-//       await prisma.$disconnect();
-//     }
-//   } finally {
-//     await prisma.$disconnect();
-//   }
-// };
 let lastBoard = {};
 
 const serializeFormData = (
@@ -348,6 +296,18 @@ export const editBoard = async (
             where: { id: updatedColumn.id as string },
             data: { name: updatedColumn.value },
           });
+          // Update the status of tasks that belong to this column
+          const belongingTasks = await tx.task.findMany({
+            where: { columnId: updatedColumn.id as string },
+          });
+          for (const belongingTask of belongingTasks) {
+            await tx.task.update({
+              where: {
+                id: belongingTask.id as string,
+              },
+              data: { status: updatedColumn.value },
+            });
+          }
         }
         // Create new columns
         if (columnsToAdd.length > 0) {
@@ -682,7 +642,7 @@ export const createTask = async (
 
 export const getAllTasks = async (boardId: string) => {
   try {
-    return await prisma.board.findUnique({
+    const data = await prisma.board.findUnique({
       where: { id: boardId },
       include: {
         columns: {
@@ -696,6 +656,7 @@ export const getAllTasks = async (boardId: string) => {
         },
       },
     });
+    return data;
   } catch (error) {
     throw new Error();
   } finally {
@@ -719,12 +680,7 @@ export const updateSubtasksStatus = async (
 
     await prisma.task.update({
       where: { id: taskId },
-      data: { status: currentStatus },
-    });
-
-    await prisma.task.update({
-      where: { id: taskId },
-      data: { columnId: newColumnId },
+      data: { status: currentStatus, columnId: newColumnId },
     });
   });
 

@@ -35,6 +35,8 @@ export const ViewTask: React.FC<ViewTaskProps> = (props) => {
     CompletedTasks[]
   >([]);
 
+  console.log({ currentStatus });
+
   let finishedSubtasks: SubtaskSchema[] = [];
   if (typeof subtasks !== "undefined")
     finishedSubtasks = subtasks.filter((subtask) => subtask.isCompleted);
@@ -64,8 +66,6 @@ export const ViewTask: React.FC<ViewTaskProps> = (props) => {
   }
 
   const updateTask = () => {
-    console.log("cols");
-    console.log(taskId, newColumnId, currentStatus, completedTasksObject);
     startTransition(async () => {
       await updateSubtasksStatus(
         taskId,

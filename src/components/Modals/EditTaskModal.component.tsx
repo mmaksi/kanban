@@ -48,6 +48,10 @@ export const EditTask: React.FC<Props> = (props) => {
     (state: RootState) => state.board.columns
   );
 
+  const currentTaskColumnId = currentBoardColumns.find(
+    (col) => col.name === task.status
+  )?.id;
+
   const initialFormFields: TaskInputField[] = Object.entries(task.subtasks).map(
     ([key, value]) => ({
       name: `subtask${key}`,
@@ -63,7 +67,7 @@ export const EditTask: React.FC<Props> = (props) => {
   const [taskTitle, setTaskTitle] = useState(task.title);
   const [counter, setCounter] = useState(task.subtasks.length);
   const [status, setStatus] = useState(task.status);
-  const [taskColumnId, setTaskColumnId] = useState(currentBoardColumns[0].id);
+  const [taskColumnId, setTaskColumnId] = useState(currentTaskColumnId!);
 
   const options: { id: string; value: string }[] = [];
   currentBoardColumns.forEach((column) => {
@@ -81,15 +85,22 @@ export const EditTask: React.FC<Props> = (props) => {
 
   const changeHandler = (event: TaskEvent) => {
     const { name, value } = event.target;
-    let selectedIndex = undefined;
-    if (event.target.selectedIndex) {
-      selectedIndex = event.target.selectedIndex;
-    }
-    if (typeof selectedIndex !== "undefined") {
-      setTaskColumnId(currentBoardColumns[selectedIndex].id);
-      setStatus(value);
-    }
+
     value.length > 2 ? (formState.error = "none") : null;
+    setFormFields((prevInputs) =>
+      prevInputs.map((input) =>
+        input.name === name ? { ...input, value } : input
+      )
+    );
+  };
+
+  const optionsChangeHandler = (event: any) => {
+    const { name, value } = event.target;
+    const chosenBoard = currentBoardColumns.find(
+      (board) => board.name === value
+    );
+    setTaskColumnId(chosenBoard!.id);
+    setStatus(value);
     setFormFields((prevInputs) =>
       prevInputs.map((input) =>
         input.name === name ? { ...input, value } : input
@@ -124,8 +135,6 @@ export const EditTask: React.FC<Props> = (props) => {
       setIsOpen(false);
     }
   }, [formState.modalState, setIsOpen]);
-
-  console.log(status);
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -189,7 +198,7 @@ export const EditTask: React.FC<Props> = (props) => {
           </Button>
           <OptionsInput
             name="status"
-            changeHandler={changeHandler}
+            changeHandler={optionsChangeHandler}
             firstValue={status}
             options={options}
           />

@@ -7,6 +7,7 @@ import styles from "@/styles/Modal.module.scss";
 import * as actions from "@/actions/actions";
 import Cross from "public/icon-cross.svg";
 import {
+  setCurrentBoardColumns,
   setCurrentBoardId,
   setCurrentBoardName,
 } from "@/store/slices/board.slice";
@@ -101,9 +102,26 @@ export const EditBoard = (props: Props) => {
     if (formState.modalState === "edited") {
       dispatch(setCurrentBoardName(boardName));
       dispatch(setCurrentBoardId(boardId));
+      const currentBoardColumns = formFields.map((field) => {
+        if (field.id) {
+          return { id: field.id, name: field.value, boardId };
+        }
+      });
+      dispatch(
+        setCurrentBoardColumns(
+          currentBoardColumns as { id: string; name: string; boardId: string }[]
+        )
+      );
       setIsOpen(false);
     }
-  }, [formState.modalState, boardName, boardId, setIsOpen, dispatch]);
+  }, [
+    formFields,
+    formState.modalState,
+    boardName,
+    boardId,
+    setIsOpen,
+    dispatch,
+  ]);
 
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>

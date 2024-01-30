@@ -77,12 +77,12 @@ export const BoardModal = (props: Props) => {
       dispatch(setCurrentBoardId(boardId));
       dispatch(setCurrentBoardName(boardName));
 
-      if (boardsLength) {
-        const newIndex = boardsLength - 1;
-        localStorage.setItem("currentBoardIndex", newIndex.toString());
-      } else {
-        localStorage.setItem("currentBoardIndex", "0");
-      }
+      // if (boardsLength) {
+      //   const newIndex = boardsLength - 1;
+      //   localStorage.setItem("currentBoardIndex", newIndex.toString());
+      // } else {
+      //   localStorage.setItem("currentBoardIndex", "0");
+      // }
       setIsOpen(false);
     }
   }, [

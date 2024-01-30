@@ -1,49 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { BoardData } from "@/types/schemas";
 import { RootState } from "@/store/store";
-import {
-  setCurrentBoardColumns,
-  setCurrentBoardId,
-} from "@/store/slices/board.slice";
 
 import styles from "@/styles/Board.module.scss";
 
 import { ModalConatiner } from "./Modals/_ModalContainer/ModalContainer.component";
 import { EditBoard } from "./Modals/EditBoardModal.component";
-import { BoardColumn } from "./BoardColumns.component";
+import { BoardColumns } from "./BoardColumns.component";
 import Button from "./Button.component";
 import { closeSidebar, setIsSidebarOpen } from "@/store/slices/sidebar.slice";
 
 interface Props {
-  boards: BoardData[] | undefined;
   getAllTasks: any;
 }
 
-export const Board = ({ boards, getAllTasks }: Props) => {
+export const Board = ({ getAllTasks }: Props) => {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
-  const currentBoardName = useSelector(
-    (state: RootState) => state.board.boardName
-  );
-
   const boardColumns = useSelector((state: RootState) => state.board.columns);
   const boardId = useSelector((state: RootState) => state.board.id);
-
-  useEffect(() => {
-    if (boards) {
-      boards.forEach((board) => {
-        if (board.boardName === currentBoardName) {
-          dispatch(setCurrentBoardColumns(board.columns));
-          dispatch(setCurrentBoardId(board.id));
-        }
-      });
-    }
-  }, [boards, currentBoardName, dispatch, boardColumns]);
 
   return (
     <>
@@ -70,11 +49,7 @@ export const Board = ({ boards, getAllTasks }: Props) => {
         )}
 
         {!isOpen && boardColumns.length > 0 && (
-          <BoardColumn
-            columns={boardColumns}
-            boardId={boardId}
-            getAllTasks={getAllTasks}
-          />
+          <BoardColumns boardId={boardId} getAllTasks={getAllTasks} />
         )}
       </div>
       {isOpen && (
