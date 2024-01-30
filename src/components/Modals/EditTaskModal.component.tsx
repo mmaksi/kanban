@@ -85,8 +85,7 @@ export const EditTask: React.FC<Props> = (props) => {
 
   const changeHandler = (event: TaskEvent) => {
     const { name, value } = event.target;
-
-    value.length > 2 ? (formState.error = "none") : null;
+    formState.error = "none";
     setFormFields((prevInputs) =>
       prevInputs.map((input) =>
         input.name === name ? { ...input, value } : input

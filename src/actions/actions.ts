@@ -29,14 +29,14 @@ const serializeFormData = (
 };
 
 const checkEmptyValues = (values: string[]) => {
-  values.forEach((value) => {
-    if (value.length) {
-      return {
-        error: "Input fields cannot be empty",
-        modalState: "",
-      };
-    }
-  });
+  const emptyValues = values.some((value) => value === "");
+  if (emptyValues) {
+    return {
+      error: "Input fields cannot be empty",
+      modalState: "",
+    };
+  }
+  return false;
 };
 
 const getExistedBoards = async (boardName: string) => {
@@ -94,7 +94,8 @@ const validateBoardForm = async (
 const validateCreateTaskForm = (formData: FormData, formValues: string[]) => {
   const title = formData.get("title") as string;
   // Check for empty values
-  checkEmptyValues(formValues);
+  const error = checkEmptyValues(formValues);
+  if (error) return error;
 
   // Check for duplicate values
   for (let i = 0; i < formValues.length - 1; i++) {
@@ -123,7 +124,8 @@ const validateEditTaskForm = (
   const title = formData.get("title") as string;
   // Check for empty values
   const subtasksValues = subtasksArray.map((item) => item.value.trim());
-  checkEmptyValues(subtasksValues);
+  const error = checkEmptyValues(subtasksValues);
+  if (error) return error;
 
   // Check for duplicate values
   for (let i = 0; i < formValues.length - 1; i++) {

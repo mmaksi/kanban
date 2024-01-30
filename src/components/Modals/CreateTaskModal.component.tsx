@@ -70,7 +70,7 @@ export const CreateTask: React.FC<Props> = ({ setIsOpen }) => {
     if (typeof selectedIndex !== "undefined") {
       setTaskColumnId(currentBoardColumns[selectedIndex].id);
     }
-    value.length > 2 ? (formState.error = "none") : null;
+    formState.error = "none";
     setFormFields((prevInputs) =>
       prevInputs.map((input) =>
         input.name === name ? { ...input, value } : input

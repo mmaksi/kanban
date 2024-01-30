@@ -46,7 +46,7 @@ export const BoardModal = (props: Props) => {
   const changeHandler = (event: any) => {
     // Client side input validation
     const { name, value } = event.target;
-    value.length > 2 ? (formState.error = "none") : null;
+    formState.error = "none";
 
     setFormFields((prevInputs) =>
       prevInputs.map((input) =>
