@@ -29,12 +29,15 @@ const serializeFormData = (
 };
 
 const checkEmptyValues = (values: string[]) => {
-  const emptyValues = values.some((value) => value === "");
-  if (emptyValues) {
-    return {
-      error: "Input fields cannot be empty",
-      modalState: "",
-    };
+  if (values) {
+    const emptyValues = values.some((value) => value === "");
+    // const isDeleted = values.some((value) => value.);
+    if (emptyValues) {
+      return {
+        error: "Input fields cannot be empty",
+        modalState: "",
+      };
+    }
   }
   return false;
 };
@@ -123,8 +126,11 @@ const validateEditTaskForm = (
 ) => {
   const title = formData.get("title") as string;
   // Check for empty values
-  const subtasksValues = subtasksArray.map((item) => item.value.trim());
-  const error = checkEmptyValues(subtasksValues);
+  const subtasksValues = subtasksArray.filter((item) => {
+    return item.toDelete === false;
+  });
+  const filteredValues = subtasksValues.map((item) => item.value.trim());
+  const error = checkEmptyValues(filteredValues);
   if (error) return error;
 
   // Check for duplicate values
